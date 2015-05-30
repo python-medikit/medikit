@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import, print_function
 
 import sys
 
@@ -90,7 +90,7 @@ def main(args=None):
         try:
             feature = __import__('edgy.project.feature.' + feature_name, fromlist=('__feature__', )).__feature__
         except (ImportError, AttributeError, ) as e:
-            print 'Error while importing feature "{}" ...'.format(feature_name)
+            print('Error while importing feature "{}" ...'.format(feature_name))
             raise
 
         if feature:

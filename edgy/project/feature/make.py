@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import textwrap
 
 from collections import OrderedDict
@@ -74,6 +76,6 @@ class MakeFeature(Feature):
 
         self.dispatcher.dispatch(__name__+'.on_generate', MakefileEvent(event.setup['name'], self.makefile))
 
-        self.render_file_inline('Makefile', unicode(self.makefile), override=True)
+        self.render_file_inline('Makefile', self.makefile.__str__(), override=True)
 
 __feature__ = MakeFeature

@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import os
 
 from edgy.project.util import format_file_content
@@ -24,10 +26,10 @@ class PythonFeature(Feature):
         package_bits = event.setup['name'].split('.')
         if len(package_bits) > 1:
             event.setup['namespace_packages'] = []
-            for i in range(len(package_bits))[1:]:
+            for i in range(1, len(package_bits)):
                 event.setup['namespace_packages'].append('.'.join(package_bits[0:i]))
 
-        for i in range(len(package_bits)+1)[1:]:
+        for i in range(1, len(package_bits)+1):
             _bits = package_bits[0:i]
             package_dir = os.path.join(*_bits)
             if not os.path.exists(package_dir):

@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 from .util import format_file_content
 
 class Config(object):
