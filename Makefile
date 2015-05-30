@@ -13,6 +13,7 @@ install: $(VIRTUALENV_PATH)
 $(VIRTUALENV_PATH):
 	virtualenv $(VIRTUALENV_PATH)
 	$(PYTHON_PIP) install -U pip\>=7.0,\<8.0 wheel\>=0.24,\<1.0
+	ln -fs $(VIRTUALENV_PATH)/bin/activate
 
 test: install
 	nosetests -q --with-doctest --with-coverage --cover-package=edgy.project

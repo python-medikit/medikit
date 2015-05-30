@@ -68,6 +68,7 @@ class MakeFeature(Feature):
         self.makefile.add_target('$(VIRTUALENV_PATH)', '''
             virtualenv $(VIRTUALENV_PATH)
             $(PYTHON_PIP) install -U pip\>=7.0,\<8.0 wheel\>=0.24,\<1.0
+            ln -fs $(VIRTUALENV_PATH)/bin/activate
         ''')
 
         self.dispatcher.dispatch(__name__+'.on_generate', MakefileEvent(self.makefile))

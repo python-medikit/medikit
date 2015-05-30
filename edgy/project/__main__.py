@@ -100,10 +100,5 @@ def main(args=None):
     event = dispatcher.dispatch('edgy.project.on_end', event)
 
 
-
-
-
-
-
 if __name__ == '__main__':
     main()
