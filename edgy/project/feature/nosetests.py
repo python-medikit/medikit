@@ -9,8 +9,8 @@ class NosetestsFeature(Feature):
     def on_make_generate(self, event):
         makefile = event.makefile
         makefile.add_target('test', '''
-            nosetests -q --with-doctest --with-coverage --cover-package=edgy.project
-        ''', deps=('install', ), phony=True)
+            nosetests -q --with-doctest --with-coverage --cover-package={name}
+        '''.format(name=event.package_name), deps=('install', ), phony=True)
 
     def on_python_generate(self, event):
         event.files['requirements'] = '\n'.join((event.files['requirements'], 'nose >=1.3,<1.4', 'coverage >=3.7,<3.8' ))

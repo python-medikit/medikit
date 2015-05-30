@@ -44,7 +44,8 @@ class Makefile(UserDict):
         return '\n'.join(content)
 
 class MakefileEvent(Event):
-    def __init__(self, makefile):
+    def __init__(self, package_name, makefile):
+        self.package_name = package_name
         self.makefile = makefile
         super(MakefileEvent, self).__init__()
 
@@ -71,7 +72,7 @@ class MakeFeature(Feature):
             ln -fs $(VIRTUALENV_PATH)/bin/activate
         ''')
 
-        self.dispatcher.dispatch(__name__+'.on_generate', MakefileEvent(self.makefile))
+        self.dispatcher.dispatch(__name__+'.on_generate', MakefileEvent(event.setup['name'], self.makefile))
 
         self.render_file_inline('Makefile', unicode(self.makefile), override=True)
 
