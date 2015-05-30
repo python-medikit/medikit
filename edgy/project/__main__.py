@@ -57,6 +57,8 @@ def _read_configuration():
         ('name', None, ),
         ('description', None, ),
         ('license', None, ),
+        ('url', 'http://example.com/', ),
+        ('download_url', 'http://example.com/', ),
     ))
 
     features = {

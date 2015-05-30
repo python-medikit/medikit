@@ -15,9 +15,8 @@ class PythonFeature(Feature):
         self.render_file_inline('requirements.txt', event.files['requirements'], override=True)
         self.render_file_inline('MANIFEST.in', 'include *.txt', override=True)
         self.render_file_inline('setup.cfg', '''
-                [egg_info]
-                tag_build = dev
-                tag_svn_revision = true
+                [metadata]
+                description-file = README.rst
             ''', override=True)
 
         # Explode package name so we know which python packages are namespaced and
@@ -38,6 +37,10 @@ class PythonFeature(Feature):
             if not os.path.exists(package_init_file):
                 self.render_file(package_init_file, 'python/package_init.py.j2', {'is_namespace': i < len(package_bits)})
 
-        self.render_file('setup.py', 'python/setup.py.j2', {'setup': event.setup}, override=True)
+        self.render_file('setup.py', 'python/setup.py.j2', {
+            'setup': event.setup,
+            'url': event.setup.pop('url', 'http://example.com/'),
+            'download_url': event.setup.pop('download_url', 'http://example.com/'),
+        }, override=True)
 
 __feature__ = PythonFeature
