@@ -18,9 +18,13 @@ Install
 Before installing the package, you must make sure that `pip` and `virtualenv`
 are installed and available to be used in your current environment.
 
+.. code-block:: shell
+
     pip install edgy.project
 
 Now, you may want to bootstrap a python package source tree.
+
+.. code-block:: shell
 
     mkdir my.awesome.pkg
     cd my.awesome.pkg
@@ -32,6 +36,8 @@ Now, you may want to bootstrap a python package source tree.
     python -m edgy.project init
 
 You're done with the bootstrap. You can now run:
+
+.. code-block:: shell
 
     make install
     make test
