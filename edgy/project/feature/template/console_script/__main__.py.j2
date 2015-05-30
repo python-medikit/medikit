@@ -1,0 +1,22 @@
+#!/usr/bin/env python
+# coding=utf-8
+
+from __future__ import unicode_literals
+
+import sys
+from argparse import ArgumentParser as BaseArgumentParser
+
+
+class ArgumentParser(BaseArgumentParser):
+    pass
+
+
+def main(args=None, prog=None):
+    args = args or sys.argv[1:]
+    prog = prog or sys.argv[0]
+
+    raise NotImplementedError('Project command line interface is up and running, but you should probably add some code now.')
+
+
+if __name__ == '__main__':
+    main()

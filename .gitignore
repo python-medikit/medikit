@@ -1,0 +1,10 @@
+*.pyc
+*.swp
+/.python-virtualenv
+/.python-wheelhouse
+/.python-pipcache
+/.coverage
+/build
+/dist
+*.egg-info
+/.idea

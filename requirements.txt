@@ -1,0 +1,2 @@
+Jinja2 >=2.7,<3.0
+-e git+https://github.com/python-edgy/event.git@master#egg=edgy.event
