@@ -62,7 +62,8 @@ def _read_configuration():
     features = {
         'git',
         'make',
-        'virtualenv'
+        'python',
+        'nosetests',
     }
 
     return read_configuration(config_filename, variables, features, files, setup)

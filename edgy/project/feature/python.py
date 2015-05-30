@@ -1,4 +1,5 @@
 import os
+
 from edgy.project.util import format_file_content
 
 from . import Feature
@@ -8,26 +9,16 @@ class PythonFeature(Feature):
         self.dispatcher.add_listener('edgy.project.on_start', self.on_start, priority=-99)
 
     def on_start(self, event):
-        # requirements
-        with self.file('requirements.txt', override=True) as f:
-            f.write(event.files['requirements'])
+        self.dispatcher.dispatch(__name__+'.on_generate', event)
 
         self.render_empty_files('classifiers.txt', 'version.txt', 'README.rst')
-
-
-        # manifest
-        with self.file('MANIFEST.in', override=True) as f:
-            f.write(format_file_content('''
-                include *.txt
-            '''))
-
-        # setup.cfg
-        with self.file('setup.cfg', override=True) as f:
-            f.write(format_file_content('''
+        self.render_file_inline('requirements.txt', event.files['requirements'], override=True)
+        self.render_file_inline('MANIFEST.in', 'include *.txt', override=True)
+        self.render_file_inline('setup.cfg', '''
                 [egg_info]
                 tag_build = dev
                 tag_svn_revision = true
-            '''))
+            ''', override=True)
 
         # Explode package name so we know which python packages are namespaced and
         # which are not

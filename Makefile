@@ -4,10 +4,7 @@ WHEELHOUSE_PATH ?= .python-wheelhouse
 PYTHON_PIP ?= $(VIRTUALENV_PATH)/bin/pip --cache-dir=$(PIPCACHE_PATH)
 PIPCACHE_PATH ?= .python-pipcache
 
-.PHONY: run install
-
-run: install
-	echo 'run target'
+.PHONY: test install
 
 install: $(VIRTUALENV_PATH)
 	$(PYTHON_PIP) wheel -w $(WHEELHOUSE_PATH) -f $(WHEELHOUSE_PATH) -r requirements.txt
@@ -16,3 +13,6 @@ install: $(VIRTUALENV_PATH)
 $(VIRTUALENV_PATH):
 	virtualenv $(VIRTUALENV_PATH)
 	$(PYTHON_PIP) install -U pip\>=7.0,\<8.0 wheel\>=0.24,\<1.0
+
+test: install
+	nosetests -q --with-doctest --with-coverage --cover-package=edgy.project

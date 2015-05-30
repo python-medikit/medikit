@@ -28,10 +28,10 @@ class Feature(object):
             )
         return type(self)._jinja_environemnt
 
-    def render(self, template, context = None):
+    def render(self, template, context=None):
         context = context or {}
         os.path.join(os.path.dirname(__file__), 'template')
-        return self.jinja.get_template(template).render(**context)
+        return self.jinja.get_template(template).render(**(context or {}))
 
     def render_file(self, target, template, context=None, override=False):
         with self.file(target, override=override) as f:
@@ -39,7 +39,7 @@ class Feature(object):
 
     def render_file_inline(self, target, template_string, context=None, override=False):
         with self.file(target, override=override) as f:
-            f.write(format_file_content(Template(template_string).render(**context)))
+            f.write(format_file_content(Template(template_string).render(**(context or {}))))
 
     def render_empty_files(self, *targets, **kwargs):
         for target in targets:
