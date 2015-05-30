@@ -66,6 +66,7 @@ def _read_configuration():
         'make',
         'python',
         'nosetests',
+        'pylint',
     }
 
     return read_configuration(config_filename, variables, features, files, setup)

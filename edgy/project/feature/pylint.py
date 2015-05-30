@@ -3,19 +3,19 @@ from __future__ import absolute_import
 from . import Feature
 
 
-class NosetestsFeature(Feature):
+class PylintFeature(Feature):
     def configure(self):
         self.dispatcher.add_listener('edgy.project.feature.make.on_generate', self.on_make_generate)
         self.dispatcher.add_listener('edgy.project.feature.python.on_generate', self.on_python_generate)
 
     def on_make_generate(self, event):
         makefile = event.makefile
-        makefile.add_target('test', '''
-            $(VIRTUALENV_PATH)/bin/nosetests -q --with-doctest --with-coverage --cover-package={name}
+        makefile.add_target('lint', '''
+            $(VIRTUALENV_PATH)/bin/pylint --py3k {name} -f html > pylint.html
         '''.format(name=event.package_name), deps=('install', ), phony=True)
 
     def on_python_generate(self, event):
-        event.files['requirements'] = '\n'.join((event.files['requirements'], 'nose >=1.3,<1.4', 'coverage >=3.7,<3.8' ))
+        event.files['requirements'] = '\n'.join((event.files['requirements'], 'pylint >=1.4,<1.5', ))
 
 
-__feature__ = NosetestsFeature
+__feature__ = PylintFeature

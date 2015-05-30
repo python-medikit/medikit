@@ -1,14 +1,18 @@
 name = 'edgy.project'
 description = 'Strongly opinionated python project management.'
 license = 'Apache License, Version 2.0'
+
+# Project site and download urls
 url = 'https://github.com/python-edgy/project'
 download_url = 'https://github.com/python-edgy/project/tarball/{version}'
 
+# Author informations (for setup.py, not yet implemented)
+author = 'Romain Dorgueil'
+author_email = 'edgy@rdc.li'
+
 requirements = '''
 Jinja2 >=2.7,<3.0
--e git+https://github.com/python-edgy/event.git@master#egg=edgy.event
-
-pylint
+edgy.event >=0.1,<0.2
 '''
 
 enable_features = {
