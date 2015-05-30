@@ -15,11 +15,11 @@ class PythonFeature(Feature):
 
         self.render_empty_files('classifiers.txt', 'version.txt', 'README.rst')
         self.render_file_inline('requirements.txt', event.files['requirements'], override=True)
-        self.render_file_inline('MANIFEST.in', 'include *.txt', override=True)
+        self.render_file_inline('MANIFEST.in', 'include *.txt')
         self.render_file_inline('setup.cfg', '''
                 [metadata]
                 description-file = README.rst
-            ''', override=True)
+            ''')
 
         # Explode package name so we know which python packages are namespaced and
         # which are not
