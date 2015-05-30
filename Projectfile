@@ -1,0 +1,14 @@
+name = 'edgy.project'
+description = 'Strongly opinionated python project management.'
+license = 'Apache License, Version 2.0'
+requirements = '''
+Jinja2 >=2.7,<3.0
+-e git+https://github.com/python-edgy/event.git@master#egg=edgy.event
+'''
+
+enable_features = {
+    'python',
+    'git',
+    'make',
+    'virtualenv'
+}
