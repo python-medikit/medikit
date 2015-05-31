@@ -19,9 +19,7 @@ class GitFeature(Feature):
         self.render_file_inline('.gitignore', '''
             *.pyc
             *.swp
-            /{{ virtualenv_path }}
-            /{{ wheelhouse_path }}
-            /{{ pipcache_path }}
+            /.python*-*
             /.coverage
             /build
             /dist

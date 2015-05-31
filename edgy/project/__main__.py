@@ -3,15 +3,11 @@
 
 from __future__ import unicode_literals, absolute_import, print_function
 
-import sys
-
 import os
 import sys
 import textwrap
 
 from collections import OrderedDict
-from UserDict import UserDict
-
 from edgy.event import Event, EventDispatcher as BaseEventDispatcher
 
 from .config import read_configuration
@@ -41,11 +37,11 @@ def _read_configuration():
     if not os.path.exists(config_filename):
         raise IOError('Could not find project description file (looked in {})'.format(config_filename))
 
-    variables = {
-        'virtualenv_path': os.getenv('VIRTUALENV_PATH', '.python-virtualenv'),
-        'wheelhouse_path': os.getenv('WHEELHOUSE_PATH', '.python-wheelhouse'),
-        'pipcache_path': os.getenv('PIPCACHE_PATH', '.python-pipcache'),
-    }
+    variables = OrderedDict((
+        ('virtualenv_path', '.$(PYTHON_BASENAME)-virtualenv', ),
+        ('wheelhouse_path', '.$(PYTHON_BASENAME)-wheelhouse', ),
+        ('pipcache_path', '.$(PYTHON_BASENAME)-pipcache', ),
+    ))
 
     files = {
         'requirements': '',

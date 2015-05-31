@@ -10,7 +10,7 @@ def read_configuration(filename, variables, features, files, setup):
     with open('Projectfile') as f:
         code = compile(f.read(), 'Projectfile', 'exec')
     ctx = {}
-    exec code in ctx
+    exec(code, ctx)
 
     for k in variables.keys():
         if k in ctx:
