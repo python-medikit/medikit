@@ -78,7 +78,31 @@ F.A.Q
 
   * You're a grown man, right?
 
+* Is it stable / production ready?
+
+  * Not really relevant to this project, as it's more a development tool than
+    something you'll use in operations. However, please note that on some points
+    and until version 1.0, we will tune things and change the way it works to find
+    the most flexible way to operate. Thus, if you relly on a specific
+    implementation, updates may break things. The good news is that you'll be able
+    to review changes using `git diff --cached`, and either rollback or report
+    issues saying how much you're disappointed (and why, don't forget the why,
+    please).
+
 * Can I contribute?
 
   * Yes, but the right vs wrong choices decision is up to us. Probably a good
     idea to discuss about it (in an issue for example) first.
+
+* Can you include feature «foo»?
+
+  * Probably, or maybe not. Come on github issues to discuss it, if we agree on
+    the fact this feature is good for a lot of usages, your patch will be
+    welcome. Also, we're working on a simple way to write "feature plugins", so
+    even if we don't agree on something, you'll be able to code and even distribute
+    addons that make things work the way you like.
+
+* Do you support python 3?
+
+  * It's the plan, but unfortunately, not for now.
+   
