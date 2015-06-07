@@ -4,15 +4,11 @@
 from __future__ import unicode_literals, absolute_import, print_function
 
 import os
-import sys
-import textwrap
 
 from collections import OrderedDict
-from edgy.event import Event, EventDispatcher as BaseEventDispatcher
+from edgy.event import Event, EventDispatcher
 
 from .config import read_configuration
-from .file import File
-from .util import format_file_content
 
 class ArgumentParser(object):
     from argparse import ArgumentParser as ArgumentParserType
@@ -25,14 +21,7 @@ class ArgumentParser(object):
     def parse_args(self, args=None, namespace=None):
         return self.parser.parse_args(args, namespace)
 
-class EventDispatcher(BaseEventDispatcher):
-    def listen(self, event_name, priority=0):
-        def wrapper(listener):
-            self.add_listener(event_name, listener, priority)
-            return listener
-        return wrapper
-
-def _read_configuration():
+def _read_configuration(dispatcher):
     config_filename = os.path.join(os.getcwd(), 'Projectfile')
     if not os.path.exists(config_filename):
         raise IOError('Could not find project description file (looked in {})'.format(config_filename))
@@ -65,7 +54,7 @@ def _read_configuration():
         'pylint',
     }
 
-    return read_configuration(config_filename, variables, features, files, setup)
+    return read_configuration(dispatcher, config_filename, variables, features, files, setup)
 
 class ProjectEvent(Event):
     variables = None
@@ -76,12 +65,7 @@ def main(args=None):
     parser = ArgumentParser()
     dispatcher = EventDispatcher()
 
-    # XXX Temporary debug snippet
-    #@dispatcher.listen('edgy.project.on_file_closed')
-    #def on_file_closed(event):
-    #    print 'on_file_closed', event.filename
-
-    variables, features, files, setup = _read_configuration()
+    variables, features, files, setup = _read_configuration(dispatcher)
     feature_instances = {}
     for feature_name in features:
         try:

@@ -13,8 +13,7 @@ class PythonFeature(Feature):
     def on_start(self, event):
         self.dispatcher.dispatch(__name__+'.on_generate', event)
 
-        self.render_empty_files('classifiers.txt', 'version.txt', 'README.rst')
-        self.render_file_inline('requirements.txt', event.files['requirements'], override=True)
+        self.render_empty_files('classifiers.txt', 'requirements.txt', 'version.txt', 'README.rst')
         self.render_file_inline('MANIFEST.in', 'include *.txt')
         self.render_file_inline('setup.cfg', '''
                 [metadata]

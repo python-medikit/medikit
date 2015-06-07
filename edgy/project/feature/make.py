@@ -11,14 +11,16 @@ from . import Feature
 class Makefile(object):
     def __init__(self):
         self._env_order, self._env_values = deque(), {}
-        self.targets = OrderedDict()
+        self._target_order, self._target_values = deque(), {}
         self.phony = set()
 
-    def add_target(self, target, rule, deps=None, phony=False):
-        self.targets[target] = (
+    def add_target(self, target, rule, deps=None, phony=False, first=False):
+        self._target_values[target] = (
             deps or list(),
             textwrap.dedent(rule).strip(),
         )
+        self._target_order.appendleft(target) if first else self._target_order.append(target)
+
         if phony:
             self.phony.add(target)
 
@@ -34,7 +36,7 @@ class Makefile(object):
             content.append('.PHONY: ' + ' '.join(self.phony))
             content.append('')
 
-        for target, details in self.targets.items():
+        for target, details in self.targets:
             deps, rule = details
             content.append('{}: {}'.format(target, ' '.join(deps)).strip())
             for line in rule.split('\n'):
@@ -71,6 +73,11 @@ class Makefile(object):
         for key in self._env_order:
             yield key, self._env_values[key]
 
+    @property
+    def targets(self):
+        for key in self._target_order:
+            yield key, self._target_values[key]
+
 
 class MakefileEvent(Event):
     def __init__(self, package_name, makefile):
@@ -101,8 +108,8 @@ class MakeFeature(Feature):
         ''', deps=('$(VIRTUALENV_PATH)', ), phony=True)
 
         self.makefile.add_target('$(VIRTUALENV_PATH)', '''
-            $(PYTHON) -m virtualenv -p $(PYTHON) $(VIRTUALENV_PATH)
-            $(PIP) install -U pip\>=7.0,\<8.0 wheel\>=0.24,\<1.0
+            virtualenv -p $(PYTHON) $(VIRTUALENV_PATH)
+            $(VIRTUALENV_PATH)/bin/pip install -U pip\>=7.0,\<8.0 wheel\>=0.24,\<1.0
             ln -fs $(VIRTUALENV_PATH)/bin/activate $(PYTHON_BASENAME)-activate
         ''')
 
