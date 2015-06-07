@@ -104,7 +104,8 @@ class MakeFeature(Feature):
 
         self.makefile.add_target('install', '''
             $(PIP) wheel -w $(WHEELHOUSE_PATH) -f $(WHEELHOUSE_PATH) -r requirements.txt
-            $(PIP) install -f $(WHEELHOUSE_PATH) -U -r requirements.txt
+            $(PIP) install -Ue .
+            $(PIP) install -f $(WHEELHOUSE_PATH) -Ur requirements.txt
         ''', deps=('$(VIRTUALENV_PATH)', ), phony=True)
 
         self.makefile.add_target('$(VIRTUALENV_PATH)', '''
@@ -112,6 +113,10 @@ class MakeFeature(Feature):
             $(VIRTUALENV_PATH)/bin/pip install -U pip\>=7.0,\<8.0 wheel\>=0.24,\<1.0
             ln -fs $(VIRTUALENV_PATH)/bin/activate $(PYTHON_BASENAME)-activate
         ''')
+
+        self.makefile.add_target('clean', '''
+            rm -rf $(VIRTUALENV_PATH) $(WHEELHOUSE_PATH) $(PIPCACHE_PATH)
+        ''', phony=True)
 
         self.dispatcher.dispatch(__name__ + '.on_generate', MakefileEvent(event.setup['name'], self.makefile))
 
