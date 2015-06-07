@@ -3,7 +3,7 @@
 
 from setuptools import setup, find_packages
 
-tolines = lambda c: filter(None, map(lambda s: s.strip(), c.split('\\n')))
+tolines = lambda c: filter(None, map(lambda s: s.strip(), c.split('\n')))
 
 def read(filename, flt=None):
     with open(filename) as f:
