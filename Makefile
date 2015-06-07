@@ -12,8 +12,8 @@ install: $(VIRTUALENV_PATH)
 	$(PIP) install -f $(WHEELHOUSE_PATH) -U -r requirements.txt
 
 $(VIRTUALENV_PATH):
-	$(PYTHON) -m virtualenv -p $(PYTHON) $(VIRTUALENV_PATH)
-	$(PIP) install -U pip\>=7.0,\<8.0 wheel\>=0.24,\<1.0
+	virtualenv -p $(PYTHON) $(VIRTUALENV_PATH)
+	$(VIRTUALENV_PATH)/bin/pip install -U pip\>=7.0,\<8.0 wheel\>=0.24,\<1.0
 	ln -fs $(VIRTUALENV_PATH)/bin/activate $(PYTHON_BASENAME)-activate
 
 lint: install
