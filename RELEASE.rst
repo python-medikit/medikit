@@ -5,8 +5,7 @@ First, update version.txt.
 
 .. code-block:: shell
 
-   make lint
-   make test
+   make lint test
 
 Looks good?
 
