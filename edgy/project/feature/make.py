@@ -139,6 +139,10 @@ class MakeFeature(Feature):
             Setup the local virtualenv.
         ''')
 
+        self.makefile.add_target('clean', '''
+            rm -rf $(VIRTUALENV_PATH) $(WHEELHOUSE_PATH) $(PIPCACHE_PATH)
+        ''', phony=True)
+
         self.dispatcher.dispatch(__name__ + '.on_generate', MakefileEvent(event.setup['name'], self.makefile))
 
         self.render_file_inline('Makefile', self.makefile.__str__(), override=True)
