@@ -115,13 +115,16 @@ class MakeFeature(Feature):
             ('PYTHON', '$(shell which python)', ),
             ('PYTHON_BASENAME', '$(shell basename $(PYTHON))', ),
             ('PYTHON_REQUIREMENTS_FILE', 'requirements.txt', ),
+            ('QUICK', '', ),
         )
 
         self.makefile['PIP'] = '$(VIRTUALENV_PATH)/bin/pip --cache-dir=$(PIPCACHE_PATH)'
 
         self.makefile.add_target('install', '''
-            $(PIP) wheel -w $(WHEELHOUSE_PATH) -f $(WHEELHOUSE_PATH) -r $(PYTHON_REQUIREMENTS_FILE)
-            $(PIP) install -f $(WHEELHOUSE_PATH) -U -r $(PYTHON_REQUIREMENTS_FILE)
+            if [ -z "$(QUICK)" ]; then \\
+                $(PIP) wheel -w $(WHEELHOUSE_PATH) -f $(WHEELHOUSE_PATH) -r $(PYTHON_REQUIREMENTS_FILE); \\
+                $(PIP) install -f $(WHEELHOUSE_PATH) -U -r $(PYTHON_REQUIREMENTS_FILE); \\
+            fi
         ''', deps=('$(VIRTUALENV_PATH)', ), phony=True, doc='''
             Installs the local project dependencies, using the environment given requirement file.
         ''')
