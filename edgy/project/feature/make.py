@@ -14,15 +14,23 @@ class Makefile(object):
         self._target_order, self._target_values = deque(), {}
         self.phony = set()
 
-    def add_target(self, target, rule, deps=None, phony=False, first=False):
+    def add_target(self, target, rule, deps=None, phony=False, first=False, doc=None):
         self._target_values[target] = (
             deps or list(),
             textwrap.dedent(rule).strip(),
+            textwrap.dedent(doc or '').strip(),
         )
         self._target_order.appendleft(target) if first else self._target_order.append(target)
 
         if phony:
             self.phony.add(target)
+
+    def set_deps(self, target, deps=None):
+        self._target_values[target] = (
+            deps or list(),
+            self._target_values[target][1],
+            self._target_values[target][2],
+        )
 
     def __str__(self):
         content = []
@@ -37,7 +45,10 @@ class Makefile(object):
             content.append('')
 
         for target, details in self.targets:
-            deps, rule = details
+            deps, rule, doc = details
+            if doc:
+                for line in doc.split('\n'):
+                    content.append('# ' + line)
             content.append('{}: {}'.format(target, ' '.join(deps)).strip())
             for line in rule.split('\n'):
                 content.append('	' + line)
@@ -98,19 +109,24 @@ class MakeFeature(Feature):
         self.makefile.updateleft(
             ('PYTHON', '$(shell which python)', ),
             ('PYTHON_BASENAME', '$(shell basename $(PYTHON))', ),
+            ('PYTHON_REQUIREMENTS_FILE', 'requirements.txt', ),
         )
 
         self.makefile['PIP'] = '$(VIRTUALENV_PATH)/bin/pip --cache-dir=$(PIPCACHE_PATH)'
 
         self.makefile.add_target('install', '''
-            $(PIP) wheel -w $(WHEELHOUSE_PATH) -f $(WHEELHOUSE_PATH) -r requirements.txt
-            $(PIP) install -f $(WHEELHOUSE_PATH) -U -r requirements.txt
-        ''', deps=('$(VIRTUALENV_PATH)', ), phony=True)
+            $(PIP) wheel -w $(WHEELHOUSE_PATH) -f $(WHEELHOUSE_PATH) -r $(PYTHON_REQUIREMENTS_FILE)
+            $(PIP) install -f $(WHEELHOUSE_PATH) -U -r $(PYTHON_REQUIREMENTS_FILE)
+        ''', deps=('$(VIRTUALENV_PATH)', ), phony=True, doc='''
+            Installs the local project dependencies, using the environment given requirement file.
+        ''')
 
         self.makefile.add_target('$(VIRTUALENV_PATH)', '''
             virtualenv -p $(PYTHON) $(VIRTUALENV_PATH)
             $(VIRTUALENV_PATH)/bin/pip install -U pip\>=7.0,\<8.0 wheel\>=0.24,\<1.0
             ln -fs $(VIRTUALENV_PATH)/bin/activate $(PYTHON_BASENAME)-activate
+        ''', doc='''
+            Setup the local virtualenv.
         ''')
 
         self.dispatcher.dispatch(__name__ + '.on_generate', MakefileEvent(event.setup['name'], self.makefile))
