@@ -1,13 +1,16 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals, print_function
 
+import datetime
+import six
 import textwrap
 
-from collections import OrderedDict, deque
-import datetime
+from collections import deque
+
 from edgy.event import Event
+from edgy.project.feature import Feature
 
-from . import Feature
-
+if six.PY3:
+    unicode = str
 
 class Makefile(object):
     def __init__(self):
@@ -48,7 +51,7 @@ class Makefile(object):
             content.append('')
 
         if len(self.phony):
-            content.append('.PHONY: ' + ' '.join(self.phony))
+            content.append('.PHONY: ' + ' '.join(sorted(self.phony)))
             content.append('')
 
         for target, details in self.targets:
