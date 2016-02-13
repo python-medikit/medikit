@@ -17,14 +17,17 @@ class GitFeature(Feature):
 
     def on_end(self, event):
         self.render_file_inline('.gitignore', '''
+            *.egg-info
             *.pyc
             *.swp
-            /.python*-*
+            /.cache
             /.coverage
+            /.idea
+            /.python*-*
             /build
             /dist
-            *.egg-info
-            /.idea
+            /htmlcov
+            /pylint.html
         ''', event.variables)
 
     def on_file_change(self, event):

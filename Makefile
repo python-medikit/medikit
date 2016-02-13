@@ -1,7 +1,7 @@
 # This file has been auto-generated.
 # All manual changes may be lost, see Projectfile.
 #
-# Date: 2015-11-06 13:53:53.792543
+# Date: 2016-02-13 17:40:31.644797
 
 PYTHON ?= $(shell which python)
 PYTHON_BASENAME ?= $(shell basename $(PYTHON))
@@ -11,8 +11,9 @@ VIRTUALENV_PATH ?= .$(PYTHON_BASENAME)-virtualenv
 WHEELHOUSE_PATH ?= .$(PYTHON_BASENAME)-wheelhouse
 PIPCACHE_PATH ?= .$(PYTHON_BASENAME)-pipcache
 PIP ?= $(VIRTUALENV_PATH)/bin/pip --cache-dir=$(PIPCACHE_PATH)
+PYTEST_OPTIONS ?= --capture=no --cov=edgy/project --cov-report html
 
-.PHONY: test lint clean install
+.PHONY: clean install lint test
 
 # Installs the local project dependencies, using the environment given requirement file.
 install: $(VIRTUALENV_PATH)
@@ -30,8 +31,8 @@ $(VIRTUALENV_PATH):
 clean:
 	rm -rf $(VIRTUALENV_PATH) $(WHEELHOUSE_PATH) $(PIPCACHE_PATH)
 
+test: install
+	$(VIRTUALENV_PATH)/bin/py.test $(PYTEST_OPTIONS) tests
+
 lint: install
 	$(VIRTUALENV_PATH)/bin/pylint --py3k edgy.project -f html > pylint.html
-
-test: install
-	$(VIRTUALENV_PATH)/bin/nosetests -q --with-doctest --with-coverage --cover-package=edgy.project

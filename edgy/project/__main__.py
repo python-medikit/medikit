@@ -49,8 +49,8 @@ def _read_configuration(dispatcher):
     features = {
         'git',
         'make',
+        'pytest',
         'python',
-        'nosetests',
         'pylint',
     }
 
