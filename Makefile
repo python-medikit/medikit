@@ -1,7 +1,7 @@
 # This file has been auto-generated.
 # All manual changes may be lost, see Projectfile.
 #
-# Date: 2016-02-13 17:40:31.644797
+# Date: 2016-02-14 15:02:00.513564
 
 PYTHON ?= $(shell which python)
 PYTHON_BASENAME ?= $(shell basename $(PYTHON))
@@ -25,14 +25,14 @@ install: $(VIRTUALENV_PATH)
 # Setup the local virtualenv.
 $(VIRTUALENV_PATH):
 	virtualenv -p $(PYTHON) $(VIRTUALENV_PATH)
-	$(VIRTUALENV_PATH)/bin/pip install -U pip\>=7.0,\<8.0 wheel\>=0.24,\<1.0
+	$(VIRTUALENV_PATH)/bin/pip install -U pip\>=8.0,\<9.0 wheel\>=0.24,\<1.0
 	ln -fs $(VIRTUALENV_PATH)/bin/activate $(PYTHON_BASENAME)-activate
 
 clean:
 	rm -rf $(VIRTUALENV_PATH) $(WHEELHOUSE_PATH) $(PIPCACHE_PATH)
 
-test: install
-	$(VIRTUALENV_PATH)/bin/py.test $(PYTEST_OPTIONS) tests
-
 lint: install
 	$(VIRTUALENV_PATH)/bin/pylint --py3k edgy.project -f html > pylint.html
+
+test: install
+	$(VIRTUALENV_PATH)/bin/py.test $(PYTEST_OPTIONS) tests
