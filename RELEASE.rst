@@ -7,7 +7,7 @@ How to make a release?
 
 .. code-block:: shell
 
-   make clean lint test
+   make clean lint test doc
 
 3. Create the git release
 
