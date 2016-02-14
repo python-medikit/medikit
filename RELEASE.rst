@@ -1,13 +1,15 @@
 How to make a release?
 ======================
 
-First, update version.txt.
+1. Update version.txt.
+
+2. Run a full test, from a clean virtualenv
 
 .. code-block:: shell
 
-   make lint test
+   make clean lint test
 
-Looks good?
+3. Create the git release
 
 .. code-block:: shell
 
@@ -16,7 +18,7 @@ Looks good?
    git tag -am `cat version.txt` `cat version.txt`
    git push origin --tags
 
-Now go PyPI!
+4. Publish to PyPI
 
 .. code-block:: shell
 
