@@ -67,7 +67,7 @@ def main(args=None):
 
     variables, features, files, setup = _read_configuration(dispatcher)
     feature_instances = {}
-    for feature_name in features:
+    for feature_name in sorted(features):
         try:
             feature = __import__('edgy.project.feature.' + feature_name, fromlist=('__feature__', )).__feature__
         except (ImportError, AttributeError, ) as e:

@@ -128,10 +128,10 @@ class MakeFeature(Feature):
         self.makefile.add_target('install', '''
             if [ -z "$(QUICK)" ]; then \\
                 $(PIP) wheel -w $(WHEELHOUSE_PATH) -f $(WHEELHOUSE_PATH) -r $(PYTHON_REQUIREMENTS_FILE); \\
-                $(PIP) install -f $(WHEELHOUSE_PATH) -U -r $(PYTHON_REQUIREMENTS_FILE); \\
+                $(PIP) install -f $(WHEELHOUSE_PATH) -Ue "file://`pwd`#egg={name}[dev]"; \\
             fi
-        ''', deps=('$(VIRTUALENV_PATH)', ), phony=True, doc='''
-            Installs the local project dependencies, using the environment given requirement file.
+        '''.format(name=event.setup['name']), deps=('$(VIRTUALENV_PATH)', ), phony=True, doc='''
+            Installs the local project dependencies.
         ''')
 
         self.makefile.add_target('$(VIRTUALENV_PATH)', '''
