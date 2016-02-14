@@ -1,7 +1,7 @@
 How to make a release?
 ======================
 
-1. Update version.txt.
+1. Update version.txt with the new version number
 
 2. Run a full test, from a clean virtualenv
 
