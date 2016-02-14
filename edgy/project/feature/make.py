@@ -136,7 +136,7 @@ class MakeFeature(Feature):
 
         self.makefile.add_target('$(VIRTUALENV_PATH)', '''
             virtualenv -p $(PYTHON) $(VIRTUALENV_PATH)
-            $(VIRTUALENV_PATH)/bin/pip install -U pip\>=7.0,\<8.0 wheel\>=0.24,\<1.0
+            $(VIRTUALENV_PATH)/bin/pip install -U pip\>=8.0,\<9.0 wheel\>=0.24,\<1.0
             ln -fs $(VIRTUALENV_PATH)/bin/activate $(PYTHON_BASENAME)-activate
         ''', doc='''
             Setup the local virtualenv.
