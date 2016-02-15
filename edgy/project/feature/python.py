@@ -2,8 +2,6 @@ from __future__ import absolute_import
 
 import os
 
-from edgy.project.util import format_file_content
-
 from . import Feature
 
 class PythonFeature(Feature):
@@ -42,6 +40,7 @@ class PythonFeature(Feature):
             'setup': event.setup,
             'url': event.setup.pop('url', 'http://example.com/'),
             'download_url': event.setup.pop('download_url', 'http://example.com/'),
+            'extras_require': event.setup.pop('extras_require', {})
         }, override=True)
 
 __feature__ = PythonFeature

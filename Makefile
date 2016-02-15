@@ -1,35 +1,32 @@
 # This file has been auto-generated.
 # All manual changes may be lost, see Projectfile.
 #
-# Date: 2016-02-14 15:02:00.513564
+# Date: 2016-02-15 07:33:25.578684
 
 PYTHON ?= $(shell which python)
 PYTHON_BASENAME ?= $(shell basename $(PYTHON))
 PYTHON_REQUIREMENTS_FILE ?= requirements.txt
 QUICK ?= 
-VIRTUALENV_PATH ?= .$(PYTHON_BASENAME)-virtualenv
-WHEELHOUSE_PATH ?= .$(PYTHON_BASENAME)-wheelhouse
-PIPCACHE_PATH ?= .$(PYTHON_BASENAME)-pipcache
-PIP ?= $(VIRTUALENV_PATH)/bin/pip --cache-dir=$(PIPCACHE_PATH)
+VIRTUALENV_PATH ?= .virtualenv-$(PYTHON_BASENAME)
+PIP ?= $(VIRTUALENV_PATH)/bin/pip
 PYTEST_OPTIONS ?= --capture=no --cov=edgy/project --cov-report html
 
 .PHONY: clean install lint test
 
-# Installs the local project dependencies, using the environment given requirement file.
+# Installs the local project dependencies.
 install: $(VIRTUALENV_PATH)
 	if [ -z "$(QUICK)" ]; then \
-	    $(PIP) wheel -w $(WHEELHOUSE_PATH) -f $(WHEELHOUSE_PATH) -r $(PYTHON_REQUIREMENTS_FILE); \
-	    $(PIP) install -f $(WHEELHOUSE_PATH) -U -r $(PYTHON_REQUIREMENTS_FILE); \
+	    $(PIP) install -Ue "file://`pwd`#egg=edgy.project[dev]"; \
 	fi
 
 # Setup the local virtualenv.
 $(VIRTUALENV_PATH):
 	virtualenv -p $(PYTHON) $(VIRTUALENV_PATH)
-	$(VIRTUALENV_PATH)/bin/pip install -U pip\>=8.0,\<9.0 wheel\>=0.24,\<1.0
-	ln -fs $(VIRTUALENV_PATH)/bin/activate $(PYTHON_BASENAME)-activate
+	$(PIP) install -U pip\>=8.0,\<9.0 wheel\>=0.24,\<1.0
+	ln -fs $(VIRTUALENV_PATH)/bin/activate activate-$(PYTHON_BASENAME)
 
 clean:
-	rm -rf $(VIRTUALENV_PATH) $(WHEELHOUSE_PATH) $(PIPCACHE_PATH)
+	rm -rf $(VIRTUALENV_PATH)
 
 lint: install
 	$(VIRTUALENV_PATH)/bin/pylint --py3k edgy.project -f html > pylint.html

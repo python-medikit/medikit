@@ -123,27 +123,30 @@ class MakeFeature(Feature):
             ('QUICK', '', ),
         )
 
-        self.makefile['PIP'] = '$(VIRTUALENV_PATH)/bin/pip --cache-dir=$(PIPCACHE_PATH)'
+        self.makefile['PIP'] = '$(VIRTUALENV_PATH)/bin/pip'
 
+        # Install
         self.makefile.add_target('install', '''
             if [ -z "$(QUICK)" ]; then \\
-                $(PIP) wheel -w $(WHEELHOUSE_PATH) -f $(WHEELHOUSE_PATH) -r $(PYTHON_REQUIREMENTS_FILE); \\
-                $(PIP) install -f $(WHEELHOUSE_PATH) -Ue "file://`pwd`#egg={name}[dev]"; \\
+                $(PIP) install -Ue "file://`pwd`#egg={name}[dev]"; \\
             fi
-        '''.format(name=event.setup['name']), deps=('$(VIRTUALENV_PATH)', ), phony=True, doc='''
+        '''.format(name=event.setup['name']), deps=('$(VIRTUALENV_PATH)', ),
+                                 phony=True, doc='''
             Installs the local project dependencies.
         ''')
 
+        # Virtualenv
         self.makefile.add_target('$(VIRTUALENV_PATH)', '''
             virtualenv -p $(PYTHON) $(VIRTUALENV_PATH)
-            $(VIRTUALENV_PATH)/bin/pip install -U pip\>=8.0,\<9.0 wheel\>=0.24,\<1.0
-            ln -fs $(VIRTUALENV_PATH)/bin/activate $(PYTHON_BASENAME)-activate
+            $(PIP) install -U pip\>=8.0,\<9.0 wheel\>=0.24,\<1.0
+            ln -fs $(VIRTUALENV_PATH)/bin/activate activate-$(PYTHON_BASENAME)
         ''', doc='''
             Setup the local virtualenv.
         ''')
 
+        # Housekeeping
         self.makefile.add_target('clean', '''
-            rm -rf $(VIRTUALENV_PATH) $(WHEELHOUSE_PATH) $(PIPCACHE_PATH)
+            rm -rf $(VIRTUALENV_PATH)
         ''', phony=True)
 
         self.dispatcher.dispatch(__name__ + '.on_generate', MakefileEvent(event.setup['name'], self.makefile))

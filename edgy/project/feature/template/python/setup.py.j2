@@ -35,6 +35,9 @@ setup(
     packages = find_packages(exclude=['ez_setup', 'example', 'test']),
     include_package_data = True,
     install_requires = read('requirements.txt', requirements_filter),
+    {% if extras_require -%}
+        extras_require = {{ extras_require | pprint }},{{ '\n    ' }}
+    {%- endif -%}
     url = {{ url | pprint }},
     download_url = {{ download_url | pprint }}.format(version=version),
 )
