@@ -4,7 +4,7 @@
 /.cache
 /.coverage
 /.idea
-/.python*-*
+/.virtualenv-python*
 /build
 /dist
 /htmlcov
