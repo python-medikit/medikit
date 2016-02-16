@@ -46,6 +46,7 @@ class PythonFeature(Feature):
             'download_url': event.setup.pop('download_url', 'http://example.com/'),
             'extras_require': event.setup.pop('extras_require', {}),
             'install_require': event.setup.pop('install_require', {}),
+            'entry_points': event.setup.pop('entry_points', {}),
         }, override=True)
 
 

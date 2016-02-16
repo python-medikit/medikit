@@ -31,10 +31,15 @@ extras_require = {
     ]
 }
 
+entry_points = {
+    'console_scripts': [
+        'edgy-project=edgy.project.__main__:project_cli'
+    ]
+}
+
 @listen('edgy.project.feature.make.on_generate')
 def on_make_generate_add_development(event):
     event.makefile.add_target('install-dev', '''
-        
         if [ -z "$(QUICK)" ]; then \\
             $(PIP) install -Ue "file://`pwd`#egg={name}[dev]"; \\
         fi

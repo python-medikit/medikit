@@ -40,6 +40,9 @@ setup(
     {% if extras_require -%}
         extras_require = {{ extras_require | pprint }},{{ '\n    ' }}
     {%- endif -%}
+    {% if entry_points -%}
+        entry_points = {{ entry_points | pprint }},{{ '\n    ' }}
+    {%- endif -%}
     url = {{ url | pprint }},
     download_url = {{ download_url | pprint }}.format(version=version),
 )
