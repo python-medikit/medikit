@@ -9,9 +9,6 @@ from collections import deque
 from edgy.event import Event
 from edgy.project.feature import Feature
 
-if six.PY3:
-    unicode = str
-
 class Makefile(object):
     def __init__(self):
         self._env_order, self._env_values = deque(), {}
@@ -41,7 +38,7 @@ class Makefile(object):
             '# This file has been auto-generated.',
             '# All manual changes may be lost, see Projectfile.',
             '#',
-            '# Date: '+ unicode(datetime.datetime.now()),
+            '# Date: '+ six.text_type(datetime.datetime.now()),
             '',
         ]
 
@@ -110,7 +107,7 @@ class MakefileEvent(Event):
 class MakeFeature(Feature):
     def configure(self):
         self.makefile = Makefile()
-        self.dispatcher.add_listener('edgy.project.on_start', self.on_start)
+        self.dispatcher.add_listener('edgy.project.on_start', self.on_start, priority=-80)
 
     def on_start(self, event):
         for k in event.variables:
@@ -123,30 +120,29 @@ class MakeFeature(Feature):
             ('QUICK', '', ),
         )
 
-        self.makefile['PIP'] = '$(VIRTUALENV_PATH)/bin/pip'
+        self.makefile['PIP'] = '$(VIRTUAL_ENV)/bin/pip'
 
         # Install
         self.makefile.add_target('install', '''
             if [ -z "$(QUICK)" ]; then \\
-                $(PIP) install -Ue "file://`pwd`#egg={name}[dev]"; \\
+                $(PIP) install -Ur $(PYTHON_REQUIREMENTS_FILE); \\
             fi
-        '''.format(name=event.setup['name']), deps=('$(VIRTUALENV_PATH)', ),
-                                 phony=True, doc='''
+        ''', deps=('$(VIRTUAL_ENV)', ), phony=True, doc='''
             Installs the local project dependencies.
         ''')
 
         # Virtualenv
-        self.makefile.add_target('$(VIRTUALENV_PATH)', '''
-            virtualenv -p $(PYTHON) $(VIRTUALENV_PATH)
+        self.makefile.add_target('$(VIRTUAL_ENV)', '''
+            virtualenv -p $(PYTHON) $(VIRTUAL_ENV)
             $(PIP) install -U pip\>=8.0,\<9.0 wheel\>=0.24,\<1.0
-            ln -fs $(VIRTUALENV_PATH)/bin/activate activate-$(PYTHON_BASENAME)
+            ln -fs $(VIRTUAL_ENV)/bin/activate activate-$(PYTHON_BASENAME)
         ''', doc='''
             Setup the local virtualenv.
         ''')
 
         # Housekeeping
         self.makefile.add_target('clean', '''
-            rm -rf $(VIRTUALENV_PATH)
+            rm -rf $(VIRTUAL_ENV)
         ''', phony=True)
 
         self.dispatcher.dispatch(__name__ + '.on_generate', MakefileEvent(event.setup['name'], self.makefile))

@@ -13,7 +13,7 @@ class PylintFeature(Feature):
     def on_make_generate(self, event):
         makefile = event.makefile
         makefile.add_target('lint', '''
-            $(VIRTUALENV_PATH)/bin/pylint --py3k {name} -f html > pylint.html
+            $(VIRTUAL_ENV)/bin/pylint --py3k {name} -f html > pylint.html
         '''.format(name=event.package_name), deps=('install', ), phony=True)
 
     def on_python_generate(self, event):

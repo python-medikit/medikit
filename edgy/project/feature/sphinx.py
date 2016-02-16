@@ -5,13 +5,13 @@ from . import Feature
 
 class SphinxFeature(Feature):
     def configure(self):
-        self.dispatcher.add_listener('edgy.project.feature.make.on_generate', self.on_make_generate)
+        self.dispatcher.add_listener('edgy.project.feature.make.on_generate', self.on_make_generate, priority=-10)
 
     def on_make_generate(self, event):
         makefile = event.makefile
 
         makefile['SPHINX_OPTS'] = ''
-        makefile['SPHINX_BUILD'] = '$(VIRTUALENV_PATH)/bin/sphinx-build'
+        makefile['SPHINX_BUILD'] = '$(VIRTUAL_ENV)/bin/sphinx-build'
         makefile['SPHINX_SOURCEDIR'] = 'doc'
         makefile['SPHINX_BUILDDIR'] = '$(SPHINX_SOURCEDIR)/_build'
 

@@ -11,7 +11,7 @@ class PythonFeature(Feature):
     def on_start(self, event):
         self.dispatcher.dispatch(__name__+'.on_generate', event)
 
-        self.render_empty_files('classifiers.txt', 'requirements.txt', 'version.txt', 'README.rst')
+        self.render_empty_files('classifiers.txt', 'version.txt', 'README.rst')
         self.render_file_inline('MANIFEST.in', 'include *.txt')
         self.render_file_inline('setup.cfg', '''
                 [metadata]
@@ -40,7 +40,9 @@ class PythonFeature(Feature):
             'setup': event.setup,
             'url': event.setup.pop('url', 'http://example.com/'),
             'download_url': event.setup.pop('download_url', 'http://example.com/'),
-            'extras_require': event.setup.pop('extras_require', {})
+            'extras_require': event.setup.pop('extras_require', {}),
+            'install_require': event.setup.pop('install_require', {}),
         }, override=True)
+
 
 __feature__ = PythonFeature

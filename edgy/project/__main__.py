@@ -27,7 +27,7 @@ def _read_configuration(dispatcher):
         raise IOError('Could not find project description file (looked in {})'.format(config_filename))
 
     variables = OrderedDict((
-        ('virtualenv_path', '.virtualenv-$(PYTHON_BASENAME)', ),
+        ('virtual_env', '.virtualenv-$(PYTHON_BASENAME)', ),
     ))
 
     files = {
@@ -43,6 +43,7 @@ def _read_configuration(dispatcher):
         ('url', 'http://example.com/', ),
         ('download_url', 'http://example.com/', ),
         ('extras_require', {}, ),
+        ('install_requires', [], ),
     ))
 
     features = {

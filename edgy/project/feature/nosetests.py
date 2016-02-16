@@ -11,7 +11,7 @@ class NosetestsFeature(Feature):
     def on_make_generate(self, event):
         makefile = event.makefile
         makefile.add_target('test', '''
-            $(VIRTUALENV_PATH)/bin/nosetests -q --with-doctest --with-coverage --cover-package={name}
+            $(VIRTUAL_ENV)/bin/nosetests -q --with-doctest --with-coverage --cover-package={name}
         '''.format(name=event.package_name), deps=('install', ), phony=True)
 
     def on_python_generate(self, event):

@@ -19,7 +19,7 @@ class PytestFeature(Feature):
             path=event.package_name.replace('.', os.sep)
         )
         makefile.add_target('test', '''
-            $(VIRTUALENV_PATH)/bin/py.test $(PYTEST_OPTIONS) tests
+            $(VIRTUAL_ENV)/bin/py.test $(PYTEST_OPTIONS) tests
         ''', deps=('install',), phony=True)
 
     def on_start(self, event):
