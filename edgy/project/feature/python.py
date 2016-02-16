@@ -1,15 +1,18 @@
-from __future__ import absolute_import
+# coding: utf-8
+
+from __future__ import absolute_import, print_function, unicode_literals
 
 import os
 
-from . import Feature
+from . import Feature, ABSOLUTE_PRIORITY
+
 
 class PythonFeature(Feature):
     def configure(self):
-        self.dispatcher.add_listener('edgy.project.on_start', self.on_start, priority=-99)
+        self.dispatcher.add_listener('edgy.project.on_start', self.on_start, priority=ABSOLUTE_PRIORITY)
 
     def on_start(self, event):
-        self.dispatcher.dispatch(__name__+'.on_generate', event)
+        self.dispatcher.dispatch(__name__ + '.on_generate', event)
 
         self.render_empty_files('classifiers.txt', 'version.txt', 'README.rst')
         self.render_file_inline('MANIFEST.in', 'include *.txt')
@@ -26,7 +29,7 @@ class PythonFeature(Feature):
             for i in range(1, len(package_bits)):
                 event.setup['namespace_packages'].append('.'.join(package_bits[0:i]))
 
-        for i in range(1, len(package_bits)+1):
+        for i in range(1, len(package_bits) + 1):
             _bits = package_bits[0:i]
             package_dir = os.path.join(*_bits)
             if not os.path.exists(package_dir):
@@ -34,7 +37,8 @@ class PythonFeature(Feature):
 
             package_init_file = os.path.join(package_dir, '__init__.py')
             if not os.path.exists(package_init_file):
-                self.render_file(package_init_file, 'python/package_init.py.j2', {'is_namespace': i < len(package_bits)})
+                self.render_file(package_init_file, 'python/package_init.py.j2',
+                                 {'is_namespace': i < len(package_bits)})
 
         self.render_file('setup.py', 'python/setup.py.j2', {
             'setup': event.setup,

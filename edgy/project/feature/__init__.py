@@ -9,7 +9,11 @@ from edgy.project.file import File
 from edgy.project.util import format_file_content
 
 ABSOLUTE_PRIORITY = -100
-SUPPORT_PRIORITY = -10
+HIGH_PRIORITY = -80
+MEDIUM_PRIORITY = -60
+LOW_PRIORITY = -60
+SUPPORT_PRIORITY = -20
+LAST_PRIORITY = 100
 
 class Feature(object):
     _jinja_environment = None

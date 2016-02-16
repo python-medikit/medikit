@@ -1,17 +1,17 @@
 # coding: utf-8
 
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function, unicode_literals
 
 import os
 
-from . import Feature
+from . import Feature, SUPPORT_PRIORITY
 
 
 class PytestFeature(Feature):
     def configure(self):
-        self.dispatcher.add_listener('edgy.project.on_start', self.on_start, priority=-50)
+        self.dispatcher.add_listener('edgy.project.on_start', self.on_start, priority=SUPPORT_PRIORITY)
         self.dispatcher.add_listener('edgy.project.feature.make.on_generate',
-                                     self.on_make_generate, priority=-50)
+                                     self.on_make_generate, priority=SUPPORT_PRIORITY)
 
     def on_make_generate(self, event):
         makefile = event.makefile
@@ -31,5 +31,6 @@ class PytestFeature(Feature):
 
         if not os.path.exists(tests_init_file):
             self.render_file(tests_init_file, 'python/package_init.py.j2', {'is_namespace': False})
+
 
 __feature__ = PytestFeature

@@ -1,13 +1,15 @@
-from __future__ import absolute_import, unicode_literals, print_function
+# coding: utf-8
+
+from __future__ import absolute_import, print_function, unicode_literals
 
 import datetime
 import six
 import textwrap
 
 from collections import deque
-
 from edgy.event import Event
-from edgy.project.feature import Feature
+
+from . import Feature, HIGH_PRIORITY
 
 
 @six.python_2_unicode_compatible
@@ -109,7 +111,7 @@ class MakefileEvent(Event):
 class MakeFeature(Feature):
     def configure(self):
         self.makefile = Makefile()
-        self.dispatcher.add_listener('edgy.project.on_start', self.on_start, priority=-80)
+        self.dispatcher.add_listener('edgy.project.on_start', self.on_start, priority=HIGH_PRIORITY)
 
     def on_start(self, event):
         for k in event.variables:

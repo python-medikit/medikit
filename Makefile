@@ -1,7 +1,7 @@
 # This file has been auto-generated.
 # All manual changes may be lost, see Projectfile.
 #
-# Date: 2016-02-15 09:02:25.248355
+# Date: 2016-02-16 10:20:00.745408
 
 PYTHON ?= $(shell which python)
 PYTHON_BASENAME ?= $(shell basename $(PYTHON))
@@ -16,7 +16,7 @@ PYTEST_OPTIONS ?= --capture=no --cov=edgy/project --cov-report html
 # Installs the local project dependencies.
 install: $(VIRTUAL_ENV)
 	if [ -z "$(QUICK)" ]; then \
-	    $(PIP) install -Ue "file://`pwd`#egg=edgy.project[dev]"; \
+	    $(PIP) install -Ur $(PYTHON_REQUIREMENTS_FILE); \
 	fi
 
 # Setup the local virtualenv.
@@ -28,10 +28,10 @@ $(VIRTUAL_ENV):
 clean:
 	rm -rf $(VIRTUAL_ENV)
 
-lint: install
+lint: install-dev
 	$(VIRTUAL_ENV)/bin/pylint --py3k edgy.project -f html > pylint.html
 
-test: install
+test: install-dev
 	$(VIRTUAL_ENV)/bin/py.test $(PYTEST_OPTIONS) tests
 
 install-dev: $(VIRTUALENV_PATH) $(WHEELHOUSE)
