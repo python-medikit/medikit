@@ -1,11 +1,12 @@
 from __future__ import absolute_import
 
 import os
-from . import Feature
+from . import Feature, ABSOLUTE_PRIORITY
+
 
 class GitFeature(Feature):
     def configure(self):
-        self.dispatcher.add_listener('edgy.project.on_start', self.on_start, priority=-100)
+        self.dispatcher.add_listener('edgy.project.on_start', self.on_start, priority=ABSOLUTE_PRIORITY)
         self.dispatcher.add_listener('edgy.project.on_file_closed', self.on_file_change)
         self.dispatcher.add_listener('edgy.project.on_end', self.on_end)
 

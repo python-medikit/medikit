@@ -8,6 +8,8 @@ from jinja2 import Template
 from edgy.project.file import File
 from edgy.project.util import format_file_content
 
+ABSOLUTE_PRIORITY = -100
+SUPPORT_PRIORITY = -10
 
 class Feature(object):
     _jinja_environment = None

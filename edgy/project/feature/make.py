@@ -9,29 +9,37 @@ from collections import deque
 from edgy.event import Event
 from edgy.project.feature import Feature
 
+
+@six.python_2_unicode_compatible
 class Makefile(object):
+    @property
+    def targets(self):
+        for key in self._target_order:
+            yield key, self._target_values[key]
+
     def __init__(self):
         self._env_order, self._env_values = deque(), {}
         self._target_order, self._target_values = deque(), {}
         self.phony = set()
 
-    def add_target(self, target, rule, deps=None, phony=False, first=False, doc=None):
-        self._target_values[target] = (
-            deps or list(),
-            textwrap.dedent(rule).strip(),
-            textwrap.dedent(doc or '').strip(),
-        )
-        self._target_order.appendleft(target) if first else self._target_order.append(target)
+    def __delitem__(self, key):
+        self._env_order.remove(key)
+        del self._env_values[key]
 
-        if phony:
-            self.phony.add(target)
+    def __getitem__(self, item):
+        return self._env_values[item]
 
-    def set_deps(self, target, deps=None):
-        self._target_values[target] = (
-            deps or list(),
-            self._target_values[target][1],
-            self._target_values[target][2],
-        )
+    def __setitem__(self, key, value):
+        self._env_values[key] = value
+        if not key in self._env_order:
+            self._env_order.append(key)
+
+    def __iter__(self):
+        for key in self._env_order:
+            yield key, self._env_values[key]
+
+    def __len__(self):
+        return len(self._env_order)
 
     def __str__(self):
         content = [
@@ -40,7 +48,7 @@ class Makefile(object):
             '#',
             '# Date: '+ six.text_type(datetime.datetime.now()),
             '',
-        ]
+            ]
 
         if len(self):
             for k, v in self:
@@ -63,10 +71,23 @@ class Makefile(object):
 
         return '\n'.join(content)
 
-    def __setitem__(self, key, value):
-        self._env_values[key] = value
-        if not key in self._env_order:
-            self._env_order.append(key)
+    def add_target(self, target, rule, deps=None, phony=False, first=False, doc=None):
+        self._target_values[target] = (
+            deps or list(),
+            textwrap.dedent(rule).strip(),
+            textwrap.dedent(doc or '').strip(),
+        )
+        self._target_order.appendleft(target) if first else self._target_order.append(target)
+
+        if phony:
+            self.phony.add(target)
+
+    def set_deps(self, target, deps=None):
+        self._target_values[target] = (
+            deps or list(),
+            self._target_values[target][1],
+            self._target_values[target][2],
+        )
 
     def setleft(self, key, value):
         self._env_values[key] = value
@@ -76,25 +97,6 @@ class Makefile(object):
     def updateleft(self, *lst):
         for key, value in reversed(lst):
             self.setleft(key, value)
-
-    def __getitem__(self, item):
-        return self._env_values[item]
-
-    def __delitem__(self, key):
-        self._env_order.remove(key)
-        del self._env_values[key]
-
-    def __len__(self):
-        return len(self._env_order)
-
-    def __iter__(self):
-        for key in self._env_order:
-            yield key, self._env_values[key]
-
-    @property
-    def targets(self):
-        for key in self._target_order:
-            yield key, self._target_values[key]
 
 
 class MakefileEvent(Event):
