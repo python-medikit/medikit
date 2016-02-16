@@ -5,7 +5,7 @@ from . import Feature
 
 class Flake8Feature(Feature):
     def configure(self):
-        self.dispatcher.add_listener('edgy.project.feature.make.on_generate', self.on_make_generate)
+        self.dispatcher.add_listener('edgy.project.feature.make.on_generate', self.on_make_generate, priority=-50)
 
     def on_make_generate(self, event):
         makefile = event.makefile
