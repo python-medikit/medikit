@@ -18,6 +18,14 @@ enable_features = {
     'pytest',
 }
 
+install_requires = [
+    'blessings >=1.6,<1.7',
+    'click >=6.2,<7.0',
+    'edgy.event >=0.1,<0.2',
+    'jinja2 >=2.7,<3.0',
+    'six',
+]
+
 extras_require = {
     'dev': [
         'coverage >=4.0,<4.2',
