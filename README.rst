@@ -104,5 +104,9 @@ F.A.Q
 
 * Do you support python 3?
 
-  * It's the plan, but unfortunately, not for now.
+  * Yes, edgy.project run both with python 2.7+ and python 3.4+, but we don't
+    generate version specific code. For example, we don't support generating
+    namespace packages that does not have __init__.py files with the python
+    namespace package boilerplate.
+    
    

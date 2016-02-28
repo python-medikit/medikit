@@ -1,7 +1,1 @@
-blessings >=1.6,<1.7
-click >=6.2,<7.0
-edgy.event >=0.1,<0.2
-jinja2 >=2.7,<3.0
-six
-
 -e .
