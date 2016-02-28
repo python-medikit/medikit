@@ -29,12 +29,16 @@ class Feature(object):
         return File(self.dispatcher, *args, **kwargs)
 
     @property
+    def __name__(self):
+        return type(self).__name__
+
+    @property
     def jinja(self):
         if type(self)._jinja_environment is None:
-            type(self)._jinja_environemnt = Environment(
+            type(self)._jinja_environment = Environment(
                 loader=PackageLoader(__name__, 'template')
             )
-        return type(self)._jinja_environemnt
+        return type(self)._jinja_environment
 
     def render(self, template, context=None):
         context = context or {}
@@ -43,13 +47,21 @@ class Feature(object):
 
     def render_file(self, target, template, context=None, override=False):
         with self.file(target, override=override) as f:
-            f.write(format_file_content(self.render(template, context)))
+            self.dispatcher.echo(self.__name__, '::render_file({}, {}, context={}, override={})'.format(repr(target), repr(template), set(context.keys()) if context else None, str(override)))
+            content = format_file_content(self.render(template, context))
+            f.write(content)
+            self.dispatcher.echo(self.__name__, '::render_file({}, ...) ---> {} bytes.'.format(repr(target), len(content)))
 
     def render_file_inline(self, target, template_string, context=None, override=False):
         with self.file(target, override=override) as f:
-            f.write(format_file_content(Template(template_string).render(**(context or {}))))
+            self.dispatcher.echo(self.__name__, '::render_file_inline({}, ..., context={}, override={})'.format(repr(target), set(context.keys()) if context else None, str(override)))
+            content = format_file_content(Template(template_string).render(**(context or {})))
+            f.write(content)
+            self.dispatcher.echo(self.__name__, '::render_file_inline({}, ...) ---> {} bytes.'.format(repr(target), len(content)))
 
     def render_empty_files(self, *targets, **kwargs):
+        override = kwargs.pop('override', False)
         for target in targets:
-            with self.file(target, override=kwargs.pop('override', False)) as f:
-                pass
+            with self.file(target, override=override) as f:
+                self.dispatcher.echo(self.__name__, '::render_empty_file({}, override={})'.format(target, override))
+

@@ -15,6 +15,7 @@ class FileEvent(Event):
 def File(dispatcher, name, override=False):
     event = FileEvent(name, override)
 
+
     if event.override or not os.path.exists(event.filename):
         with open(event.filename, 'w+') as f:
             event.file = f
