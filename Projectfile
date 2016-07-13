@@ -11,10 +11,11 @@ author = 'Romain Dorgueil'
 author_email = 'edgy@rdc.li'
 
 enable_features = {
-    'python',
     'git',
     'make',
     'pytest',
+    'python',
+    'sphinx',
 }
 
 install_requires = [
@@ -28,11 +29,11 @@ install_requires = [
 extras_require = {
     'dev': [
         'coverage >=4.0,<4.2',
+        'mock >=2.0,<2.1',
         'nose >=1.3,<1.4',
-        'pylint >=1.4,<1.5',
-        'pytest >=2.8,<2.9',
-        'pytest-cov >=2.2,<2.3',
-        'mock >=1.3,<1.4',
+        'pylint >=1.6,<1.7',
+        'pytest >=2.9,<2.10',
+        'pytest-cov >=2.3,<2.4',
         'sphinx',
         'sphinx_rtd_theme',
     ]
@@ -48,9 +49,10 @@ entry_points = {
 def on_make_generate_add_development(event):
     event.makefile.add_target('install-dev', '''
         if [ -z "$(QUICK)" ]; then \\
-            $(PIP) install -Ue "file://`pwd`#egg={name}[dev]"; \\
+            $(PIP) install -Ur requirements.dev.txt; \\
         fi
     '''.format(name=name), deps=('$(VIRTUALENV_PATH)', '$(WHEELHOUSE)'), phony=True)
 
+    event.makefile.set_deps('doc', deps=('install-dev', ))
     event.makefile.set_deps('lint', deps=('install-dev', ))
     event.makefile.set_deps('test', deps=('install-dev', ))

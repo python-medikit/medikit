@@ -3,6 +3,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import datetime
+
+import itertools
 import six
 import textwrap
 
@@ -48,9 +50,9 @@ class Makefile(object):
             '# This file has been auto-generated.',
             '# All manual changes may be lost, see Projectfile.',
             '#',
-            '# Date: '+ six.text_type(datetime.datetime.now()),
+            '# Date: ' + six.text_type(datetime.datetime.now()),
             '',
-            ]
+        ]
 
         if len(self):
             for k, v in self:
@@ -67,8 +69,12 @@ class Makefile(object):
                 for line in doc.split('\n'):
                     content.append('# ' + line)
             content.append('{}: {}'.format(target, ' '.join(deps)).strip())
-            for line in rule.split('\n'):
-                content.append('	' + line)
+
+            script = textwrap.dedent(str(rule)).strip()
+
+            for line in script.split('\n'):
+                content.append('\t' + line)
+
             content.append('')
 
         return '\n'.join(content)
@@ -76,13 +82,16 @@ class Makefile(object):
     def add_target(self, target, rule, deps=None, phony=False, first=False, doc=None):
         self._target_values[target] = (
             deps or list(),
-            textwrap.dedent(rule).strip(),
+            rule,
             textwrap.dedent(doc or '').strip(),
         )
         self._target_order.appendleft(target) if first else self._target_order.append(target)
 
         if phony:
             self.phony.add(target)
+
+    def get_target(self, target):
+        return self._target_values[target][1]
 
     def set_deps(self, target, deps=None):
         self._target_values[target] = (
@@ -108,6 +117,31 @@ class MakefileEvent(Event):
         super(MakefileEvent, self).__init__()
 
 
+@six.python_2_unicode_compatible
+class InstallScript(object):
+    before_install = []
+    install = [
+        '$(PIP) install -Ur $(PYTHON_REQUIREMENTS_FILE)'
+    ]
+    after_install = []
+
+    def __str__(self):
+        return '\n'.join(
+            itertools.chain(
+                ['if [ -z "$(QUICK)" ]; then \\'],
+                list(map(
+                    lambda x: '    {} ; \\'.format(x),
+                    itertools.chain(
+                        self.before_install,
+                        self.install,
+                        self.after_install
+                    )
+                )),
+                ['fi']
+            )
+        )
+
+
 class MakeFeature(Feature):
     def configure(self):
         self.makefile = Makefile()
@@ -118,20 +152,16 @@ class MakeFeature(Feature):
             self.makefile[k.upper()] = event.variables[k]
 
         self.makefile.updateleft(
-            ('PYTHON', '$(shell which python)', ),
-            ('PYTHON_BASENAME', '$(shell basename $(PYTHON))', ),
-            ('PYTHON_REQUIREMENTS_FILE', 'requirements.txt', ),
-            ('QUICK', '', ),
+            ('PYTHON', '$(shell which python)',),
+            ('PYTHON_BASENAME', '$(shell basename $(PYTHON))',),
+            ('PYTHON_REQUIREMENTS_FILE', 'requirements.txt',),
+            ('QUICK', '',),
         )
 
         self.makefile['PIP'] = '$(VIRTUAL_ENV)/bin/pip'
 
         # Install
-        self.makefile.add_target('install', '''
-            if [ -z "$(QUICK)" ]; then \\
-                $(PIP) install -Ur $(PYTHON_REQUIREMENTS_FILE); \\
-            fi
-        ''', deps=('$(VIRTUAL_ENV)', ), phony=True, doc='''
+        self.makefile.add_target('install', InstallScript(), deps=('$(VIRTUAL_ENV)',), phony=True, doc='''
             Installs the local project dependencies.
         ''')
 

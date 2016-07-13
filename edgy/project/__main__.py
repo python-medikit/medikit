@@ -72,7 +72,7 @@ class LoggingDispatcher(EventDispatcher):
         return super(LoggingDispatcher, self).dispatch(event_id, event)
 
     def echo(self, feature, *messages):
-        message = ' '.join(itertools.chain((t.bold(t.green(feature)),), map(str, messages)))
+        message = ' '.join(itertools.chain((t.bold(t.green(feature)),), list(map(str, messages))))
         return click.echo(message)
 
 
