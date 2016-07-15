@@ -28,12 +28,7 @@ Now, you may want to bootstrap a python package source tree.
 
     mkdir my.awesome.pkg
     cd my.awesome.pkg
-    cat >Projectfile <<EOF
-    name = 'my.awesome.pkg'
-    description = 'Amazing description.'
-    license = 'Apache License, Version 2.0'
-    EOF
-    python -m edgy.project init
+    edgy-project init
 
 You're done with the bootstrap. You can now run:
 
