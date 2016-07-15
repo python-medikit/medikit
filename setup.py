@@ -33,7 +33,7 @@ setup(
  'edgy.event >=0.1,<0.2',
  'jinja2 >=2.8,<3.0',
  'six',
- 'tornado >=4.3,<4.4'],
+ 'tornado >=4.3,<4.5'],
     namespace_packages = ['edgy'],
     version = version,
     long_description = read('README.rst'),

@@ -23,7 +23,7 @@ install_requires = [
     'edgy.event >=0.1,<0.2',
     'jinja2 >=2.8,<3.0',
     'six',
-    'tornado >=4.3,<4.4',
+    'tornado >=4.3,<4.5',
 ]
 
 extras_require = {
@@ -44,16 +44,3 @@ entry_points = {
         'edgy-project=edgy.project.__main__:main'
     ]
 }
-
-@listen('edgy.project.feature.make.on_generate')
-def on_make_generate_add_development(event):
-    event.makefile.add_target('install-dev', '''
-        if [ -z "$(QUICK)" ]; then \\
-            $(PIP) install -Ur requirements.dev.txt; \\
-        fi
-    '''.format(name=name), deps=('$(VIRTUALENV_PATH)', '$(WHEELHOUSE)'), phony=True)
-
-    event.makefile.set_deps('doc', deps=('install-dev', ))
-    event.makefile.set_deps('lint', deps=('install-dev', ))
-    event.makefile.set_deps('test', deps=('install-dev', ))
-

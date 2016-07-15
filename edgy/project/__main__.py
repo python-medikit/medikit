@@ -132,7 +132,7 @@ def handle_update(config_filename):
     variables, features, files, setup = _read_configuration(dispatcher, config_filename)
 
     feature_instances = {}
-    logger.info('Updating project «{}» with features: {}'.format(
+    logger.info('Updating {} with {} features'.format(
         t.bold(setup['name']),
         ', '.join(t.bold(t.green(feature_name)) for feature_name in sorted(features))))
     for feature_name in sorted(features):

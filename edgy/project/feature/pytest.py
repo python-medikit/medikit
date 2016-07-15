@@ -20,7 +20,7 @@ class PytestFeature(Feature):
         )
         makefile.add_target('test', '''
             $(VIRTUAL_ENV)/bin/py.test $(PYTEST_OPTIONS) tests
-        ''', deps=('install',), phony=True)
+        ''', deps=('install-dev',), phony=True)
 
     def on_start(self, event):
         tests_dir = os.path.join('tests', *event.setup['name'].split('.'))

@@ -16,7 +16,7 @@ class NosetestsFeature(Feature):
         makefile = event.makefile
         makefile.add_target('test', '''
             $(VIRTUAL_ENV)/bin/nosetests -q --with-doctest --with-coverage --cover-package={name}
-        '''.format(name=event.package_name), deps=('install',), phony=True)
+        '''.format(name=event.package_name), deps=('install-dev',), phony=True)
 
     def on_python_generate(self, event):
         event.files['requirements'] = '\n'.join((event.files['requirements'], 'nose >=1.3,<1.4', 'coverage >=3.7,<3.8'))

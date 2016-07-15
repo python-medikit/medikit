@@ -80,6 +80,9 @@ class Makefile(object):
         return '\n'.join(content)
 
     def add_target(self, target, rule, deps=None, phony=False, first=False, doc=None):
+        if target in self._target_order:
+            raise RuntimeError('Duplicate definition for make target «{}».'.format(target))
+
         self._target_values[target] = (
             deps or list(),
             rule,
@@ -130,7 +133,6 @@ class Script(object):
 class InstallScript(Script):
     before_install = []
     install = [
-        '$(PIP) install -Ur $(PYTHON_REQUIREMENTS_FILE)'
     ]
     after_install = []
 
@@ -166,30 +168,17 @@ class MakeFeature(Feature):
             self.makefile[k.upper()] = event.variables[k]
 
         self.makefile.updateleft(
-            ('PYTHON', '$(shell which python)',),
-            ('PYTHON_BASENAME', '$(shell basename $(PYTHON))',),
-            ('PYTHON_REQUIREMENTS_FILE', 'requirements.txt',),
             ('QUICK', '',),
         )
 
-        self.makefile['PIP'] = '$(VIRTUAL_ENV)/bin/pip'
-
         # Install
-        self.makefile.add_target('install', InstallScript(), deps=('$(VIRTUAL_ENV)',), phony=True, doc='''
-            Installs the local project dependencies.
-        ''')
-
-        # Virtualenv
-        self.makefile.add_target('$(VIRTUAL_ENV)', '''
-            virtualenv -p $(PYTHON) $(VIRTUAL_ENV)
-            $(PIP) install -U pip\>=8.0,\<9.0 wheel\>=0.24,\<1.0
-            ln -fs $(VIRTUAL_ENV)/bin/activate activate-$(PYTHON_BASENAME)
-        ''', doc='''
-            Setup the local virtualenv.
-        ''')
+        self.makefile.add_target('install', InstallScript(), phony=True,
+                                 doc='''Installs the local project dependencies.''')
+        self.makefile.add_target('install-dev', InstallScript(), phony=True,
+                                 doc='''Installs the local project dependencies, including development-only libraries.''')
 
         # Housekeeping
-        self.makefile.add_target('clean', CleanScript(), phony=True)
+        self.makefile.add_target('clean', CleanScript(), phony=True, doc='''Cleans up the local mess.''')
 
         self.dispatcher.dispatch(__name__ + '.on_generate', MakefileEvent(event.setup['name'], self.makefile))
 
