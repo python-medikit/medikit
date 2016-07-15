@@ -100,20 +100,19 @@ def main(args=None):
     subparsers.required = True
 
     parser_init = subparsers.add_parser('init', help='Initialize a new project.')
-    parser_update = subparsers.add_parser('update', help='Update current project.')
+    parser_init.set_defaults(handler=handle_init)
+
+    parser_update = subparsers.add_parser('update', aliases=('up',), help='Update current project.')
+    parser_update.set_defaults(handler=handle_update)
 
     options = parser.parse_args(args or sys.argv[1:])
     if options.verbose:
         logger.setLevel(logging.DEBUG)
     logger.debug('Parsed command line options: {}'.format(options))
 
-    config_filename = os.path.join(os.getcwd(), options.config)
-
-    if options.command == 'init':
-        return handle_init(config_filename)
-
-    if options.command == 'update':
-        return handle_update(config_filename)
+    return options.handler(
+        os.path.join(os.getcwd(), options.config)
+    )
 
 
 def handle_init(config_filename):
