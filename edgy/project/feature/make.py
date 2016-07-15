@@ -48,9 +48,9 @@ class Makefile(object):
     def __str__(self):
         content = [
             '# This file has been auto-generated.',
-            '# All manual changes may be lost, see Projectfile.',
+            '# All changes will be lost, see Projectfile.',
             '#',
-            '# Date: ' + six.text_type(datetime.datetime.now()),
+            '# Updated at ' + six.text_type(datetime.datetime.now()),
             '',
         ]
 
@@ -118,28 +118,42 @@ class MakefileEvent(Event):
 
 
 @six.python_2_unicode_compatible
-class InstallScript(object):
+class Script(object):
+    def __iter__(self):
+        raise StopIteration()
+
+    def __str__(self):
+        return '\n'.join(self.__iter__())
+
+
+@six.python_2_unicode_compatible
+class InstallScript(Script):
     before_install = []
     install = [
         '$(PIP) install -Ur $(PYTHON_REQUIREMENTS_FILE)'
     ]
     after_install = []
 
-    def __str__(self):
-        return '\n'.join(
-            itertools.chain(
-                ['if [ -z "$(QUICK)" ]; then \\'],
-                list(map(
-                    lambda x: '    {} ; \\'.format(x),
-                    itertools.chain(
-                        self.before_install,
-                        self.install,
-                        self.after_install
-                    )
-                )),
-                ['fi']
-            )
-        )
+    def __iter__(self):
+        yield 'if [ -z "$(QUICK)" ]; then \\'
+
+        for line in map(lambda x: '    {} ; \\'.format(x),
+                        itertools.chain(self.before_install, self.install, self.after_install)):
+            yield line
+
+        yield 'fi'
+
+
+@six.python_2_unicode_compatible
+class CleanScript(Script):
+    remove = [
+        'build',
+        'dist',
+    ]
+
+    def __iter__(self):
+        for target in self.remove:
+            yield 'rm -rf {}'.format(target)
 
 
 class MakeFeature(Feature):
@@ -175,9 +189,7 @@ class MakeFeature(Feature):
         ''')
 
         # Housekeeping
-        self.makefile.add_target('clean', '''
-            rm -rf $(VIRTUAL_ENV)
-        ''', phony=True)
+        self.makefile.add_target('clean', CleanScript(), phony=True)
 
         self.dispatcher.dispatch(__name__ + '.on_generate', MakefileEvent(event.setup['name'], self.makefile))
 

@@ -1,10 +1,10 @@
 # coding: utf-8
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import absolute_import, unicode_literals
 
 import os
 
-from . import Feature, ABSOLUTE_PRIORITY
+from . import ABSOLUTE_PRIORITY, Feature
 
 
 class PythonFeature(Feature):
@@ -27,6 +27,7 @@ class PythonFeature(Feature):
         if len(package_bits) > 1:
             event.setup['namespace_packages'] = []
             for i in range(1, len(package_bits)):
+                # TODO convert to string type (six?) depending on python version
                 event.setup['namespace_packages'].append('.'.join(package_bits[0:i]))
 
         for i in range(1, len(package_bits) + 1):

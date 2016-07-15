@@ -3,22 +3,47 @@
 
 from __future__ import absolute_import, print_function
 
-import click
+import argparse
+import logging
 import os
-
-import itertools
-from blessings import Terminal
+import sys
 from collections import OrderedDict
+
+import tornado.log
+from blessings import Terminal
 from edgy.event import Event, EventDispatcher
 
 from .config import read_configuration
 
 # Globals
+logger = logging.getLogger()
+
+tornado.log.enable_pretty_logging(logger=logger)
 t = Terminal()
 
+DEFAULT_FEATURES = {
+    'git',
+    'make',
+    'pytest',
+    'python',
+    'pylint',
+}
 
-def _read_configuration(dispatcher):
-    config_filename = os.path.join(os.getcwd(), 'Projectfile')
+DEFAULT_FILES = {
+    'requirements',
+    'requirements.dev',
+    'classifiers',
+    'version',
+}
+
+
+def _read_configuration(dispatcher, config_filename):
+    """
+    Prepare the python context and delegate to the real configuration reader (see config.py)
+
+    :param EventDispatcher dispatcher:
+    :return tuple: (variables, features, files, setup)
+    """
     if not os.path.exists(config_filename):
         raise IOError('Could not find project description file (looked in {})'.format(config_filename))
 
@@ -26,11 +51,7 @@ def _read_configuration(dispatcher):
         ('virtual_env', '.virtualenv-$(PYTHON_BASENAME)',),
     ))
 
-    files = {
-        'requirements': '',
-        'classifiers': '',
-        'version': '',
-    }
+    files = {filename: '' for filename in DEFAULT_FILES}
 
     setup = OrderedDict((
         ('name', None,),
@@ -43,13 +64,7 @@ def _read_configuration(dispatcher):
         ('entry_points', {},),
     ))
 
-    features = {
-        'git',
-        'make',
-        'pytest',
-        'python',
-        'pylint',
-    }
+    features = set(DEFAULT_FEATURES)
 
     return read_configuration(dispatcher, config_filename, variables, features, files, setup)
 
@@ -60,35 +75,73 @@ class ProjectEvent(Event):
     setup = None
 
 
-def echo(message=None, section='project', file=None, nl=True, err=False, color=None):
-    prefix = (t.red(t.bold(u'ERROR')) if err else (t.black(section)) if section else '')
-    return click.echo(prefix + ' - ' + (message or ''), file, nl, err, color)
-
-
 class LoggingDispatcher(EventDispatcher):
     def dispatch(self, event_id, event=None):
         if not event_id.startswith('edgy.project.on_file_'):
-            echo('Dispatching {}'.format(t.bold(t.blue(event_id))), 'event')
-        return super(LoggingDispatcher, self).dispatch(event_id, event)
+            logger.info('⚡  Dispatching {} ...'.format(t.bold(t.blue(event_id))))
+        event = super(LoggingDispatcher, self).dispatch(event_id, event)
+        if not event_id.startswith('edgy.project.on_file_'):
+            logger.info('   ... {} returned {}'.format(t.bold(t.blue(event_id)), event))
+        return event
 
-    def echo(self, feature, *messages):
-        message = ' '.join(itertools.chain((t.bold(t.green(feature)),), list(map(str, messages))))
-        return click.echo(message)
+    def debug(self, feature, *messages):
+        return logger.debug(
+            '   ✔ ' + t.blue(feature) + ' '.join(map(str, messages))
+        )
 
 
-@click.command()
-def project_cli():
+def main(args=None):
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--config', '-c', default='Projectfile')
+    parser.add_argument('--verbose', '-v', action='store_true', default=False)
+
+    subparsers = parser.add_subparsers(dest='command')
+    subparsers.required = True
+
+    parser_init = subparsers.add_parser('init', help='Initialize a new project.')
+    parser_update = subparsers.add_parser('update', help='Update current project.')
+
+    options = parser.parse_args(args or sys.argv[1:])
+    if options.verbose:
+        logger.setLevel(logging.DEBUG)
+    logger.debug('Parsed command line options: {}'.format(options))
+
+    config_filename = os.path.join(os.getcwd(), options.config)
+
+    if options.command == 'init':
+        return handle_init(config_filename)
+
+    if options.command == 'update':
+        return handle_update(config_filename)
+
+
+def handle_init(config_filename):
+    if os.path.exists(config_filename):
+        raise IOError(
+            'No config should be present in current directory to initialize (found {})'.format(config_filename))
+    raise NotImplementedError('woops...')
+
+
+# XXX deprecated
+project_cli = main
+
+
+def handle_update(config_filename):
     dispatcher = LoggingDispatcher()
 
-    variables, features, files, setup = _read_configuration(dispatcher)
+    variables, features, files, setup = _read_configuration(dispatcher, config_filename)
 
     feature_instances = {}
+    logger.info('Updating project «{}» with features: {}'.format(
+        t.bold(setup['name']),
+        ', '.join(t.bold(t.green(feature_name)) for feature_name in sorted(features))))
     for feature_name in sorted(features):
-        echo(u'Initializing feature {}...'.format(t.bold(t.green(feature_name))), 'init')
+        logger.debug('Initializing feature {}...'.format(t.bold(t.green(feature_name))))
         try:
             feature = __import__('edgy.project.feature.' + feature_name, fromlist=('__feature__',)).__feature__
         except (ImportError, AttributeError,) as e:
-            echo(u'Feature "{}" does not exist.'.format(feature_name), 'init', err=True, color='red')
+            logger.exception('Feature "{}" does not exist.'.format(feature_name))
 
         if feature:
             feature_instances[feature_name] = feature(dispatcher)
@@ -99,8 +152,8 @@ def project_cli():
     event = dispatcher.dispatch('edgy.project.on_start', event)
     event = dispatcher.dispatch('edgy.project.on_end', event)
 
-    echo(u'Done.', None)
+    logger.info(u'Done.')
 
 
 if __name__ == '__main__':
-    project_cli()
+    main()

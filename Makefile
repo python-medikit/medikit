@@ -1,7 +1,7 @@
 # This file has been auto-generated.
-# All manual changes may be lost, see Projectfile.
+# All changes will be lost, see Projectfile.
 #
-# Date: 2016-07-13 09:23:24.136986
+# Updated at 2016-07-15 16:58:03.160231
 
 PYTHON ?= $(shell which python)
 PYTHON_BASENAME ?= $(shell basename $(PYTHON))
@@ -30,7 +30,8 @@ $(VIRTUAL_ENV):
 	ln -fs $(VIRTUAL_ENV)/bin/activate activate-$(PYTHON_BASENAME)
 
 clean:
-	rm -rf $(VIRTUAL_ENV)
+	rm -rf build
+	rm -rf dist
 
 lint: install-dev
 	$(VIRTUAL_ENV)/bin/pylint --py3k edgy.project -f html > pylint.html

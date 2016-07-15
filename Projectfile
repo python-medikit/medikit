@@ -20,10 +20,10 @@ enable_features = {
 
 install_requires = [
     'blessings >=1.6,<1.7',
-    'click >=6.2,<7.0',
     'edgy.event >=0.1,<0.2',
-    'jinja2 >=2.7,<3.0',
+    'jinja2 >=2.8,<3.0',
     'six',
+    'tornado >=4.3,<4.4',
 ]
 
 extras_require = {
@@ -41,7 +41,7 @@ extras_require = {
 
 entry_points = {
     'console_scripts': [
-        'edgy-project=edgy.project.__main__:project_cli'
+        'edgy-project=edgy.project.__main__:main'
     ]
 }
 
@@ -56,3 +56,4 @@ def on_make_generate_add_development(event):
     event.makefile.set_deps('doc', deps=('install-dev', ))
     event.makefile.set_deps('lint', deps=('install-dev', ))
     event.makefile.set_deps('test', deps=('install-dev', ))
+
