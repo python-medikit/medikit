@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import os
 
+from edgy.project.settings import DEFAULT_FEATURES
 from jinja2 import Environment, PackageLoader
 from jinja2 import Template
 
@@ -14,6 +15,7 @@ MEDIUM_PRIORITY = -60
 LOW_PRIORITY = -60
 SUPPORT_PRIORITY = -20
 LAST_PRIORITY = 100
+
 
 class Feature(object):
     _jinja_environment = None
@@ -47,17 +49,25 @@ class Feature(object):
 
     def render_file(self, target, template, context=None, override=False):
         with self.file(target, override=override) as f:
-            self.dispatcher.debug(self.__name__, '::render_file({}, {}, context={}, override={})'.format(repr(target), repr(template), set(context.keys()) if context else None, str(override)))
+            self.dispatcher.debug(self.__name__,
+                                  '::render_file({}, {}, context={}, override={})'.format(repr(target), repr(template),
+                                                                                          set(
+                                                                                              context.keys()) if context else None,
+                                                                                          str(override)))
             content = format_file_content(self.render(template, context))
             f.write(content)
-            self.dispatcher.debug(self.__name__, '::render_file({}, ...) ---> {} bytes.'.format(repr(target), len(content)))
+            self.dispatcher.debug(self.__name__,
+                                  '::render_file({}, ...) ---> {} bytes.'.format(repr(target), len(content)))
 
     def render_file_inline(self, target, template_string, context=None, override=False):
         with self.file(target, override=override) as f:
-            self.dispatcher.debug(self.__name__, '::render_file_inline({}, ..., context={}, override={})'.format(repr(target), set(context.keys()) if context else None, str(override)))
+            self.dispatcher.debug(self.__name__,
+                                  '::render_file_inline({}, ..., context={}, override={})'.format(repr(target), set(
+                                      context.keys()) if context else None, str(override)))
             content = format_file_content(Template(template_string).render(**(context or {})))
             f.write(content)
-            self.dispatcher.debug(self.__name__, '::render_file_inline({}, ...) ---> {} bytes.'.format(repr(target), len(content)))
+            self.dispatcher.debug(self.__name__,
+                                  '::render_file_inline({}, ...) ---> {} bytes.'.format(repr(target), len(content)))
 
     def render_empty_files(self, *targets, **kwargs):
         override = kwargs.pop('override', False)
@@ -65,3 +75,37 @@ class Feature(object):
             with self.file(target, override=override) as f:
                 self.dispatcher.debug(self.__name__, '::render_empty_file({}, override={})'.format(target, override))
 
+
+class ProjectInitializer(Feature):
+    def execute(self):
+        context = {}
+
+        context['name'] = input('Name: ')
+        context['description'] = input('Description: ')
+        context['license'] = input('License [Apache License, Version 2.0]: ').strip() or 'Apache License, Version 2.0'
+
+        context['url'] = 'https://github.com/{user}/{name}'
+        context['download_url'] = 'https://github.com/{user}/{name}/tarball/{version}'
+
+        context['author'] = ''
+        context['author_email'] = ''
+
+        context['features'] = DEFAULT_FEATURES
+        context['install_requires'] = [
+
+        ]
+        context['extras_require'] = {
+            'dev': [
+                'coverage >=4.0,<4.2',
+                'mock >=2.0,<2.1',
+                'nose >=1.3,<1.4',
+                'pylint >=1.6,<1.7',
+                'pytest >=2.9,<2.10',
+                'pytest-cov >=2.3,<2.4',
+                'sphinx',
+                'sphinx_rtd_theme',
+            ]
+        }
+        context['entry_points'] = {}
+
+        self.render_file('Projectfile', 'Projectfile.j2', context, override=True)

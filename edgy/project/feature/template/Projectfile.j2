@@ -1,0 +1,39 @@
+# {{ name }} (see github.com/python-edgy/project)
+
+name = '{{ name }}'
+description = '{{ description }}'
+license = '{{ license }}'
+
+url = '{{ url }}'
+download_url = '{{ download_url }}'
+
+author = '{{ author }}'
+author_email = '{{ author_email }}'
+
+features = {
+{%- for feature in features %}
+    '{{ feature }}',{{ ' ' }}
+{%- endfor %}
+}
+
+{%- if install_requires %}
+
+install_requires = [
+{%- for req in install_requires %}
+    '{{ req }}',{{ ' ' }}
+{%- endfor %}
+]
+{% endif %}
+
+{%- if extras_require %}
+
+extra_require = {
+{%- for extra, reqs in extras_require.items() %}
+    '{{ extra }}': [
+    {%- for req in reqs %}
+        '{{ req }}',
+    {%- endfor %}
+    ],
+{%- endfor %}
+}
+{% endif %}

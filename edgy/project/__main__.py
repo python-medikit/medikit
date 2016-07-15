@@ -12,29 +12,20 @@ from collections import OrderedDict
 import tornado.log
 from blessings import Terminal
 from edgy.event import Event, EventDispatcher
+from edgy.project.feature import ProjectInitializer
+from edgy.project.settings import DEFAULT_FEATURES, DEFAULT_FILES
 
 from .config import read_configuration
 
 # Globals
 logger = logging.getLogger()
-
 tornado.log.enable_pretty_logging(logger=logger)
 t = Terminal()
 
-DEFAULT_FEATURES = {
-    'git',
-    'make',
-    'pytest',
-    'python',
-    'pylint',
-}
-
-DEFAULT_FILES = {
-    'requirements',
-    'requirements.dev',
-    'classifiers',
-    'version',
-}
+try:
+    input = raw_input
+except NameError:
+    input = input
 
 
 def _read_configuration(dispatcher, config_filename):
@@ -119,7 +110,19 @@ def handle_init(config_filename):
     if os.path.exists(config_filename):
         raise IOError(
             'No config should be present in current directory to initialize (found {})'.format(config_filename))
-    raise NotImplementedError('woops...')
+
+    # Fast and dirty implementation
+    # TODO
+    # - input validation
+    # - getting input from env/git conf (author...),
+    # - dispatching something in selected features so maybe they can suggest deps
+    # - deps selection
+    # - ...
+    dispatcher = LoggingDispatcher()
+    initializer = ProjectInitializer(dispatcher)
+    initializer.execute()
+
+    return handle_update(config_filename)
 
 
 # XXX deprecated
