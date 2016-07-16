@@ -3,7 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from collections import OrderedDict
-from unittest import TestCase, mock
+from unittest import TestCase
 
 from edgy.event import EventDispatcher
 from edgy.project.events import ProjectEvent, LoggingDispatcher
