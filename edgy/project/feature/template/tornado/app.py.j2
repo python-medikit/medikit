@@ -1,0 +1,20 @@
+import tornado.log
+import tornado.web
+import logging
+
+from .handlers import MainHandler
+from .settings import HTTP_PORT
+
+logger = logging.getLogger()
+tornado.log.enable_pretty_logging(logger=logger)
+
+def make_app():
+    return tornado.web.Application([
+        ('/', MainHandler),
+    ])
+
+if __name__ == "__main__":
+    app = make_app()
+    app.listen(HTTP_PORT)
+    logger.info('Listening to localhost:{} using IOLoop.'.format(HTTP_PORT))
+    tornado.ioloop.IOLoop.current().start()

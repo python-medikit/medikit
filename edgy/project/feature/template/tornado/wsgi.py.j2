@@ -1,0 +1,19 @@
+import tornado.log
+import tornado.wsgi
+import wsgiref.simple_server
+import logging
+
+from .app import make_app
+from .settings import HTTP_PORT
+
+logger = logging.getLogger()
+tornado.log.enable_pretty_logging(logger=logger)
+
+wsgi_app = tornado.wsgi.WSGIAdapter(
+    make_app()
+)
+
+if __name__ == "__main__":
+    server = wsgiref.simple_server.make_server('', HTTP_PORT, wsgi_app)
+    logger.info('Listening to localhost:{} using WSGI.'.format(HTTP_PORT))
+    server.serve_forever()

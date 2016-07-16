@@ -73,7 +73,7 @@ class PythonFeature(Feature):
             if not os.path.exists(package_dir):
                 os.makedirs(package_dir)
 
-            package_init_file = os.path.join(package_dir, 'python.py')
+            package_init_file = os.path.join(package_dir, '__init__.py')
             if not os.path.exists(package_init_file):
                 self.render_file(package_init_file, 'python/package_init.py.j2',
                                  {'is_namespace': i < len(package_bits)})

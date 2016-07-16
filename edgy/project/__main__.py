@@ -156,6 +156,8 @@ def handle_update(config_filename):
             for con in feature_instances[feature_name].conflicts:
                 if con in sorted_features:
                     raise RuntimeError('Conflicting dependency: {} conflicts with {}.'.format(con, feature_name))
+        else:
+            raise RuntimeError('Required feature {} not found.'.format(feature_name))
 
     event = ProjectEvent()
     event.variables, event.files, event.setup = variables, files, setup

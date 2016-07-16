@@ -33,7 +33,7 @@ class PytestFeature(Feature):
         if not os.path.exists(tests_dir):
             os.makedirs(tests_dir)
 
-        tests_init_file = os.path.join(tests_dir, 'python.py')
+        tests_init_file = os.path.join(tests_dir, '__init__.py')
 
         if not os.path.exists(tests_init_file):
             self.render_file(tests_init_file, 'python/package_init.py.j2', {'is_namespace': False})

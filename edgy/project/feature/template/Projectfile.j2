@@ -10,9 +10,9 @@ download_url = '{{ download_url }}'
 author = '{{ author }}'
 author_email = '{{ author_email }}'
 
-features = {
+enable_features = {
 {%- for feature in features %}
-    '{{ feature }}',{{ ' ' }}
+    '{{ feature }}',
 {%- endfor %}
 }
 
@@ -20,7 +20,7 @@ features = {
 
 install_requires = [
 {%- for req in install_requires %}
-    '{{ req }}',{{ ' ' }}
+    '{{ req }}',
 {%- endfor %}
 ]
 {% endif %}
