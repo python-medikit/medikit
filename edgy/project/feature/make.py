@@ -128,7 +128,6 @@ class Script(object):
         return '\n'.join(self.__iter__())
 
 
-@six.python_2_unicode_compatible
 class InstallScript(Script):
     before_install = []
     install = [
@@ -145,7 +144,6 @@ class InstallScript(Script):
         yield 'fi'
 
 
-@six.python_2_unicode_compatible
 class CleanScript(Script):
     remove = [
         'build',
