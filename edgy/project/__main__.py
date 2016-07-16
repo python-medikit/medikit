@@ -11,11 +11,11 @@ from collections import OrderedDict
 
 import tornado.log
 from blessings import Terminal
-from edgy.event import Event, EventDispatcher
+from edgy.event import EventDispatcher
+from edgy.project.config import read_configuration
+from edgy.project.events import LoggingDispatcher, ProjectEvent
 from edgy.project.feature import ProjectInitializer
 from edgy.project.settings import DEFAULT_FEATURES, DEFAULT_FILES
-
-from .config import read_configuration
 
 # Globals
 logger = logging.getLogger()
@@ -58,27 +58,6 @@ def _read_configuration(dispatcher, config_filename):
     features = set(DEFAULT_FEATURES)
 
     return read_configuration(dispatcher, config_filename, variables, features, files, setup)
-
-
-class ProjectEvent(Event):
-    variables = None
-    files = None
-    setup = None
-
-
-class LoggingDispatcher(EventDispatcher):
-    def dispatch(self, event_id, event=None):
-        if not event_id.startswith('edgy.project.on_file_'):
-            logger.info('⚡  Dispatching {} ...'.format(t.bold(t.blue(event_id))))
-        event = super(LoggingDispatcher, self).dispatch(event_id, event)
-        if not event_id.startswith('edgy.project.on_file_'):
-            logger.info('   ... {} returned {}'.format(t.bold(t.blue(event_id)), event))
-        return event
-
-    def debug(self, feature, *messages):
-        return logger.debug(
-            '   ✔ ' + t.blue(feature) + ' '.join(map(str, messages))
-        )
 
 
 def main(args=None):
@@ -163,7 +142,8 @@ def handle_update(config_filename):
     event.variables, event.files, event.setup = variables, files, setup
 
     event = dispatcher.dispatch('edgy.project.on_start', event)
-    event = dispatcher.dispatch('edgy.project.on_end', event)
+
+    dispatcher.dispatch('edgy.project.on_end', event)
 
     logger.info(u'Done.')
 

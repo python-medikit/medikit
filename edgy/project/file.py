@@ -24,6 +24,22 @@ def File(dispatcher, name, override=False):
             yield f
             event.file = None
 
-        event = dispatcher.dispatch('edgy.project.on_file_closed', event)
+        dispatcher.dispatch('edgy.project.on_file_closed', event)
+    else:
+        yield open('/dev/null', 'w')
+
+
+@contextlib.contextmanager
+def NullFile(dispatcher, name, override=False):
+    event = FileEvent(name, override)
+
+    if event.override or not os.path.exists(event.filename):
+        with open('/dev/null', 'w') as f:
+            event.file = f
+            event = dispatcher.dispatch('edgy.project.on_file_opened', event)
+            yield f
+            event.file = None
+
+        dispatcher.dispatch('edgy.project.on_file_closed', event)
     else:
         yield open('/dev/null', 'w')

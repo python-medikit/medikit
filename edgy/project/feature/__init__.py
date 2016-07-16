@@ -21,6 +21,8 @@ class Feature(object):
     requires = set()
     conflicts = set()
 
+    file_type = File
+
     def __init__(self, dispatcher):
         self.dispatcher = dispatcher
         self.configure()
@@ -29,7 +31,7 @@ class Feature(object):
         pass
 
     def file(self, *args, **kwargs):
-        return File(self.dispatcher, *args, **kwargs)
+        return self.file_type(self.dispatcher, *args, **kwargs)
 
     @property
     def __name__(self):
