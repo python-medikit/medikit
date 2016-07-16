@@ -1,9 +1,10 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import contextlib
 import os
 
 from edgy.event import Event
+
 
 class FileEvent(Event):
     def __init__(self, filename, override):
@@ -11,10 +12,10 @@ class FileEvent(Event):
         self.filename = filename
         self.override = override
 
+
 @contextlib.contextmanager
 def File(dispatcher, name, override=False):
     event = FileEvent(name, override)
-
 
     if event.override or not os.path.exists(event.filename):
         with open(event.filename, 'w+') as f:

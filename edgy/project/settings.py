@@ -9,9 +9,10 @@ DEFAULT_FEATURES = {
     'python',
     'pylint',
 }
+
 DEFAULT_FILES = {
     'requirements',
-    'requirements.dev',
+    'requirements-dev',
     'classifiers',
     'version',
 }
