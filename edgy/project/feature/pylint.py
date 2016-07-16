@@ -6,6 +6,8 @@ from . import Feature, SUPPORT_PRIORITY
 
 
 class PylintFeature(Feature):
+    requires = ['python']
+
     def configure(self):
         self.dispatcher.add_listener('edgy.project.feature.make.on_generate',
                                      self.on_make_generate, priority=SUPPORT_PRIORITY)

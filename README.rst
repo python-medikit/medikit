@@ -41,6 +41,26 @@ You're done with the bootstrap. You can now run:
 Happy?
 
 
+Update
+======
+
+If you change the `Projectfile` content, or update the library, you will need to run
+the generator again.
+
+.. code-block:: shell
+
+    edgy-project update
+
+To better control what changes are made, I suggest that you run it on a clean git
+repository, then look at the dofferences using:
+
+.. code-block:: shell
+
+    git diff --cached
+
+You can then commit the generated changes.
+
+
 Gotchas
 =======
 

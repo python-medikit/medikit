@@ -2,12 +2,10 @@ from __future__ import absolute_import
 
 import os
 
-from edgy.project.settings import DEFAULT_FEATURES
-from jinja2 import Environment, PackageLoader
-from jinja2 import Template
-
 from edgy.project.file import File
+from edgy.project.settings import DEFAULT_FEATURES
 from edgy.project.util import format_file_content
+from jinja2 import Environment, PackageLoader, Template
 
 ABSOLUTE_PRIORITY = -100
 HIGH_PRIORITY = -80
@@ -19,6 +17,9 @@ LAST_PRIORITY = 100
 
 class Feature(object):
     _jinja_environment = None
+
+    requires = set()
+    conflicts = set()
 
     def __init__(self, dispatcher):
         self.dispatcher = dispatcher

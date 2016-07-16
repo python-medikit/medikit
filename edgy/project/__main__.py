@@ -121,7 +121,6 @@ def handle_init(config_filename):
     dispatcher = LoggingDispatcher()
     initializer = ProjectInitializer(dispatcher)
     initializer.execute()
-
     return handle_update(config_filename)
 
 
@@ -138,15 +137,25 @@ def handle_update(config_filename):
     logger.info('Updating {} with {} features'.format(
         t.bold(setup['name']),
         ', '.join(t.bold(t.green(feature_name)) for feature_name in sorted(features))))
-    for feature_name in sorted(features):
+
+    sorted_features = sorted(features)
+    for feature_name in sorted_features:
         logger.debug('Initializing feature {}...'.format(t.bold(t.green(feature_name))))
         try:
             feature = __import__('edgy.project.feature.' + feature_name, fromlist=('__feature__',)).__feature__
         except (ImportError, AttributeError,) as e:
-            logger.exception('Feature "{}" does not exist.'.format(feature_name))
+            logger.exception('Feature "{}" not found.'.format(feature_name))
 
         if feature:
             feature_instances[feature_name] = feature(dispatcher)
+
+            for req in feature_instances[feature_name].requires:
+                if not req in sorted_features:
+                    raise RuntimeError('Unmet dependency: {} requires {}.'.format(feature_name, req))
+
+            for con in feature_instances[feature_name].conflicts:
+                if con in sorted_features:
+                    raise RuntimeError('Conflicting dependency: {} conflicts with {}.'.format(con, feature_name))
 
     event = ProjectEvent()
     event.variables, event.files, event.setup = variables, files, setup

@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import os
 
-from . import Feature, ABSOLUTE_PRIORITY
+from . import ABSOLUTE_PRIORITY, Feature
 
 
 class GitFeature(Feature):

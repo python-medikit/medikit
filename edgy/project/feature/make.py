@@ -3,12 +3,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import datetime
-
 import itertools
-import six
 import textwrap
-
 from collections import deque
+
+import six
 from edgy.event import Event
 
 from . import Feature, HIGH_PRIORITY
@@ -171,16 +170,20 @@ class MakeFeature(Feature):
             ('QUICK', '',),
         )
 
-        # Install
-        self.makefile.add_target('install', InstallScript(), phony=True,
-                                 doc='''Installs the local project dependencies.''')
-        self.makefile.add_target('install-dev', InstallScript(), phony=True,
-                                 doc='''Installs the local project dependencies, including development-only libraries.''')
+        self.makefile.add_target(
+            'install', InstallScript(), phony=True, doc='''Installs the local project dependencies.'''
+        )
+        self.makefile.add_target(
+            'install-dev', InstallScript(), phony=True,
+            doc='''Installs the local project dependencies, including development-only libraries.'''
+        )
+        self.makefile.add_target(
+            'clean', CleanScript(), phony=True, doc='''Cleans up the local mess.'''
+        )
 
-        # Housekeeping
-        self.makefile.add_target('clean', CleanScript(), phony=True, doc='''Cleans up the local mess.''')
-
-        self.dispatcher.dispatch(__name__ + '.on_generate', MakefileEvent(event.setup['name'], self.makefile))
+        self.dispatcher.dispatch(
+            __name__ + '.on_generate', MakefileEvent(event.setup['name'], self.makefile)
+        )
 
         self.render_file_inline('Makefile', self.makefile.__str__(), override=True)
 

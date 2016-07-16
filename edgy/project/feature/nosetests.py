@@ -6,11 +6,16 @@ from . import Feature, SUPPORT_PRIORITY
 
 
 class NosetestsFeature(Feature):
+    requires = {'python'}
+    conflicts = {'pytest'}
+
     def configure(self):
-        self.dispatcher.add_listener('edgy.project.feature.make.on_generate', self.on_make_generate,
-                                     priority=SUPPORT_PRIORITY)
-        self.dispatcher.add_listener('edgy.project.feature.python.on_generate', self.on_python_generate,
-                                     priority=SUPPORT_PRIORITY)
+        self.dispatcher.add_listener(
+            'edgy.project.feature.make.on_generate', self.on_make_generate, priority=SUPPORT_PRIORITY
+        )
+        self.dispatcher.add_listener(
+            'edgy.project.feature.python.on_generate', self.on_python_generate, priority=SUPPORT_PRIORITY
+        )
 
     def on_make_generate(self, event):
         makefile = event.makefile

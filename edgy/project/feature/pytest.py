@@ -8,10 +8,16 @@ from . import Feature, SUPPORT_PRIORITY
 
 
 class PytestFeature(Feature):
+    requires = {'python'}
+    conflicts = {'nosetests'}
+
     def configure(self):
-        self.dispatcher.add_listener('edgy.project.on_start', self.on_start, priority=SUPPORT_PRIORITY)
-        self.dispatcher.add_listener('edgy.project.feature.make.on_generate',
-                                     self.on_make_generate, priority=SUPPORT_PRIORITY)
+        self.dispatcher.add_listener(
+            'edgy.project.on_start', self.on_start, priority=SUPPORT_PRIORITY
+        )
+        self.dispatcher.add_listener(
+            'edgy.project.feature.make.on_generate', self.on_make_generate, priority=SUPPORT_PRIORITY
+        )
 
     def on_make_generate(self, event):
         makefile = event.makefile
@@ -27,7 +33,7 @@ class PytestFeature(Feature):
         if not os.path.exists(tests_dir):
             os.makedirs(tests_dir)
 
-        tests_init_file = os.path.join(tests_dir, '__init__.py')
+        tests_init_file = os.path.join(tests_dir, 'python.py')
 
         if not os.path.exists(tests_init_file):
             self.render_file(tests_init_file, 'python/package_init.py.j2', {'is_namespace': False})
