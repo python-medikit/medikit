@@ -21,7 +21,7 @@ class Feature(object):
     requires = set()
     conflicts = set()
 
-    file_type = File
+    file_type = staticmethod(File)
 
     def __init__(self, dispatcher):
         self.dispatcher = dispatcher
