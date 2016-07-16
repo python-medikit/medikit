@@ -8,8 +8,6 @@ python:
   - nightly
   - pypy
 install:
-  - make
+  - make install-dev
 script:
-  - make clean
-  - make doc
-  - make test
+  - make clean doc test
