@@ -14,6 +14,11 @@ LOW_PRIORITY = -60
 SUPPORT_PRIORITY = -20
 LAST_PRIORITY = 100
 
+try:
+    input = raw_input # pylint: disable=raw_input-builtin
+except NameError:
+    input = input # pylint: disable=input-builtin
+
 
 class Feature(object):
     _jinja_environment = None

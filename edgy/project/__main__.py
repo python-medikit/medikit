@@ -22,11 +22,6 @@ logger = logging.getLogger()
 tornado.log.enable_pretty_logging(logger=logger)
 t = Terminal()
 
-try:
-    input = raw_input
-except NameError:
-    input = input
-
 
 def _read_configuration(dispatcher, config_filename):
     """
