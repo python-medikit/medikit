@@ -1,22 +1,23 @@
-.. edgy.project documentation master file, created by
-   sphinx-quickstart on Sat Jul 16 12:38:58 2016.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. include:: overview.rst
 
-Welcome to edgy.project's documentation!
-========================================
-
-Contents:
+Documentation
+:::::::::::::
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-
+    overview
+    install
+    kickstart
+    config
+    features
+    faq
 
 Indices and tables
-==================
+::::::::::::::::::
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
 

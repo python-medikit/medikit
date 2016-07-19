@@ -10,19 +10,6 @@ def read(filename, flt=None):
         content = f.read().strip()
         return flt(content) if callable(flt) else content
 
-def requirements_filter(c):
-    install_requires = []
-    for requirement in tolines(c):
-        _pos = requirement.find('#egg=')
-        if _pos != -1:
-            requirement = requirement[_pos+5:].strip()
-        _pos = requirement.find('#')
-        if _pos != -1:
-            requirement = requirement[0:_pos].strip()
-        if len(requirement):
-            install_requires.append(requirement)
-    return install_requires
-
 version = read('version.txt')
 
 setup(

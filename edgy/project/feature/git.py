@@ -4,15 +4,13 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import os
 
+from edgy.project.events import subscribe
+
 from . import ABSOLUTE_PRIORITY, Feature
 
 
 class GitFeature(Feature):
-    def configure(self):
-        self.dispatcher.add_listener('edgy.project.on_start', self.on_start, priority=ABSOLUTE_PRIORITY)
-        self.dispatcher.add_listener('edgy.project.on_file_closed', self.on_file_change)
-        self.dispatcher.add_listener('edgy.project.on_end', self.on_end)
-
+    @subscribe('edgy.project.on_start', priority=ABSOLUTE_PRIORITY)
     def on_start(self, event):
         if not os.path.exists('.git'):
             self.dispatcher.debug('git', 'Creating git repository...')
@@ -20,6 +18,7 @@ class GitFeature(Feature):
             os.system('git add Projectfile')
             os.system('git commit -m "initial commit"')
 
+    @subscribe('edgy.project.on_end')
     def on_end(self, event):
         self.render_file_inline('.gitignore', '''
             *.egg-info
@@ -35,6 +34,7 @@ class GitFeature(Feature):
             /pylint.html
         ''', event.variables)
 
+    @subscribe('edgy.project.on_file_closed')
     def on_file_change(self, event):
         os.system('git add {}'.format(event.filename))
 

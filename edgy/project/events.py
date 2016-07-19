@@ -7,6 +7,7 @@ import logging
 from blessings import Terminal
 
 term = Terminal()
+logger = logging.getLogger()
 
 
 class ProjectEvent(Event):
@@ -30,3 +31,35 @@ class LoggingDispatcher(EventDispatcher):
         return self.logger.debug(
             '   ✔ ' + term.blue(feature) + ' '.join(map(str, messages))
         )
+
+
+def subscribe(event_id, priority=0):
+    """
+    Lazy event subscription. Will need to be attached to an event dispatcher using ``attach_subscriptions``
+
+    :param str event_id:
+    :param int priority:
+    :return:
+    """
+
+    def wrapper(f):
+        f.__subscriptions__ = getattr(f, '__subscriptions__', {})
+        f.__subscriptions__[event_id] = priority
+        return f
+
+    return wrapper
+
+
+def attach_subscriptions(obj, dispatcher):
+    """
+    Attach subscriptions to an actual event dispatcher.
+
+    :param object obj:
+    :param EventDispatcher dispatcher:
+    :return:
+    """
+    for k in dir(obj):
+        v = getattr(obj, k)
+        if k[0] != '_' and callable(v) and hasattr(v, '__subscriptions__'):
+            for event_id, priority in v.__subscriptions__.items():
+                dispatcher.add_listener(event_id, v, priority=priority)

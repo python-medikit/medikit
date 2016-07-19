@@ -4,6 +4,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import os
 
+from edgy.project.events import subscribe
+
 from . import Feature, SUPPORT_PRIORITY
 
 
@@ -11,14 +13,7 @@ class PytestFeature(Feature):
     requires = {'python'}
     conflicts = {'nosetests'}
 
-    def configure(self):
-        self.dispatcher.add_listener(
-            'edgy.project.on_start', self.on_start, priority=SUPPORT_PRIORITY
-        )
-        self.dispatcher.add_listener(
-            'edgy.project.feature.make.on_generate', self.on_make_generate, priority=SUPPORT_PRIORITY
-        )
-
+    @subscribe('edgy.project.feature.make.on_generate', priority=SUPPORT_PRIORITY)
     def on_make_generate(self, event):
         makefile = event.makefile
         makefile['PYTEST_OPTIONS'] = '--capture=no --cov={path} --cov-report html'.format(
@@ -28,6 +23,7 @@ class PytestFeature(Feature):
             $(VIRTUAL_ENV)/bin/py.test $(PYTEST_OPTIONS) tests
         ''', deps=('install-dev',), phony=True)
 
+    @subscribe('edgy.project.on_start', priority=SUPPORT_PRIORITY)
     def on_start(self, event):
         tests_dir = os.path.join('tests', *event.setup['name'].split('.'))
         if not os.path.exists(tests_dir):

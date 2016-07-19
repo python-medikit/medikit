@@ -9,6 +9,7 @@ from collections import deque
 
 import six
 from edgy.event import Event
+from edgy.project.events import subscribe
 
 from . import Feature, HIGH_PRIORITY
 
@@ -158,8 +159,8 @@ class CleanScript(Script):
 class MakeFeature(Feature):
     def configure(self):
         self.makefile = Makefile()
-        self.dispatcher.add_listener('edgy.project.on_start', self.on_start, priority=HIGH_PRIORITY)
 
+    @subscribe('edgy.project.on_start', priority=HIGH_PRIORITY)
     def on_start(self, event):
         for k in event.variables:
             self.makefile[k.upper()] = event.variables[k]

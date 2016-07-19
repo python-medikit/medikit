@@ -3,17 +3,50 @@
 from __future__ import absolute_import, unicode_literals
 
 import os
+from getpass import getuser
+
+from edgy.project.events import subscribe
 
 from . import ABSOLUTE_PRIORITY, Feature
 
 
 class PythonFeature(Feature):
-    def configure(self):
-        self.dispatcher.add_listener('edgy.project.on_start', self.on_start, priority=ABSOLUTE_PRIORITY)
-        self.dispatcher.add_listener('edgy.project.feature.make.on_generate', self.on_make_generate,
-                                     priority=ABSOLUTE_PRIORITY)
+    """
+    Basic python support for your project. Adds the requirements/requirements-dev logic, virtualenv support, setup.py
+    generation, a few metadata files used by setuptools...
 
+    """
+
+    @subscribe('edgy.project.feature.make.on_generate', priority=ABSOLUTE_PRIORITY)
     def on_make_generate(self, event):
+        """
+        Listens to edgy.project.feature.make.on_generate event to enhance the makefile with python specific tasks.
+
+        Define environment variables:
+
+        * ``PYTHON``
+        * ``PYTHON_BASENAME``
+        * ``PYTHON_REQUIREMENTS_FILE``
+        * ``PYTHON_REQUIREMENTS_DEV_FILE``
+        * ``PIP`` (should it be renamed to PYTHON_PIP to match the naming pattern?)
+
+        Implements make targets:
+
+        - ``install``
+        - ``install-dev``
+        - ``$(VIRTUAL_ENV)``: either a local brand new python virtualenv or your currently activated virtualenv.
+
+        :param MakefileEvent event:
+
+        """
+        # Python related environment
+        event.makefile.updateleft(
+            ('PYTHON', '$(shell which python)',),
+            ('PYTHON_BASENAME', '$(shell basename $(PYTHON))',),
+            ('PYTHON_REQUIREMENTS_FILE', 'requirements.txt',),
+            ('PYTHON_REQUIREMENTS_DEV_FILE', 'requirements-dev.txt',),
+        )
+
         # Package manager
         event.makefile['PIP'] = '$(VIRTUAL_ENV)/bin/pip'
 
@@ -35,15 +68,13 @@ class PythonFeature(Feature):
             '$(PIP) install -Ur $(PYTHON_REQUIREMENTS_DEV_FILE)'
         ]
 
-        # Python related environment
-        event.makefile.updateleft(
-            ('PYTHON', '$(shell which python)',),
-            ('PYTHON_BASENAME', '$(shell basename $(PYTHON))',),
-            ('PYTHON_REQUIREMENTS_FILE', 'requirements.txt',),
-            ('PYTHON_REQUIREMENTS_DEV_FILE', 'requirements-dev.txt',),
-        )
-
+    @subscribe('edgy.project.on_start', priority=ABSOLUTE_PRIORITY)
     def on_start(self, event):
+        """
+
+        :param event:
+        :return:
+        """
         self.dispatcher.dispatch(__name__ + '.on_generate', event)
 
         # Some metadata that will prove useful.
@@ -78,15 +109,27 @@ class PythonFeature(Feature):
                 self.render_file(package_init_file, 'python/package_init.py.j2',
                                  {'is_namespace': i < len(package_bits)})
 
-        # Render (with overwriting) the allmighty setup.py
-        self.render_file('setup.py', 'python/setup.py.j2', {
-            'setup': event.setup,
+        context = {
             'url': event.setup.pop('url', 'http://example.com/'),
             'download_url': event.setup.pop('download_url', 'http://example.com/'),
+        }
+
+        for k, v in context.items():
+            context[k] = context[k].format(
+                name=event.setup['name'],
+                user=getuser(),
+                version='{version}',
+            )
+
+        context.update({
+            'setup': event.setup,
             'extras_require': event.setup.pop('extras_require', {}),
             'install_require': event.setup.pop('install_require', {}),
             'entry_points': event.setup.pop('entry_points', {}),
-        }, override=True)
+        })
+
+        # Render (with overwriting) the allmighty setup.py
+        self.render_file('setup.py', 'python/setup.py.j2', context, override=True)
 
 
 __feature__ = PythonFeature

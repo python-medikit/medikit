@@ -73,7 +73,6 @@ def main(args=None):
     options = parser.parse_args(args or sys.argv[1:])
     if options.verbose:
         logger.setLevel(logging.DEBUG)
-    logger.debug('Parsed command line options: {}'.format(options))
 
     return options.handler(
         os.path.join(os.getcwd(), options.config)
@@ -135,6 +134,8 @@ def handle_update(config_filename):
 
     event = ProjectEvent()
     event.variables, event.files, event.setup = variables, files, setup
+
+    # todo: add listener dump list in debug/verbose mode ?
 
     event = dispatcher.dispatch('edgy.project.on_start', event)
 

@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import os
 
+from edgy.project.events import attach_subscriptions
 from edgy.project.file import File
 from edgy.project.settings import DEFAULT_FEATURES
 from edgy.project.util import format_file_content
@@ -15,9 +16,9 @@ SUPPORT_PRIORITY = -20
 LAST_PRIORITY = 100
 
 try:
-    input = raw_input # pylint: disable=raw_input-builtin
+    input = raw_input  # pylint: disable=raw_input-builtin
 except NameError:
-    input = input # pylint: disable=input-builtin
+    input = input  # pylint: disable=input-builtin
 
 
 class Feature(object):
@@ -31,6 +32,7 @@ class Feature(object):
     def __init__(self, dispatcher):
         self.dispatcher = dispatcher
         self.configure()
+        attach_subscriptions(self, self.dispatcher)
 
     def configure(self):
         pass
