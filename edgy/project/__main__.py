@@ -97,10 +97,6 @@ def handle_init(config_filename):
     return handle_update(config_filename)
 
 
-# XXX deprecated
-project_cli = main
-
-
 def handle_update(config_filename):
     dispatcher = LoggingDispatcher()
 
