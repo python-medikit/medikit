@@ -43,7 +43,7 @@ class LoggingDispatcher(EventDispatcher):
         )
 
     def info(self, *messages):
-        return self.logger.info(self.indent+' '.join(map(str, messages)))
+        return self.logger.info(self.indent+term.black('∙')+' '+' '.join(map(str, messages)))
 
 
 def subscribe(event_id, priority=0):
