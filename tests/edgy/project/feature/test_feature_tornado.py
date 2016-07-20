@@ -28,10 +28,9 @@ class TestTornadoFeature(FeatureTestCase):
         # actual call
         feature.on_make_generate(event)
 
+        # check makefile targets
         targets = dict(makefile.targets)
-
-        assert 'serve', 'serve-wsgi' in targets
-        assert len(targets) == 2
+        assert {'serve', 'serve-wsgi'} == set(targets)
 
     def test_on_start(self):
         feature, dispatcher = self.create_feature()
