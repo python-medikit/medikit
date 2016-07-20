@@ -2,13 +2,9 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from collections import OrderedDict
-
-from edgy.event import EventDispatcher
-from edgy.project.events import ProjectEvent, LoggingDispatcher
+from edgy.project.events import ProjectEvent
 from edgy.project.feature.make import Makefile, MakefileEvent
 from edgy.project.feature.tornado import TornadoFeature
-from edgy.project.file import NullFile
 from edgy.project.testing import FeatureTestCase
 
 PACKAGE_NAME = 'foo.bar'
