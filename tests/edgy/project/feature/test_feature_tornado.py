@@ -19,8 +19,9 @@ class TestTornadoFeature(TestCase):
         dispatcher = EventDispatcher()
         feature = TornadoFeature(dispatcher)
         listeners = dispatcher.get_listeners()
-        self.assertIn(feature.on_start, listeners['edgy.project.on_start'])
-        self.assertIn(feature.on_make_generate, listeners['edgy.project.feature.make.on_generate'])
+
+        assert feature.on_start in listeners['edgy.project.on_start']
+        assert feature.on_make_generate in listeners['edgy.project.feature.make.on_generate']
 
     def test_on_make_generate(self):
         dispatcher = EventDispatcher()
@@ -32,8 +33,9 @@ class TestTornadoFeature(TestCase):
         feature.on_make_generate(event)
 
         targets = dict(makefile.targets)
-        self.assertIn('serve', targets)
-        self.assertIn('serve-wsgi', targets)
+
+        assert 'serve' in targets
+        assert 'serve-wsgi' in targets
 
     def test_on_start(self):
         dispatcher = LoggingDispatcher()
