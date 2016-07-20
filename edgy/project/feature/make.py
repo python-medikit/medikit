@@ -162,6 +162,9 @@ class MakeFeature(Feature):
 
     @subscribe('edgy.project.on_start', priority=HIGH_PRIORITY)
     def on_start(self, event):
+        """
+        :param ProjectEvent event:
+        """
         for k in event.variables:
             self.makefile[k.upper()] = event.variables[k]
 

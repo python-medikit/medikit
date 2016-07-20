@@ -64,7 +64,8 @@ class Feature(object):
         return type(self)._jinja_environment
 
     def _log_file(self, target, override, content=()):
-        self.dispatcher.info(term.bold(term.red('W!') if override else term.green('W?')), target, '({} bytes)'.format(len(content)))
+        self.dispatcher.info(term.bold(term.red('W!') if override else term.green('W?')), target,
+                             '({} bytes)'.format(len(content)))
 
     def render(self, template, context=None):
         context = context or {}
