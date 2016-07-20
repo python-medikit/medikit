@@ -20,17 +20,15 @@ class PythonFeature(Feature):
     @subscribe('edgy.project.feature.make.on_generate', priority=ABSOLUTE_PRIORITY)
     def on_make_generate(self, event):
         """
-        Listens to edgy.project.feature.make.on_generate event to enhance the makefile with python specific tasks.
+        **Environment variables**
 
-        Define environment variables:
+        - ``PYTHON``
+        - ``PYTHON_BASENAME``
+        - ``PYTHON_REQUIREMENTS_FILE``
+        - ``PYTHON_REQUIREMENTS_DEV_FILE``
+        - ``PIP`` (should it be renamed to PYTHON_PIP to match the naming pattern?)
 
-        * ``PYTHON``
-        * ``PYTHON_BASENAME``
-        * ``PYTHON_REQUIREMENTS_FILE``
-        * ``PYTHON_REQUIREMENTS_DEV_FILE``
-        * ``PIP`` (should it be renamed to PYTHON_PIP to match the naming pattern?)
-
-        Implements make targets:
+        **Make targets**
 
         - ``install``
         - ``install-dev``
@@ -71,9 +69,24 @@ class PythonFeature(Feature):
     @subscribe('edgy.project.on_start', priority=ABSOLUTE_PRIORITY)
     def on_start(self, event):
         """
+        **Events**
 
-        :param event:
-        :return:
+        - ``edgy.project.feature.python.on_generate`` (with the same ``ProjectEvent`` we got, todo: why not deprecate
+          it in favor of higher priority edgy.project.on_start?)
+
+        **Files**
+
+        - ``<yourpackage>/__init__.py``
+        - ``MANIFEST.in``
+        - ``README.rst``
+        - ``classifiers.txt``
+        - ``requirements-dev.txt``
+        - ``requirements.txt``
+        - ``setup.cfg``
+        - ``setup.py`` (overwritten)
+        - ``version.txt``
+
+        :param ProjectEvent event:
         """
         self.dispatcher.dispatch(__name__ + '.on_generate', event)
 

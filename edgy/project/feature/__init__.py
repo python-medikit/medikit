@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import os
 
+from blessings import Terminal
 from edgy.project.events import attach_subscriptions
 from edgy.project.file import File
 from edgy.project.settings import DEFAULT_FEATURES
@@ -20,6 +21,8 @@ try:
 except NameError:
     input = input  # pylint: disable=input-builtin
 
+term = Terminal()
+
 
 class Feature(object):
     _jinja_environment = None
@@ -30,6 +33,10 @@ class Feature(object):
     file_type = staticmethod(File)
 
     def __init__(self, dispatcher):
+        """
+
+        :param EventDispatcher dispatcher:
+        """
         self.dispatcher = dispatcher
         self.configure()
         attach_subscriptions(self, self.dispatcher)
@@ -45,12 +52,19 @@ class Feature(object):
         return type(self).__name__
 
     @property
+    def __shortname__(self):
+        return self.__name__.replace('Feature', '').lower()
+
+    @property
     def jinja(self):
         if type(self)._jinja_environment is None:
             type(self)._jinja_environment = Environment(
                 loader=PackageLoader(__name__, 'template')
             )
         return type(self)._jinja_environment
+
+    def _log_file(self, target, override, content=()):
+        self.dispatcher.info(term.bold(term.red('W!') if override else term.green('W?')), target, '({} bytes)'.format(len(content)))
 
     def render(self, template, context=None):
         context = context or {}
@@ -59,31 +73,21 @@ class Feature(object):
 
     def render_file(self, target, template, context=None, override=False):
         with self.file(target, override=override) as f:
-            self.dispatcher.debug(self.__name__,
-                                  '::render_file({}, {}, context={}, override={})'.format(repr(target), repr(template),
-                                                                                          set(
-                                                                                              context.keys()) if context else None,
-                                                                                          str(override)))
             content = format_file_content(self.render(template, context))
             f.write(content)
-            self.dispatcher.debug(self.__name__,
-                                  '::render_file({}, ...) ---> {} bytes.'.format(repr(target), len(content)))
+            self._log_file(target, override, content)
 
     def render_file_inline(self, target, template_string, context=None, override=False):
         with self.file(target, override=override) as f:
-            self.dispatcher.debug(self.__name__,
-                                  '::render_file_inline({}, ..., context={}, override={})'.format(repr(target), set(
-                                      context.keys()) if context else None, str(override)))
             content = format_file_content(Template(template_string).render(**(context or {})))
             f.write(content)
-            self.dispatcher.debug(self.__name__,
-                                  '::render_file_inline({}, ...) ---> {} bytes.'.format(repr(target), len(content)))
+            self._log_file(target, override, content)
 
     def render_empty_files(self, *targets, **kwargs):
         override = kwargs.pop('override', False)
         for target in targets:
             with self.file(target, override=override) as f:
-                self.dispatcher.debug(self.__name__, '::render_empty_file({}, override={})'.format(target, override))
+                self._log_file(target, override)
 
 
 class ProjectInitializer(Feature):
