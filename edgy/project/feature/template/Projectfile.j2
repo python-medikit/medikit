@@ -27,7 +27,7 @@ install_requires = [
 
 {%- if extras_require %}
 
-extra_require = {
+extras_require = {
 {%- for extra, reqs in extras_require.items() %}
     '{{ extra }}': [
     {%- for req in reqs %}
