@@ -3,11 +3,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
-from edgy.event import EventDispatcher
-from edgy.project.events import LoggingDispatcher, ProjectEvent
+from edgy.project.events import ProjectEvent
 from edgy.project.feature.make import MakeFeature, Makefile, MakefileEvent
 from edgy.project.feature.python import PythonFeature
-from edgy.project.file import NullFile
 from edgy.project.testing import FeatureTestCase
 
 PACKAGE_NAME = 'foo.bar'

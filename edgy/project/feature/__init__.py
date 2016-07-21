@@ -35,7 +35,7 @@ class Feature(object):
     def __init__(self, dispatcher):
         """
 
-        :param EventDispatcher dispatcher:
+        :param LoggingDispatcher dispatcher:
         """
         self.dispatcher = dispatcher
         self.configure()
@@ -99,8 +99,8 @@ class ProjectInitializer(Feature):
         context['description'] = input('Description: ')
         context['license'] = input('License [Apache License, Version 2.0]: ').strip() or 'Apache License, Version 2.0'
 
-        context['url'] = 'https://github.com/{user}/{name}'
-        context['download_url'] = 'https://github.com/{user}/{name}/tarball/{version}'
+        context['url'] = ''
+        context['download_url'] = ''
 
         context['author'] = ''
         context['author_email'] = ''
