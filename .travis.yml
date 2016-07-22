@@ -11,3 +11,5 @@ install:
   - make install-dev
 script:
   - make clean doc test
+after_success:
+  - coveralls
