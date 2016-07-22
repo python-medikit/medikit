@@ -3,6 +3,18 @@ edgy.project
 
 Strongly opinionated python project management.
 
+.. image:: https://travis-ci.org/python-edgy/project.svg?branch=master
+    :target: https://travis-ci.org/python-edgy/project
+    :alt: Continuous Integration Status
+
+.. image:: https://coveralls.io/repos/github/python-edgy/project/badge.svg?branch=master
+    :target: https://coveralls.io/github/python-edgy/project?branch=master
+    :alt: Coverage Status
+
+.. image:: https://readthedocs.org/projects/edgyproject/badge/?version=latest
+    :target: http://edgyproject.readthedocs.org/en/latest/?badge=latest
+    :alt: Documentation Status
+
 This package helps you create python source trees using best practices (or at
 least the practices we consider as best for us) in a breeze.
 
