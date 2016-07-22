@@ -24,9 +24,9 @@ class ProjectEvent(Event):
         """
         :param OrderedDict|NoneType variables:
         """
-        self.variables = variables or OrderedDict()
-        self.files = files or dict()
-        self.setup = setup or OrderedDict()
+        self.variables = OrderedDict(variables or {})
+        self.files = dict(files or {})
+        self.setup = OrderedDict(setup or {})
         super(ProjectEvent, self).__init__()
 
 
