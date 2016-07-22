@@ -1,5 +1,14 @@
 # coding: utf-8
 
+"""
+TODO
+====
+
+* find a way to automate dependency check ?
+  https://blog.dbrgn.ch/2013/4/26/pip-list-outdated/
+
+"""
+
 from __future__ import absolute_import, unicode_literals
 
 import os
