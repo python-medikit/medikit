@@ -9,6 +9,7 @@ python:
   - pypy
 install:
   - make install-dev
+  - pip install coveralls
 script:
   - make clean doc test
 after_success:
