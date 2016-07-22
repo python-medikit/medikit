@@ -46,9 +46,7 @@ class TestGitFeature(FeatureTestCase):
                 patch('os.system', side_effect=commands.append) as os_system \
                 :
             feature.on_end(ProjectEvent(setup={'name': PACKAGE_NAME}))
-            print(commands)
-            print(fe.call_args_list)
 
-    @pytest.skip
+    @pytest.mark.skip()
     def test_on_file_change(self):
         self.fail()

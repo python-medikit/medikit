@@ -1,5 +1,11 @@
 # coding: utf-8
 
+"""
+TODO:
+
+* http://docs.pytest.org/en/latest/goodpractices.html#integrating-with-setuptools-python-setup-py-test-pytest-runner
+"""
+
 from __future__ import absolute_import, print_function, unicode_literals
 
 import os
