@@ -21,7 +21,7 @@ How to make a release?
    git add version.txt
    git commit -m "release: "`cat version.txt`
    git tag -am `cat version.txt` `cat version.txt`
-   git push origin --tags
+   git push origin master --tags
 
 4. Publish to PyPI
 
