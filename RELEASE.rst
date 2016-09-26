@@ -23,10 +23,15 @@ How to make a release?
    git tag -am `cat version.txt` `cat version.txt`
    git push origin master --tags
 
-4. Publish to PyPI
+4. Create the distribution
 
 .. code-block:: shell
 
    python setup.py sdist bdist bdist_egg bdist_wheel
-   python setup.py sdist bdist bdist_egg bdist_wheel upload
+
+5. Upload to PyPI
+
+.. code-block:: shell
+
+   twine upload dist/*-`cat version.txt`*
 
