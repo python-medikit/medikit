@@ -9,7 +9,6 @@ TODO:
 from __future__ import absolute_import, print_function, unicode_literals
 
 import os
-
 from edgy.project.events import subscribe
 
 from . import Feature, SUPPORT_PRIORITY
@@ -22,23 +21,24 @@ class PytestFeature(Feature):
     @subscribe('edgy.project.feature.make.on_generate', priority=SUPPORT_PRIORITY)
     def on_make_generate(self, event):
         makefile = event.makefile
+        makefile['PYTEST'] = '$(VIRTUAL_ENV)/bin/py.test'
         makefile['PYTEST_OPTIONS'] = '--capture=no --cov={path} --cov-report html'.format(
             path=event.package_name.replace('.', os.sep)
         )
         makefile.add_target('test', '''
-            $(VIRTUAL_ENV)/bin/py.test $(PYTEST_OPTIONS) tests
+            $(PYTEST) $(PYTEST_OPTIONS) tests
         ''', deps=('install-dev',), phony=True)
 
     @subscribe('edgy.project.on_start', priority=SUPPORT_PRIORITY)
     def on_start(self, event):
-        tests_dir = os.path.join('tests', *event.setup['name'].split('.'))
+        tests_dir = 'tests'
         if not os.path.exists(tests_dir):
             os.makedirs(tests_dir)
 
-        tests_init_file = os.path.join(tests_dir, '__init__.py')
+        gitkeep_file = os.path.join(tests_dir, '.gitkeep')
 
-        if not os.path.exists(tests_init_file):
-            self.render_file(tests_init_file, 'python/package_init.py.j2', {'is_namespace': False})
+        if not os.path.exists(gitkeep_file):
+            self.render_empty_files(gitkeep_file)
 
 
 __feature__ = PytestFeature

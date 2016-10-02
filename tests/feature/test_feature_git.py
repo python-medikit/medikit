@@ -2,7 +2,6 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import pytest
 from edgy.event import Event
 from edgy.project.events import ProjectEvent
 from edgy.project.feature.git import GitFeature
@@ -47,6 +46,7 @@ class TestGitFeature(FeatureTestCase):
                 :
             feature.on_end(ProjectEvent(setup={'name': PACKAGE_NAME}))
 
-    @pytest.mark.skip()
-    def test_on_file_change(self):
-        self.fail()
+            # TODO
+            # @pytest.mark.skip()
+            # def test_on_file_change(self):
+            #     self.fail()

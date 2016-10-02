@@ -10,7 +10,10 @@ def read(filename, flt=None):
         content = f.read().strip()
         return flt(content) if callable(flt) else content
 
-version = read('version.txt')
+try:
+    version = read('version.txt')
+except:
+    version = 'dev'
 
 setup(
     {% for k, v in setup.items() -%}

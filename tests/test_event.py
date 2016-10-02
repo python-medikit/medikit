@@ -10,7 +10,6 @@ from edgy.project.events import ProjectEvent
 
 
 class TestProjectEvent(TestCase):
-
     def _test_constructor(self, **kwargs):
         e = ProjectEvent(**kwargs)
 
@@ -29,6 +28,3 @@ class TestProjectEvent(TestCase):
 
         with pytest.raises(TypeError):
             self._test_constructor(unknown='foo')
-
-
-

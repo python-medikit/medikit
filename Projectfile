@@ -30,7 +30,6 @@ extras_require = {
     'dev': [
         'coverage >=4.0,<4.2',
         'mock >=2.0,<2.1',
-        'nose >=1.3,<1.4',
         'pylint >=1.6,<1.7',
         'pytest >=2.9,<2.10',
         'pytest-cov >=2.3,<2.4',
@@ -38,6 +37,10 @@ extras_require = {
         'sphinx_rtd_theme',
     ]
 }
+'''
+coverage (4.1) - Latest: 4.2 [wheel]
+pytest (2.9.2) - Latest: 3.0.3 [wheel]
+'''
 
 entry_points = {
     'console_scripts': [

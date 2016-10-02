@@ -4,10 +4,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import datetime
 import itertools
+import six
 import textwrap
 from collections import deque
-
-import six
 from edgy.event import Event
 from edgy.project.events import subscribe
 
@@ -20,6 +19,10 @@ class Makefile(object):
     def targets(self):
         for key in self._target_order:
             yield key, self._target_values[key]
+
+    @property
+    def environ(self):
+        return self._env_values
 
     def __init__(self):
         self._env_order, self._env_values = deque(), {}

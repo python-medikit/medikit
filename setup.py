@@ -10,7 +10,10 @@ def read(filename, flt=None):
         content = f.read().strip()
         return flt(content) if callable(flt) else content
 
-version = read('version.txt')
+try:
+    version = read('version.txt')
+except:
+    version = 'dev'
 
 setup(
     name = 'edgy.project',
@@ -21,7 +24,7 @@ setup(
  'jinja2 >=2.8,<3.0',
  'six',
  'tornado >=4.4,<4.5'],
-    namespace_packages = ['edgy'],
+    namespace_packages = [u'edgy'],
     version = version,
     long_description = read('README.rst'),
     classifiers = read('classifiers.txt', tolines),
@@ -29,7 +32,6 @@ setup(
     include_package_data = True,
     extras_require = {'dev': ['coverage >=4.0,<4.2',
          'mock >=2.0,<2.1',
-         'nose >=1.3,<1.4',
          'pylint >=1.6,<1.7',
          'pytest >=2.9,<2.10',
          'pytest-cov >=2.3,<2.4',
