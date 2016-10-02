@@ -1,4 +1,5 @@
-# coding: utf-8
+from __future__ import absolute_import
+
 from edgy.project.events import LoggingDispatcher
 from edgy.project.feature import Feature
 from edgy.project.file import NullFile
