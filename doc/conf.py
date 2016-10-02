@@ -6,6 +6,8 @@
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+import datetime
+
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
@@ -31,8 +33,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'edgy.project'
-copyright = '2016, Romain Dorgueil'
 author = 'Romain Dorgueil'
+copyright = '2015-{}, {}'.format(datetime.datetime.now().year, author)
 
 # Version infos
 with open('../version.txt') as f:

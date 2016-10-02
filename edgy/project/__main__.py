@@ -64,13 +64,16 @@ def main(args=None):
     subparsers = parser.add_subparsers(dest='command')
     subparsers.required = True
 
+    # todo aliases for update/init
+    # warning: http://bugs.python.org/issue9234
+
     parser_init = subparsers.add_parser('init', help='Initialize a new project.')
     parser_init.set_defaults(handler=handle_init)
 
-    parser_update = subparsers.add_parser('update', aliases=('up',), help='Update current project.')
+    parser_update = subparsers.add_parser('update', help='Update current project.')
     parser_update.set_defaults(handler=handle_update)
 
-    options = parser.parse_args(args or sys.argv[1:])
+    options = parser.parse_args(args if args is not None else sys.argv[1:])
     if options.verbose:
         logger.setLevel(logging.DEBUG)
 
