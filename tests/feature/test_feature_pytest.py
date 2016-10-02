@@ -2,7 +2,6 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import pytest
 from edgy.project.events import ProjectEvent
 from edgy.project.feature.make import MakeFeature, Makefile, MakefileEvent
 from edgy.project.feature.pytest import PytestFeature
