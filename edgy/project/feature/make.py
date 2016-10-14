@@ -59,6 +59,8 @@ class Makefile(object):
 
         if len(self):
             for k, v in self:
+                v = textwrap.dedent(str(v)).strip()
+                v = v.replace('\n', ' \\\n'+' '*(len(k)+4))
                 content.append('{} ?= {}'.format(k, v))
             content.append('')
 
