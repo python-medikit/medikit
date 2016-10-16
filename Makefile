@@ -1,7 +1,7 @@
 # This file has been auto-generated.
 # All changes will be lost, see Projectfile.
 #
-# Updated at 2016-10-02 09:35:31.162813
+# Updated at 2016-10-16 09:59:21.935869
 
 PYTHON ?= $(shell which python)
 PYTHON_BASENAME ?= $(shell basename $(PYTHON))
@@ -10,7 +10,7 @@ PYTHON_REQUIREMENTS_DEV_FILE ?= requirements-dev.txt
 QUICK ?= 
 VIRTUAL_ENV ?= .virtualenv-$(PYTHON_BASENAME)
 PIP ?= $(VIRTUAL_ENV)/bin/pip
-PYTEST ?= $(VIRTUAL_ENV)/bin/py.test
+PYTEST ?= $(VIRTUAL_ENV)/bin/pytest
 PYTEST_OPTIONS ?= --capture=no --cov=edgy/project --cov-report html
 SPHINX_OPTS ?= 
 SPHINX_BUILD ?= $(VIRTUAL_ENV)/bin/sphinx-build
