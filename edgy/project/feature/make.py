@@ -4,9 +4,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import datetime
 import itertools
-import six
 import textwrap
 from collections import deque
+
+import six
 from edgy.event import Event
 from edgy.project.events import subscribe
 
@@ -60,7 +61,7 @@ class Makefile(object):
         if len(self):
             for k, v in self:
                 v = textwrap.dedent(str(v)).strip()
-                v = v.replace('\n', ' \\\n'+' '*(len(k)+4))
+                v = v.replace('\n', ' \\\n' + ' ' * (len(k) + 4))
                 content.append('{} ?= {}'.format(k, v))
             content.append('')
 
@@ -135,10 +136,10 @@ class Script(object):
 
 
 class InstallScript(Script):
-    before_install = []
-    install = [
-    ]
-    after_install = []
+    def __init__(self):
+        self.before_install = []
+        self.install = []
+        self.after_install = []
 
     def __iter__(self):
         yield 'if [ -z "$(QUICK)" ]; then \\'
