@@ -26,7 +26,7 @@ class Makefile(object):
         return self._env_values
 
     def __init__(self):
-        self._env_order, self._env_values = deque(), {}
+        self._env_order, self._env_values, self._env_assignment_operators = deque(), {}, {}
         self._target_order, self._target_values = deque(), {}
         self.phony = set()
 
@@ -62,7 +62,7 @@ class Makefile(object):
             for k, v in self:
                 v = textwrap.dedent(str(v)).strip()
                 v = v.replace('\n', ' \\\n' + ' ' * (len(k) + 4))
-                content.append('{} ?= {}'.format(k, v))
+                content.append('{} {} {}'.format(k, self._env_assignment_operators.get(k, '?='), v))
             content.append('')
 
         if len(self.phony):
@@ -108,6 +108,10 @@ class Makefile(object):
             self._target_values[target][1],
             self._target_values[target][2],
         )
+
+    def set_assignment_operator(self, key, value):
+        assert value in ('?=', '=', '+=', ':=', '::=', '!='), 'Invalid operator'
+        self._env_assignment_operators[key] = value
 
     def setleft(self, key, value):
         self._env_values[key] = value
