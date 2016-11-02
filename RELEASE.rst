@@ -11,7 +11,6 @@ How to make a release?
 
 .. code-block:: shell
 
-   deactivate  # be sure you're not in a virtualenv
    make clean install lint test doc
 
 3. Create the git release
