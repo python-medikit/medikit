@@ -5,6 +5,7 @@ How to make a release?
 
 .. code-block:: shell
 
+   git fetch --tags
    git semver --next-patch > version.txt
 
 2. Run a full test, from a clean virtualenv
