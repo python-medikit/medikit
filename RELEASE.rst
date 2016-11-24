@@ -5,13 +5,13 @@ How to make a release?
 
 .. code-block:: shell
 
+   git fetch --tags
    git semver --next-patch > version.txt
 
 2. Run a full test, from a clean virtualenv
 
 .. code-block:: shell
 
-   deactivate  # be sure you're not in a virtualenv
    make clean install lint test doc
 
 3. Create the git release
@@ -21,7 +21,7 @@ How to make a release?
    git add version.txt
    git commit -m "release: "`cat version.txt`
    git tag -am `cat version.txt` `cat version.txt`
-   git push origin master --tags
+   git push && git push --tags
 
 4. Create the distribution
 
