@@ -11,7 +11,7 @@ import six
 from edgy.event import Event
 from edgy.project.events import subscribe
 
-from . import Feature, HIGH_PRIORITY
+from . import Feature, HIGH_PRIORITY, Script
 
 
 @six.python_2_unicode_compatible
@@ -89,6 +89,9 @@ class Makefile(object):
         if target in self._target_order:
             raise RuntimeError('Duplicate definition for make target «{}».'.format(target))
 
+        if isinstance(rule, str):
+            rule = Script(rule)
+
         self._target_values[target] = (
             deps or list(),
             rule,
@@ -130,28 +133,19 @@ class MakefileEvent(Event):
         super(MakefileEvent, self).__init__()
 
 
-@six.python_2_unicode_compatible
-class Script(object):
-    def __iter__(self):
-        raise StopIteration()
-
-    def __str__(self):
-        return '\n'.join(self.__iter__())
-
-
 class InstallScript(Script):
-    def __init__(self):
+    def __init__(self, script=None):
+        super(InstallScript, self).__init__(script)
+
         self.before_install = []
-        self.install = []
+        self.install = self.script
         self.after_install = []
 
     def __iter__(self):
         yield 'if [ -z "$(QUICK)" ]; then \\'
-
         for line in map(lambda x: '    {} ; \\'.format(x),
                         itertools.chain(self.before_install, self.install, self.after_install)):
             yield line
-
         yield 'fi'
 
 

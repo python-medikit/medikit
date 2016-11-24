@@ -24,7 +24,7 @@ setup(
  'jinja2 >=2.8,<3.0',
  'six',
  'tornado >=4,<5'],
-    namespace_packages = ['edgy'],
+    namespace_packages = [u'edgy'],
     version = version,
     long_description = read('README.rst'),
     classifiers = read('classifiers.txt', tolines),

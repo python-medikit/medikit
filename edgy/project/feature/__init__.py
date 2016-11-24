@@ -1,7 +1,9 @@
 from __future__ import absolute_import
 
 import os
+import textwrap
 
+import six
 from blessings import Terminal
 from edgy.project.events import attach_subscriptions
 from edgy.project.file import File
@@ -124,3 +126,22 @@ class ProjectInitializer(Feature):
         context['entry_points'] = {}
 
         self.render_file('Projectfile', 'Projectfile.j2', context, override=True)
+
+
+@six.python_2_unicode_compatible
+class Script(object):
+    def __init__(self, script=None):
+        self.script = self.parse_script(script)
+
+    def parse_script(self, script):
+        if not script:
+            return []
+        script = textwrap.dedent(str(script)).strip()
+        return script.split('\n')
+
+    def __iter__(self):
+        for line in self.script:
+            yield line
+
+    def __str__(self):
+        return '\n'.join(self.__iter__())
