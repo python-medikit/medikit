@@ -17,7 +17,7 @@ class SphinxFeature(Feature):
         makefile['SPHINX_SOURCEDIR'] = 'doc'
         makefile['SPHINX_BUILDDIR'] = '$(SPHINX_SOURCEDIR)/_build'
 
-        makefile.add_target('doc', '''
+        makefile.add_target('$(SPHINX_SOURCEDIR)', '''
             $(SPHINX_BUILD) -b html -D latex_paper_size=a4 $(SPHINX_OPTS) $(SPHINX_SOURCEDIR) $(SPHINX_BUILDDIR)/html
         ''', deps=('install-dev',), phony=True)
 

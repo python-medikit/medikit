@@ -24,6 +24,9 @@ setup(
     classifiers = read('classifiers.txt', tolines),
     packages = find_packages(exclude=['ez_setup', 'example', 'test']),
     include_package_data = True,
+    {% if data_files -%}
+        data_files = {{ data_files | pprint }},{{ '\n    ' }}
+    {%- endif -%}
     {% if install_requires -%}
         install_requires = {{ install_requires | pprint }},{{ '\n    ' }}
     {%- endif -%}

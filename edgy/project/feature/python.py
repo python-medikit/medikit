@@ -144,10 +144,11 @@ class PythonFeature(Feature):
             )
 
         context.update({
-            'setup': event.setup,
+            'data_files': event.setup.pop('data_files', {}),
+            'entry_points': event.setup.pop('entry_points', {}),
             'extras_require': event.setup.pop('extras_require', {}),
             'install_require': event.setup.pop('install_require', {}),
-            'entry_points': event.setup.pop('entry_points', {}),
+            'setup': event.setup,
         })
 
         # Render (with overwriting) the allmighty setup.py

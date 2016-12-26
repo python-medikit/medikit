@@ -40,14 +40,15 @@ def _read_configuration(dispatcher, config_filename):
     files = {filename: '' for filename in DEFAULT_FILES}
 
     setup = OrderedDict((
-        ('name', None,),
+        ('data_files', [],),
         ('description', None,),
-        ('license', None,),
-        ('url', 'http://example.com/',),
         ('download_url', 'http://example.com/',),
+        ('entry_points', {},),
         ('extras_require', {},),
         ('install_requires', [],),
-        ('entry_points', {},),
+        ('license', None,),
+        ('name', None,),
+        ('url', 'http://example.com/',),
     ))
 
     features = set(DEFAULT_FEATURES)

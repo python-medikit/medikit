@@ -22,6 +22,7 @@ class GitFeature(Feature):
     def on_end(self, event):
         self.render_file_inline('.gitignore', '''
             *.egg-info
+            *.iml
             *.pyc
             *.swp
             /.cache
