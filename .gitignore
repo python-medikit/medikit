@@ -7,6 +7,6 @@
 /.virtualenv-python*
 /build
 /dist
-/doc/_build
+/docs/_build
 /htmlcov
 /pylint.html
