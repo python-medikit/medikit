@@ -16,6 +16,7 @@ enable_features = {
     'pytest',
     'python',
     'sphinx',
+    'yapf',
 }
 
 install_requires = [
@@ -35,6 +36,7 @@ extras_require = {
         'pytest-cov >=2.3,<2.4',
         'sphinx',
         'sphinx_rtd_theme',
+        'yapf',
     ]
 }
 

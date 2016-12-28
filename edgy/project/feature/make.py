@@ -95,8 +95,7 @@ class Makefile(object):
         self._target_values[target] = (
             deps or list(),
             rule,
-            textwrap.dedent(doc or '').strip(),
-        )
+            textwrap.dedent(doc or '').strip(), )
         self._target_order.appendleft(target) if first else self._target_order.append(target)
 
         if phony:
@@ -109,8 +108,7 @@ class Makefile(object):
         self._target_values[target] = (
             deps or list(),
             self._target_values[target][1],
-            self._target_values[target][2],
-        )
+            self._target_values[target][2], )
 
     def set_assignment_operator(self, key, value):
         assert value in ('?=', '=', '+=', ':=', '::=', '!='), 'Invalid operator'
@@ -172,24 +170,20 @@ class MakeFeature(Feature):
         for k in event.variables:
             self.makefile[k.upper()] = event.variables[k]
 
-        self.makefile.updateleft(
-            ('QUICK', '',),
-        )
+        self.makefile.updateleft((
+            'QUICK',
+            '', ), )
 
         self.makefile.add_target(
-            'install', InstallScript(), phony=True, doc='''Installs the local project dependencies.'''
-        )
+            'install', InstallScript(), phony=True, doc='''Installs the local project dependencies.''')
         self.makefile.add_target(
-            'install-dev', InstallScript(), phony=True,
-            doc='''Installs the local project dependencies, including development-only libraries.'''
-        )
-        self.makefile.add_target(
-            'clean', CleanScript(), phony=True, doc='''Cleans up the local mess.'''
-        )
+            'install-dev',
+            InstallScript(),
+            phony=True,
+            doc='''Installs the local project dependencies, including development-only libraries.''')
+        self.makefile.add_target('clean', CleanScript(), phony=True, doc='''Cleans up the local mess.''')
 
-        self.dispatcher.dispatch(
-            __name__ + '.on_generate', MakefileEvent(event.setup['name'], self.makefile)
-        )
+        self.dispatcher.dispatch(__name__ + '.on_generate', MakefileEvent(event.setup['name'], self.makefile))
 
         self.render_file_inline('Makefile', self.makefile.__str__(), override=True)
 

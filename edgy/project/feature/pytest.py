@@ -1,5 +1,4 @@
 # coding: utf-8
-
 """
 TODO:
 
@@ -23,11 +22,11 @@ class PytestFeature(Feature):
         makefile = event.makefile
         makefile['PYTEST'] = '$(VIRTUAL_ENV)/bin/pytest'
         makefile['PYTEST_OPTIONS'] = '--capture=no --cov={path} --cov-report html'.format(
-            path=event.package_name.replace('.', os.sep)
-        )
-        makefile.add_target('test', '''
+            path=event.package_name.replace('.', os.sep))
+        makefile.add_target(
+            'test', '''
             $(PYTEST) $(PYTEST_OPTIONS) tests
-        ''', deps=('install-dev',), phony=True)
+        ''', deps=('install-dev', ), phony=True)
 
     @subscribe('edgy.project.on_start', priority=SUPPORT_PRIORITY)
     def on_start(self, event):
@@ -39,6 +38,9 @@ class PytestFeature(Feature):
 
         if not os.path.exists(gitkeep_file):
             self.render_empty_files(gitkeep_file)
+
+        self.render_file('.coveragerc', 'pytest/coveragerc.j2')
+        self.render_file('.travis.yml', 'pytest/travis.yml.j2')
 
 
 __feature__ = PytestFeature

@@ -14,9 +14,13 @@ class NosetestsFeature(Feature):
     @subscribe('edgy.project.feature.make.on_generate', priority=SUPPORT_PRIORITY)
     def on_make_generate(self, event):
         makefile = event.makefile
-        makefile.add_target('test', '''
+        makefile.add_target(
+            'test',
+            '''
             $(VIRTUAL_ENV)/bin/nosetests -q --with-doctest --with-coverage --cover-package={name}
-        '''.format(name=event.package_name), deps=('install-dev',), phony=True)
+        '''.format(name=event.package_name),
+            deps=('install-dev', ),
+            phony=True)
 
     @subscribe('edgy.project.feature.python.on_generate', priority=SUPPORT_PRIORITY)
     def on_python_generate(self, event):

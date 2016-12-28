@@ -2,16 +2,16 @@ from __future__ import absolute_import
 
 from .util import format_file_content
 
+
 class Config(object):
     def __init__(self):
         pass
 
+
 def read_configuration(dispatcher, filename, variables, features, files, setup):
     with open(filename) as f:
         code = compile(f.read(), filename, 'exec')
-    ctx = {
-        'listen': dispatcher.listen
-    }
+    ctx = {'listen': dispatcher.listen}
     exec(code, ctx)
 
     for k in variables.keys():

@@ -14,12 +14,16 @@ class SphinxFeature(Feature):
 
         makefile['SPHINX_OPTS'] = ''
         makefile['SPHINX_BUILD'] = '$(VIRTUAL_ENV)/bin/sphinx-build'
-        makefile['SPHINX_SOURCEDIR'] = 'doc'
+        makefile['SPHINX_SOURCEDIR'] = 'docs'
         makefile['SPHINX_BUILDDIR'] = '$(SPHINX_SOURCEDIR)/_build'
 
-        makefile.add_target('$(SPHINX_SOURCEDIR)', '''
+        makefile.add_target(
+            '$(SPHINX_SOURCEDIR)',
+            '''
             $(SPHINX_BUILD) -b html -D latex_paper_size=a4 $(SPHINX_OPTS) $(SPHINX_SOURCEDIR) $(SPHINX_BUILDDIR)/html
-        ''', deps=('install-dev',), phony=True)
+        ''',
+            deps=('install-dev', ),
+            phony=True)
 
 
 __feature__ = SphinxFeature

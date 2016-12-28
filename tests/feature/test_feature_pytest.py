@@ -33,4 +33,3 @@ class TestPytestFeature(FeatureTestCase):
         feature, dispatcher = self.create_feature()
         event = ProjectEvent(setup={'name': PACKAGE_NAME})
         feature.on_start(event)
-

@@ -1,5 +1,4 @@
 # coding: utf-8
-
 """
 TODO
 ====
@@ -48,32 +47,38 @@ class PythonFeature(Feature):
         """
         # Python related environment
         event.makefile.updateleft(
-            ('PYTHON', '$(shell which python)',),
-            ('PYTHON_BASENAME', '$(shell basename $(PYTHON))',),
-            ('PYTHON_REQUIREMENTS_FILE', 'requirements.txt',),
-            ('PYTHON_REQUIREMENTS_DEV_FILE', 'requirements-dev.txt',),
-        )
+            (
+                'PYTHON',
+                '$(shell which python)', ),
+            (
+                'PYTHON_BASENAME',
+                '$(shell basename $(PYTHON))', ),
+            (
+                'PYTHON_REQUIREMENTS_FILE',
+                'requirements.txt', ),
+            (
+                'PYTHON_REQUIREMENTS_DEV_FILE',
+                'requirements-dev.txt', ), )
 
         # Package manager
         event.makefile['PIP'] = '$(VIRTUAL_ENV)/bin/pip'
 
         # Virtualenv, with external virtual env support.
-        event.makefile.add_target('$(VIRTUAL_ENV)', '''
+        event.makefile.add_target(
+            '$(VIRTUAL_ENV)',
+            '''
             virtualenv -p $(PYTHON) $(VIRTUAL_ENV)
             $(PIP) install -U pip\>=8.1.2,\<9 wheel\>=0.29,\<1.0
             ln -fs $(VIRTUAL_ENV)/bin/activate activate-$(PYTHON_BASENAME)
-        ''', doc='''
+        ''',
+            doc='''
             Setup the local virtualenv, or use the one provided by the current environment.
         ''')
-        event.makefile.set_deps('install', ('$(VIRTUAL_ENV)',))
-        event.makefile.get_target('install').install = [
-            '$(PIP) install -Ur $(PYTHON_REQUIREMENTS_FILE)'
-        ]
+        event.makefile.set_deps('install', ('$(VIRTUAL_ENV)', ))
+        event.makefile.get_target('install').install = ['$(PIP) install -Ur $(PYTHON_REQUIREMENTS_FILE)']
 
-        event.makefile.set_deps('install-dev', ('$(VIRTUAL_ENV)',))
-        event.makefile.get_target('install-dev').install = [
-            '$(PIP) install -Ur $(PYTHON_REQUIREMENTS_DEV_FILE)'
-        ]
+        event.makefile.set_deps('install-dev', ('$(VIRTUAL_ENV)', ))
+        event.makefile.get_target('install-dev').install = ['$(PIP) install -Ur $(PYTHON_REQUIREMENTS_DEV_FILE)']
 
     @subscribe('edgy.project.on_start', priority=ABSOLUTE_PRIORITY)
     def on_start(self, event):
@@ -140,8 +145,7 @@ class PythonFeature(Feature):
             context[k] = context[k].format(
                 name=event.setup['name'],
                 user=getuser(),
-                version='{version}',
-            )
+                version='{version}', )
 
         context.update({
             'data_files': event.setup.pop('data_files', {}),

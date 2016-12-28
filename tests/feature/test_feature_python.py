@@ -26,15 +26,11 @@ class TestPythonFeature(FeatureTestCase):
 
         with pytest.raises(KeyError):
             # This should fail, as the install/install-dev targets are defined in MakeFeature
-            python_feature.on_make_generate(
-                MakefileEvent(PACKAGE_NAME, Makefile())
-            )
+            python_feature.on_make_generate(MakefileEvent(PACKAGE_NAME, Makefile()))
 
         make_feature, dispatcher = self.create_feature(feature_type=MakeFeature)
         self.create_feature(dispatcher=dispatcher)
-        make_feature.on_start(
-            ProjectEvent(setup={'name': PACKAGE_NAME})
-        )
+        make_feature.on_start(ProjectEvent(setup={'name': PACKAGE_NAME}))
 
         assert sorted(dict(make_feature.makefile.targets).keys()) == [
             '$(VIRTUAL_ENV)',
@@ -45,6 +41,4 @@ class TestPythonFeature(FeatureTestCase):
 
     def test_on_start(self):
         feature, dispatcher = self.create_feature()
-        feature.on_start(
-            ProjectEvent(setup={'name': PACKAGE_NAME})
-        )
+        feature.on_start(ProjectEvent(setup={'name': PACKAGE_NAME}))

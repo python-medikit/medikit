@@ -33,23 +33,40 @@ def _read_configuration(dispatcher, config_filename):
     if not os.path.exists(config_filename):
         raise IOError('Could not find project description file (looked in {})'.format(config_filename))
 
-    variables = OrderedDict((
-        ('virtual_env', '.virtualenv-$(PYTHON_BASENAME)',),
-    ))
+    variables = OrderedDict(((
+        'virtual_env',
+        '.virtualenv-$(PYTHON_BASENAME)', ), ))
 
     files = {filename: '' for filename in DEFAULT_FILES}
 
     setup = OrderedDict((
-        ('name', None,),
-        ('description', None,),
-        ('license', None,),
-        ('entry_points', {},),
-        ('install_requires', [],),
-        ('extras_require', {},),
-        ('data_files', [],),
-        ('url', 'http://example.com/',),
-        ('download_url', 'http://example.com/',),
-    ))
+        (
+            'name',
+            None, ),
+        (
+            'description',
+            None, ),
+        (
+            'license',
+            None, ),
+        (
+            'entry_points',
+            {}, ),
+        (
+            'install_requires',
+            [], ),
+        (
+            'extras_require',
+            {}, ),
+        (
+            'data_files',
+            [], ),
+        (
+            'url',
+            'http://example.com/', ),
+        (
+            'download_url',
+            'http://example.com/', ), ))
 
     features = set(DEFAULT_FEATURES)
 
@@ -78,15 +95,13 @@ def main(args=None):
     if options.verbose:
         logger.setLevel(logging.DEBUG)
 
-    return options.handler(
-        os.path.join(os.getcwd(), options.config)
-    )
+    return options.handler(os.path.join(os.getcwd(), options.config))
 
 
 def handle_init(config_filename):
     if os.path.exists(config_filename):
-        raise IOError(
-            'No config should be present in current directory to initialize (found {})'.format(config_filename))
+        raise IOError('No config should be present in current directory to initialize (found {})'.format(
+            config_filename))
 
     # Fast and dirty implementation
     # TODO
@@ -108,15 +123,16 @@ def handle_update(config_filename):
 
     feature_instances = {}
     logger.info('Updating {} with {} features'.format(
-        t.bold(setup['name']),
-        ', '.join(t.bold(t.green(feature_name)) for feature_name in sorted(features))))
+        t.bold(setup['name']), ', '.join(t.bold(t.green(feature_name)) for feature_name in sorted(features))))
 
     sorted_features = sorted(features)
     for feature_name in sorted_features:
         logger.debug('Initializing feature {}...'.format(t.bold(t.green(feature_name))))
         try:
-            feature = __import__('edgy.project.feature.' + feature_name, fromlist=('__feature__',)).__feature__
-        except (ImportError, AttributeError,) as e:
+            feature = __import__('edgy.project.feature.' + feature_name, fromlist=('__feature__', )).__feature__
+        except (
+                ImportError,
+                AttributeError, ) as e:
             logger.exception('Feature "{}" not found.'.format(feature_name))
 
         if feature:

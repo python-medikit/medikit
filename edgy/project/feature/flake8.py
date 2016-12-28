@@ -13,9 +13,13 @@ class Flake8Feature(Feature):
     @subscribe('edgy.project.feature.make.on_generate', priority=SUPPORT_PRIORITY)
     def on_make_generate(self, event):
         makefile = event.makefile
-        makefile.add_target('lint', '''
+        makefile.add_target(
+            'lint',
+            '''
             $(VIRTUAL_ENV)/bin/flake8 {name}
-        '''.format(name=event.package_name), deps=('install',), phony=True)
+        '''.format(name=event.package_name),
+            deps=('install', ),
+            phony=True)
 
 
 __feature__ = Flake8Feature

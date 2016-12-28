@@ -60,14 +60,12 @@ class Feature(object):
     @property
     def jinja(self):
         if type(self)._jinja_environment is None:
-            type(self)._jinja_environment = Environment(
-                loader=PackageLoader(__name__, 'template')
-            )
+            type(self)._jinja_environment = Environment(loader=PackageLoader(__name__, 'template'))
         return type(self)._jinja_environment
 
     def _log_file(self, target, override, content=()):
-        self.dispatcher.info(term.bold(term.red('W!') if override else term.green('W?')), target,
-                             '({} bytes)'.format(len(content)))
+        self.dispatcher.info(
+            term.bold(term.red('W!') if override else term.green('W?')), target, '({} bytes)'.format(len(content)))
 
     def render(self, template, context=None):
         context = context or {}
@@ -108,9 +106,7 @@ class ProjectInitializer(Feature):
         context['author_email'] = ''
 
         context['features'] = DEFAULT_FEATURES
-        context['install_requires'] = [
-
-        ]
+        context['install_requires'] = []
         context['extras_require'] = {
             'dev': [
                 'coverage >=4.0,<4.2',
