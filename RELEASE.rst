@@ -19,8 +19,8 @@ How to make a release?
 .. code-block:: shell
 
    git add version.txt
-   git commit -m "release: "`cat version.txt`
-   git tag -am `cat version.txt` `cat version.txt`
+   git commit -m "release: "`python setup.py --version`
+   git tag -am `python setup.py --version` `python setup.py --version`
    git push && git push --tags
 
 4. Create the distribution
@@ -33,5 +33,5 @@ How to make a release?
 
 .. code-block:: shell
 
-   twine upload dist/*-`cat version.txt`*
+   twine upload dist/*-`python setup.py --version`*
 
