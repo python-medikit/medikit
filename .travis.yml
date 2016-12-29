@@ -9,7 +9,6 @@ python:
   - nightly
   - pypy
 install:
-  - pip install -U pip wheel
   - make install-dev
   - pip install -U coveralls
 script:
