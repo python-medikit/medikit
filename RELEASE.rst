@@ -3,10 +3,17 @@ How to make a release?
 
 1. Update version.txt with the new version number
 
-.. code-block:: shell
+.. code-block:: shell-session
 
    git fetch --tags
    git semver --next-patch > version.txt
+   
+Or with _version.py...
+
+.. code-block:: shell-session
+
+   echo "__version__ = '"`git semver --next-patch`"'" > `python setup.py --version`/_version.py
+   
 
 2. Run a full test, from a clean virtualenv
 
