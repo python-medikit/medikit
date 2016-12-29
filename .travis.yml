@@ -9,8 +9,9 @@ python:
   - nightly
   - pypy
 install:
+  - pip install -U pip wheel
   - make install-dev
-  - pip install coveralls
+  - pip install -U coveralls
 script:
   - make clean docs test
 after_success:
