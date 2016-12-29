@@ -10,6 +10,8 @@ python:
   - pypy
 install:
   - make install-dev
+  - python setup.py --name
+  - python setup.py --version
   - pip install -U coveralls
 script:
   - make clean docs test
