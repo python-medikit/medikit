@@ -8,6 +8,7 @@ How to make a release?
    VERSION_FILE=version.txt
    git fetch --tags
    git semver --next-patch > $VERSION_FILE
+   git add $VERSION_FILE
    
 Or with _version.py...
 
@@ -16,6 +17,7 @@ Or with _version.py...
    VERSION_FILE=`python setup.py --name | sed s@\\\.@/@g`/_version.py
    git fetch --tags
    echo "__version__ = '"`git semver --next-patch`"'" > $VERSION_FILE
+   git add $VERSION_FILE
    
 If you have formating to do, now is the time...
 
@@ -33,7 +35,6 @@ If you have formating to do, now is the time...
 
 .. code-block:: shell
 
-   git add $VERSION_FILE
    git commit -m "release: "`python setup.py --version`
    git tag -am `python setup.py --version` `python setup.py --version`
    git push && git push --tags
