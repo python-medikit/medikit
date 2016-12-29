@@ -5,7 +5,7 @@ How to make a release?
 
 .. code-block:: shell-session
 
-   VERSION_FILE = version.txt
+   VERSION_FILE=version.txt
    git fetch --tags
    git semver --next-patch > $VERSION_FILE
    
@@ -13,7 +13,7 @@ Or with _version.py...
 
 .. code-block:: shell-session
 
-   VERSION_FILE = `python setup.py --name | sed s@\\\.@/@g`/_version.py
+   VERSION_FILE=`python setup.py --name | sed s@\\\.@/@g`/_version.py
    git fetch --tags
    echo "__version__ = '"`git semver --next-patch`"'" > $VERSION_FILE
    
