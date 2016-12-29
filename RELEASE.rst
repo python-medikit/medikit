@@ -17,6 +17,11 @@ Or with _version.py...
    git fetch --tags
    echo "__version__ = '"`git semver --next-patch`"'" > $VERSION_FILE
    
+If you have formating to do, now is the time...
+
+.. code-block:: shell-session
+
+   make format && git add -p .
 
 2. Run a full test, from a clean virtualenv
 
