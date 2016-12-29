@@ -10,6 +10,7 @@ python:
   - pypy
 install:
   - make install-dev
+  - pip install -U pip wheel
   - pip install -U coveralls
 script:
   - make clean docs test
