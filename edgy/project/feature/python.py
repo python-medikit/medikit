@@ -68,7 +68,7 @@ class PythonFeature(Feature):
             '$(VIRTUAL_ENV)',
             '''
             virtualenv -p $(PYTHON) $(VIRTUAL_ENV)
-            $(PIP) install -U pip\>=8.1.2,\<9 wheel\>=0.29,\<1.0
+            $(PIP) install -U pip\>=9,\<10 wheel\>=0.29,\<1.0
             ln -fs $(VIRTUAL_ENV)/bin/activate activate-$(PYTHON_BASENAME)
         ''',
             doc='''
