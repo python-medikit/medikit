@@ -1,42 +1,57 @@
 How to make a release?
 ======================
 
-1. Update version.txt with the new version number
+1. Pull!
 
 .. code-block:: shell-session
 
+   git pull
+
+2. Update version.txt with the new version number
+
+.. code-block:: shell-session
+
+   VERSION_FILE=version.txt
    git fetch --tags
-   git semver --next-patch > version.txt
+   git semver --next-patch > $VERSION_FILE
+   git add $VERSION_FILE
    
-Or with _version.py...
+2. (alt) Or with _version.py...
 
 .. code-block:: shell-session
 
-   echo "__version__ = '"`git semver --next-patch`"'" > `python setup.py --name`/_version.py
+   VERSION_FILE=`python setup.py --name | sed s@\\\.@/@g`/_version.py
+   git fetch --tags
+   echo "__version__ = '"`git semver --next-patch`"'" > $VERSION_FILE
+   git add $VERSION_FILE
    
+If you have formating to do, now is the time...
 
-2. Run a full test, from a clean virtualenv
+.. code-block:: shell-session
+
+   make format && git add -p .
+
+3. Run a full test, from a clean virtualenv
 
 .. code-block:: shell
 
    make clean install lint test doc
 
-3. Create the git release
+4. Create the git release
 
 .. code-block:: shell
 
-   git add version.txt
    git commit -m "release: "`python setup.py --version`
    git tag -am `python setup.py --version` `python setup.py --version`
    git push && git push --tags
 
-4. Create the distribution
+5. Create the distribution
 
 .. code-block:: shell
 
    python setup.py sdist bdist bdist_egg bdist_wheel
 
-5. Upload to PyPI
+6. Upload to PyPI
 
 .. code-block:: shell
 
