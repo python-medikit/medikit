@@ -68,17 +68,18 @@ class PythonFeature(Feature):
             '$(VIRTUAL_ENV)',
             '''
             virtualenv -p $(PYTHON) $(VIRTUAL_ENV)
-            $(PIP) install -U pip\>=9,\<10 wheel\>=0.29,\<1.0
+            $(PIP) install -U pip wheel
             ln -fs $(VIRTUAL_ENV)/bin/activate activate-$(PYTHON_BASENAME)
         ''',
             doc='''
             Setup the local virtualenv, or use the one provided by the current environment.
         ''')
         event.makefile.set_deps('install', ('$(VIRTUAL_ENV)', ))
-        event.makefile.get_target('install').install = ['$(PIP) install -Ur $(PYTHON_REQUIREMENTS_FILE)']
+        event.makefile.get_target('install').install = ['$(PIP) install -U pip wheel -r $(PYTHON_REQUIREMENTS_FILE)']
 
         event.makefile.set_deps('install-dev', ('$(VIRTUAL_ENV)', ))
-        event.makefile.get_target('install-dev').install = ['$(PIP) install -Ur $(PYTHON_REQUIREMENTS_DEV_FILE)']
+        event.makefile.get_target(
+            'install-dev').install = ['$(PIP) install -U pip wheel -r $(PYTHON_REQUIREMENTS_DEV_FILE)']
 
     @subscribe('edgy.project.on_start', priority=ABSOLUTE_PRIORITY)
     def on_start(self, event):
