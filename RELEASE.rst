@@ -5,14 +5,17 @@ How to make a release?
 
 .. code-block:: shell-session
 
+   VERSION_FILE = version.txt
    git fetch --tags
-   git semver --next-patch > version.txt
+   git semver --next-patch > $VERSION_FILE
    
 Or with _version.py...
 
 .. code-block:: shell-session
 
-   echo "__version__ = '"`git semver --next-patch`"'" > `python setup.py --name | sed s@\\\.@/@g`/_version.py
+   VERSION_FILE = `python setup.py --name | sed s@\\\.@/@g`/_version.py
+   git fetch --tags
+   echo "__version__ = '"`git semver --next-patch`"'" > $VERSION_FILE
    
 
 2. Run a full test, from a clean virtualenv
@@ -25,7 +28,7 @@ Or with _version.py...
 
 .. code-block:: shell
 
-   git add version.txt
+   git add $VERSION_FILE
    git commit -m "release: "`python setup.py --version`
    git tag -am `python setup.py --version` `python setup.py --version`
    git push && git push --tags
