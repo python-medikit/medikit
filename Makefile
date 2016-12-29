@@ -24,13 +24,15 @@ YAPF_OPTIONS ?= -rip
 # Installs the local project dependencies.
 install: $(VIRTUAL_ENV)
 	if [ -z "$(QUICK)" ]; then \
-	    $(PIP) install -U pip wheel -r $(PYTHON_REQUIREMENTS_FILE) ; \
+	    $(PIP) install -U pip wheel
+	    $(PIP) install -Ur $(PYTHON_REQUIREMENTS_FILE) ; \
 	fi
 
 # Installs the local project dependencies, including development-only libraries.
 install-dev: $(VIRTUAL_ENV)
 	if [ -z "$(QUICK)" ]; then \
-	    $(PIP) install -U pip wheel -r $(PYTHON_REQUIREMENTS_DEV_FILE) ; \
+	    $(PIP) install -U pip wheel
+	    $(PIP) install -Ur $(PYTHON_REQUIREMENTS_DEV_FILE) ; \
 	fi
 
 # Cleans up the local mess.
