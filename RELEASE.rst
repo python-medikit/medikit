@@ -12,7 +12,7 @@ Or with _version.py...
 
 .. code-block:: shell-session
 
-   echo "__version__ = '"`git semver --next-patch`"'" > `python setup.py --name`/_version.py
+   echo "__version__ = '"`git semver --next-patch`"'" > `python setup.py --name | sed s@\\\.@/@g`/_version.py
    
 
 2. Run a full test, from a clean virtualenv
