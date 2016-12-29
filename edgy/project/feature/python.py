@@ -105,7 +105,7 @@ class PythonFeature(Feature):
         self.dispatcher.dispatch(__name__ + '.on_generate', event)
 
         # Some metadata that will prove useful.
-        self.render_empty_files('classifiers.txt', 'version.txt', 'README.rst')
+        self.render_empty_files('classifiers.txt', 'README.rst')
         self.render_file_inline('MANIFEST.in', 'include *.txt')
         self.render_file_inline('setup.cfg', '''
                     [metadata]
@@ -125,6 +125,7 @@ class PythonFeature(Feature):
                 # TODO convert to string type (six?) depending on python version
                 event.setup['namespace_packages'].append('.'.join(package_bits[0:i]))
 
+        package_dir = None  # useless, but helps showing the scope of this var
         for i in range(1, len(package_bits) + 1):
             _bits = package_bits[0:i]
             package_dir = os.path.join(*_bits)
@@ -133,8 +134,16 @@ class PythonFeature(Feature):
 
             package_init_file = os.path.join(package_dir, '__init__.py')
             if not os.path.exists(package_init_file):
-                self.render_file(package_init_file, 'python/package_init.py.j2',
-                                 {'is_namespace': i < len(package_bits)})
+                is_namespace = i < len(package_bits)
+                self.render_file(package_init_file, 'python/package_init.py.j2', {'is_namespace': is_namespace})
+
+        # render version file, try to import version from version.txt if available.
+        try:
+            with open('version.txt') as version_file:
+                version = version_file.read().strip()
+        except IOError:
+            version = '0.0.0'
+        self.render_file_inline(os.path.join(package_dir, '_version.py'), "__version__ = '{}'".format(version))
 
         context = {
             'url': event.setup.pop('url', 'http://example.com/'),
