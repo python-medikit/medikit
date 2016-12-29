@@ -3,10 +3,17 @@ How to make a release?
 
 1. Update version.txt with the new version number
 
-.. code-block:: shell
+.. code-block:: shell-session
 
    git fetch --tags
    git semver --next-patch > version.txt
+   
+Or with _version.py...
+
+.. code-block:: shell-session
+
+   echo "__version__ = '"`git semver --next-patch`"'" > `python setup.py --name`/_version.py
+   
 
 2. Run a full test, from a clean virtualenv
 
@@ -19,8 +26,8 @@ How to make a release?
 .. code-block:: shell
 
    git add version.txt
-   git commit -m "release: "`cat version.txt`
-   git tag -am `cat version.txt` `cat version.txt`
+   git commit -m "release: "`python setup.py --version`
+   git tag -am `python setup.py --version` `python setup.py --version`
    git push && git push --tags
 
 4. Create the distribution
@@ -33,5 +40,5 @@ How to make a release?
 
 .. code-block:: shell
 
-   twine upload dist/*-`cat version.txt`*
+   twine upload dist/*-`python setup.py --version`*
 
