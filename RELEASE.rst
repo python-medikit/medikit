@@ -29,7 +29,7 @@ If you have formating to do, now is the time...
 
 .. code-block:: shell-session
 
-   make format && git add -p .
+   QUICK=1 make format && git add -p .
 
 3. Run a full test, from a clean virtualenv
 
