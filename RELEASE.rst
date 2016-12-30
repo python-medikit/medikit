@@ -35,7 +35,7 @@ If you have formating to do, now is the time...
 
 .. code-block:: shell
 
-   make clean install lint test doc
+   make clean install lint test docs
 
 4. Create the git release
 
