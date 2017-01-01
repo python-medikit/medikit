@@ -45,15 +45,16 @@ If you have formating to do, now is the time...
    git tag -am `python setup.py --version` `python setup.py --version`
    git push && git push --tags
 
-5. Create the distribution
+5. (open-source) Create the distribution & upload to PyPI
 
 .. code-block:: shell
 
    python setup.py sdist bdist bdist_egg bdist_wheel
+   twine upload dist/*-`python setup.py --version`*
 
-6. Upload to PyPI
+5. (private) Build containers, push and patch kubernetes
 
 .. code-block:: shell
 
-   twine upload dist/*-`python setup.py --version`*
-
+   make release push rollout
+   
