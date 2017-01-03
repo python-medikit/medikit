@@ -49,16 +49,21 @@ class PythonFeature(Feature):
         event.makefile.updateleft(
             (
                 'PYTHON',
-                '$(shell which python)', ),
+                '$(shell which python)',
+            ),
             (
                 'PYTHON_BASENAME',
-                '$(shell basename $(PYTHON))', ),
+                '$(shell basename $(PYTHON))',
+            ),
             (
                 'PYTHON_REQUIREMENTS_FILE',
-                'requirements.txt', ),
+                'requirements.txt',
+            ),
             (
                 'PYTHON_REQUIREMENTS_DEV_FILE',
-                'requirements-dev.txt', ), )
+                'requirements-dev.txt',
+            ),
+        )
 
         # Package manager
         event.makefile['PIP'] = '$(VIRTUAL_ENV)/bin/pip'
@@ -73,13 +78,14 @@ class PythonFeature(Feature):
         ''',
             doc='''
             Setup the local virtualenv, or use the one provided by the current environment.
-        ''')
+        '''
+        )
         event.makefile.set_deps('install', ('$(VIRTUAL_ENV)', ))
         event.makefile.get_target('install').install = ['$(PIP) install -U pip wheel -r $(PYTHON_REQUIREMENTS_FILE)']
 
         event.makefile.set_deps('install-dev', ('$(VIRTUAL_ENV)', ))
-        event.makefile.get_target(
-            'install-dev').install = ['$(PIP) install -U pip wheel -r $(PYTHON_REQUIREMENTS_DEV_FILE)']
+        event.makefile.get_target('install-dev'
+                                  ).install = ['$(PIP) install -U pip wheel -r $(PYTHON_REQUIREMENTS_DEV_FILE)']
 
     @subscribe('edgy.project.on_start', priority=ABSOLUTE_PRIORITY)
     def on_start(self, event):
@@ -108,10 +114,12 @@ class PythonFeature(Feature):
         # Some metadata that will prove useful.
         self.render_empty_files('classifiers.txt', 'README.rst')
         self.render_file_inline('MANIFEST.in', 'include *.txt')
-        self.render_file_inline('setup.cfg', '''
+        self.render_file_inline(
+            'setup.cfg', '''
                     [metadata]
                     description-file = README.rst
-                ''')
+                '''
+        )
 
         # If requirements files are missing, let's create em with reasonable defaults.
         self.render_file_inline('requirements.txt', '-e .')
@@ -155,15 +163,18 @@ class PythonFeature(Feature):
             context[k] = context[k].format(
                 name=event.setup['name'],
                 user=getuser(),
-                version='{version}', )
+                version='{version}',
+            )
 
-        context.update({
-            'data_files': event.setup.pop('data_files', {}),
-            'entry_points': event.setup.pop('entry_points', {}),
-            'extras_require': event.setup.pop('extras_require', {}),
-            'install_require': event.setup.pop('install_require', {}),
-            'setup': event.setup,
-        })
+        context.update(
+            {
+                'data_files': event.setup.pop('data_files', {}),
+                'entry_points': event.setup.pop('entry_points', {}),
+                'extras_require': event.setup.pop('extras_require', {}),
+                'install_require': event.setup.pop('install_require', {}),
+                'setup': event.setup,
+            }
+        )
 
         # Render (with overwriting) the allmighty setup.py
         self.render_file('setup.py', 'python/setup.py.j2', context, override=True)

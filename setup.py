@@ -48,4 +48,5 @@ setup(
     },
     entry_points={'console_scripts': ['edgy-project=edgy.project.__main__:main']},
     url='https://github.com/python-edgy/project',
-    download_url='https://github.com/python-edgy/project/tarball/{version}'.format(version=version), )
+    download_url='https://github.com/python-edgy/project/tarball/{version}'.format(version=version),
+)

@@ -23,7 +23,8 @@ class SphinxFeature(Feature):
             $(SPHINX_BUILD) -b html -D latex_paper_size=a4 $(SPHINX_OPTS) $(SPHINX_SOURCEDIR) $(SPHINX_BUILDDIR)/html
         ''',
             deps=('install-dev', ),
-            phony=True)
+            phony=True
+        )
 
 
 __feature__ = SphinxFeature

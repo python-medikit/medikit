@@ -20,7 +20,8 @@ class GitFeature(Feature):
 
     @subscribe('edgy.project.on_end')
     def on_end(self, event):
-        self.render_file_inline('.gitignore', '''
+        self.render_file_inline(
+            '.gitignore', '''
             *.egg-info
             *.iml
             *.pyc
@@ -33,7 +34,8 @@ class GitFeature(Feature):
             /dist
             /htmlcov
             /pylint.html
-        ''', event.variables)
+        ''', event.variables
+        )
 
     @subscribe('edgy.project.on_file_closed')
     def on_file_change(self, event):

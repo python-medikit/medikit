@@ -65,7 +65,8 @@ class Feature(object):
 
     def _log_file(self, target, override, content=()):
         self.dispatcher.info(
-            term.bold(term.red('W!') if override else term.green('W?')), target, '({} bytes)'.format(len(content)))
+            term.bold(term.red('W!') if override else term.green('W?')), target, '({} bytes)'.format(len(content))
+        )
 
     def render(self, template, context=None):
         context = context or {}

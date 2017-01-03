@@ -22,11 +22,13 @@ class PytestFeature(Feature):
         makefile = event.makefile
         makefile['PYTEST'] = '$(VIRTUAL_ENV)/bin/pytest'
         makefile['PYTEST_OPTIONS'] = '--capture=no --cov={path} --cov-report html'.format(
-            path=event.package_name.replace('.', os.sep))
+            path=event.package_name.replace('.', os.sep)
+        )
         makefile.add_target(
             'test', '''
             $(PYTEST) $(PYTEST_OPTIONS) tests
-        ''', deps=('install-dev', ), phony=True)
+        ''', deps=('install-dev', ), phony=True
+        )
 
     @subscribe('edgy.project.on_start', priority=SUPPORT_PRIORITY)
     def on_start(self, event):

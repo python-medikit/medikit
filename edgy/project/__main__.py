@@ -35,38 +35,51 @@ def _read_configuration(dispatcher, config_filename):
 
     variables = OrderedDict(((
         'virtual_env',
-        '.virtualenv-$(PYTHON_BASENAME)', ), ))
+        '.virtualenv-$(PYTHON_BASENAME)',
+    ), ))
 
     files = {filename: '' for filename in DEFAULT_FILES}
 
-    setup = OrderedDict((
+    setup = OrderedDict(
         (
-            'name',
-            None, ),
-        (
-            'description',
-            None, ),
-        (
-            'license',
-            None, ),
-        (
-            'entry_points',
-            {}, ),
-        (
-            'install_requires',
-            [], ),
-        (
-            'extras_require',
-            {}, ),
-        (
-            'data_files',
-            [], ),
-        (
-            'url',
-            'http://example.com/', ),
-        (
-            'download_url',
-            'http://example.com/', ), ))
+            (
+                'name',
+                None,
+            ),
+            (
+                'description',
+                None,
+            ),
+            (
+                'license',
+                None,
+            ),
+            (
+                'entry_points',
+                {},
+            ),
+            (
+                'install_requires',
+                [],
+            ),
+            (
+                'extras_require',
+                {},
+            ),
+            (
+                'data_files',
+                [],
+            ),
+            (
+                'url',
+                'http://example.com/',
+            ),
+            (
+                'download_url',
+                'http://example.com/',
+            ),
+        )
+    )
 
     features = set(DEFAULT_FEATURES)
 
@@ -100,8 +113,9 @@ def main(args=None):
 
 def handle_init(config_filename):
     if os.path.exists(config_filename):
-        raise IOError('No config should be present in current directory to initialize (found {})'.format(
-            config_filename))
+        raise IOError(
+            'No config should be present in current directory to initialize (found {})'.format(config_filename)
+        )
 
     # Fast and dirty implementation
     # TODO
@@ -122,8 +136,10 @@ def handle_update(config_filename):
     variables, features, files, setup = _read_configuration(dispatcher, config_filename)
 
     feature_instances = {}
-    logger.info('Updating {} with {} features'.format(
-        t.bold(setup['name']), ', '.join(t.bold(t.green(feature_name)) for feature_name in sorted(features))))
+    logger.info(
+        'Updating {} with {} features'.
+        format(t.bold(setup['name']), ', '.join(t.bold(t.green(feature_name)) for feature_name in sorted(features)))
+    )
 
     sorted_features = sorted(features)
     for feature_name in sorted_features:
@@ -131,8 +147,9 @@ def handle_update(config_filename):
         try:
             feature = __import__('edgy.project.feature.' + feature_name, fromlist=('__feature__', )).__feature__
         except (
-                ImportError,
-                AttributeError, ) as e:
+            ImportError,
+            AttributeError,
+        ) as e:
             logger.exception('Feature "{}" not found.'.format(feature_name))
 
         if feature:

@@ -19,7 +19,8 @@ class Flake8Feature(Feature):
             $(VIRTUAL_ENV)/bin/flake8 {name}
         '''.format(name=event.package_name),
             deps=('install', ),
-            phony=True)
+            phony=True
+        )
 
 
 __feature__ = Flake8Feature

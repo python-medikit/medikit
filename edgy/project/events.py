@@ -42,8 +42,10 @@ class LoggingDispatcher(EventDispatcher):
         should_log = not event_id.startswith('edgy.project.on_file_') or \
                      self.logger.getEffectiveLevel() <= logging.DEBUG
         if should_log:
-            self.logger.info(self.indent + term.bold('>') + ' dispatch ⚡ {} ({})'.format(
-                term.bold(term.blue(event_id)), type(event or Event).__name__))
+            self.logger.info(
+                self.indent + term.bold('>') +
+                ' dispatch ⚡ {} ({})'.format(term.bold(term.blue(event_id)), type(event or Event).__name__)
+            )
         type(self).indent_level += 1
         event = super(LoggingDispatcher, self).dispatch(event_id, event)
         type(self).indent_level -= 1

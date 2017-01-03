@@ -23,7 +23,8 @@ class TornadoFeature(Feature):
             $(VIRTUAL_ENV)/bin/python -m {name}.app
         '''.format(name=event.package_name),
             deps=('install', ),
-            phony=True)
+            phony=True
+        )
 
         makefile.add_target(
             'serve-wsgi',
@@ -31,7 +32,8 @@ class TornadoFeature(Feature):
             $(VIRTUAL_ENV)/bin/python -m {name}.wsgi
         '''.format(name=event.package_name),
             deps=('install', ),
-            phony=True)
+            phony=True
+        )
 
     @subscribe('edgy.project.on_start', priority=SUPPORT_PRIORITY)
     def on_start(self, event):

@@ -1,7 +1,7 @@
 # This file has been auto-generated.
 # All changes will be lost, see Projectfile.
 #
-# Updated at 2016-12-29 17:42:09.553911
+# Updated at 2017-01-03 12:04:34.361807
 
 PYTHON ?= $(shell which python)
 PYTHON_BASENAME ?= $(shell basename $(PYTHON))
@@ -24,15 +24,13 @@ YAPF_OPTIONS ?= -rip
 # Installs the local project dependencies.
 install: $(VIRTUAL_ENV)
 	if [ -z "$(QUICK)" ]; then \
-	    $(PIP) install -U pip wheel ; \
-	    $(PIP) install -Ur $(PYTHON_REQUIREMENTS_FILE) ; \
+	    $(PIP) install -U pip wheel -r $(PYTHON_REQUIREMENTS_FILE) ; \
 	fi
 
 # Installs the local project dependencies, including development-only libraries.
 install-dev: $(VIRTUAL_ENV)
 	if [ -z "$(QUICK)" ]; then \
-	    $(PIP) install -U pip wheel ; \
-	    $(PIP) install -Ur $(PYTHON_REQUIREMENTS_DEV_FILE) ; \
+	    $(PIP) install -U pip wheel -r $(PYTHON_REQUIREMENTS_DEV_FILE) ; \
 	fi
 
 # Cleans up the local mess.

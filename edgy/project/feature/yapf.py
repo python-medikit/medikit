@@ -18,7 +18,8 @@ class YapfFeature(Feature):
         makefile.add_target(
             'format', '''
             $(YAPF) $(YAPF_OPTIONS) .
-        ''', deps=('install-dev', ), phony=True)
+        ''', deps=('install-dev', ), phony=True
+        )
 
     @subscribe('edgy.project.on_start', priority=SUPPORT_PRIORITY)
     def on_start(self, event):
