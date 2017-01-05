@@ -58,3 +58,9 @@ If you have formating to do, now is the time...
 
    make release push rollout
    
+
+5. (private, old gen) Deploy with capistrano
+
+.. code-block:: shell
+
+   cap (pre)prod deploy
