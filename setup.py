@@ -33,7 +33,10 @@ setup(
     name='edgy.project',
     description='Strongly opinionated python project management.',
     license='Apache License, Version 2.0',
-    install_requires=['blessings >=1.6,<1.7', 'edgy.event >=0.1,<0.2', 'jinja2 >=2.8,<3.0', 'six', 'tornado >=4,<5'],
+    install_requires=[
+        'blessings >=1.6,<1.7', 'edgy.event >=0.1,<0.2', 'jinja2 >=2.8,<3.0',
+        'six', 'tornado >=4,<5', 'yapf >=0.14,<0.15'
+    ],
     namespace_packages=['edgy'],
     version=version,
     long_description=read('README.rst'),
@@ -42,11 +45,14 @@ setup(
     include_package_data=True,
     extras_require={
         'dev': [
-            'coverage >=4.2,<4.3', 'mock >=2.0,<2.1', 'pylint >=1.6,<1.7', 'pytest >=3.0,<3.1', 'pytest-cov >=2.3,<2.4',
-            'sphinx', 'sphinx_rtd_theme', 'yapf'
+            'coverage >=4.2,<4.3', 'mock >=2.0,<2.1', 'pylint >=1.6,<1.7',
+            'pytest >=3.0,<3.1', 'pytest-cov >=2.3,<2.4', 'sphinx',
+            'sphinx_rtd_theme', 'yapf'
         ]
     },
-    entry_points={'console_scripts': ['edgy-project=edgy.project.__main__:main']},
+    entry_points={
+        'console_scripts': ['edgy-project=edgy.project.__main__:main']
+    },
     url='https://github.com/python-edgy/project',
-    download_url='https://github.com/python-edgy/project/tarball/{version}'.format(version=version),
-)
+    download_url='https://github.com/python-edgy/project/tarball/{version}'.
+    format(version=version), )

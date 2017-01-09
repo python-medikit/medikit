@@ -10,6 +10,7 @@ from edgy.project.file import File
 from edgy.project.settings import DEFAULT_FEATURES
 from edgy.project.util import format_file_content
 from jinja2 import Environment, PackageLoader, Template
+from yapf import yapf_api
 
 ABSOLUTE_PRIORITY = -100
 HIGH_PRIORITY = -80
@@ -76,12 +77,16 @@ class Feature(object):
     def render_file(self, target, template, context=None, override=False):
         with self.file(target, override=override) as f:
             content = format_file_content(self.render(template, context))
+            if target.endswith('.py'):
+                content, modified = yapf_api.FormatCode(content, filename=target)
             f.write(content)
             self._log_file(target, override, content)
 
     def render_file_inline(self, target, template_string, context=None, override=False):
         with self.file(target, override=override) as f:
             content = format_file_content(Template(template_string).render(**(context or {})))
+            if target.endswith('.py'):
+                content, modified = yapf_api.FormatCode(content, filename=target, style_config='pep8')
             f.write(content)
             self._log_file(target, override, content)
 
