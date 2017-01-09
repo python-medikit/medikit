@@ -11,6 +11,8 @@ from collections import OrderedDict
 
 import tornado.log
 from blessings import Terminal
+from stevedore import ExtensionManager
+
 from edgy.event import EventDispatcher
 from edgy.project.config import read_configuration
 from edgy.project.events import LoggingDispatcher, ProjectEvent
@@ -142,14 +144,20 @@ def handle_update(config_filename):
     )
 
     sorted_features = sorted(features)
+
+    all_features = {}
+
+    def register_feature(ext, all_features=all_features):
+        all_features[ext.name] = ext.plugin
+
+    mgr = ExtensionManager(namespace='edgy.project.feature')
+    mgr.map(register_feature)
+
     for feature_name in sorted_features:
         logger.debug('Initializing feature {}...'.format(t.bold(t.green(feature_name))))
         try:
-            feature = __import__('edgy.project.feature.' + feature_name, fromlist=('__feature__', )).__feature__
-        except (
-            ImportError,
-            AttributeError,
-        ) as e:
+            feature = all_features[feature_name]
+        except KeyError as exc:
             logger.exception('Feature "{}" not found.'.format(feature_name))
 
         if feature:
