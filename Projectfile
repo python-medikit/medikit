@@ -26,7 +26,7 @@ install_requires = [
     'six',
     'stevedore >=1.19,<1.20',
     'tornado >=4,<5',
-    'yapf >=0.14,<0.15',
+    'yapf >0,<1',
 ]
 
 extras_require = {
@@ -38,7 +38,6 @@ extras_require = {
         'pytest-cov >=2.3,<2.4',
         'sphinx',
         'sphinx_rtd_theme',
-        'yapf',
     ]
 }
 
