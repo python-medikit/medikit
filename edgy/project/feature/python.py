@@ -47,22 +47,10 @@ class PythonFeature(Feature):
         """
         # Python related environment
         event.makefile.updateleft(
-            (
-                'PYTHON',
-                '$(shell which python)',
-            ),
-            (
-                'PYTHON_BASENAME',
-                '$(shell basename $(PYTHON))',
-            ),
-            (
-                'PYTHON_REQUIREMENTS_FILE',
-                'requirements.txt',
-            ),
-            (
-                'PYTHON_REQUIREMENTS_DEV_FILE',
-                'requirements-dev.txt',
-            ),
+            ('PYTHON', '$(shell which python)', ),
+            ('PYTHON_BASENAME', '$(shell basename $(PYTHON))', ),
+            ('PYTHON_REQUIREMENTS_FILE', 'requirements.txt', ),
+            ('PYTHON_REQUIREMENTS_DEV_FILE', 'requirements-dev.txt', ),
         )
 
         # Package manager

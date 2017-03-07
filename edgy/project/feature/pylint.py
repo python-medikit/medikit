@@ -24,10 +24,7 @@ class PylintFeature(Feature):
 
     @subscribe('edgy.project.feature.python.on_generate', priority=SUPPORT_PRIORITY)
     def on_python_generate(self, event):
-        event.files['requirements'] = '\n'.join((
-            event.files['requirements'],
-            'pylint >=1.4,<1.5',
-        ))
+        event.files['requirements'] = '\n'.join((event.files['requirements'], 'pylint >=1.4,<1.5', ))
 
 
 __feature__ = PylintFeature

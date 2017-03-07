@@ -12,7 +12,7 @@ def read_configuration(dispatcher, filename, variables, features, files, setup):
     with open(filename) as f:
         code = compile(f.read(), filename, 'exec')
     ctx = {'listen': dispatcher.listen}
-    exec(code, ctx)
+    exec (code, ctx)
 
     for k in variables.keys():
         if k in ctx:

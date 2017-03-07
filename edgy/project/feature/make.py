@@ -92,11 +92,7 @@ class Makefile(object):
         if isinstance(rule, str):
             rule = Script(rule)
 
-        self._target_values[target] = (
-            deps or list(),
-            rule,
-            textwrap.dedent(doc or '').strip(),
-        )
+        self._target_values[target] = (deps or list(), rule, textwrap.dedent(doc or '').strip(), )
         self._target_order.appendleft(target) if first else self._target_order.append(target)
 
         if phony:
@@ -106,11 +102,7 @@ class Makefile(object):
         return self._target_values[target][1]
 
     def set_deps(self, target, deps=None):
-        self._target_values[target] = (
-            deps or list(),
-            self._target_values[target][1],
-            self._target_values[target][2],
-        )
+        self._target_values[target] = (deps or list(), self._target_values[target][1], self._target_values[target][2], )
 
     def set_assignment_operator(self, key, value):
         assert value in ('?=', '=', '+=', ':=', '::=', '!='), 'Invalid operator'
@@ -173,10 +165,9 @@ class MakeFeature(Feature):
         for k in event.variables:
             self.makefile[k.upper()] = event.variables[k]
 
-        self.makefile.updateleft((
-            'QUICK',
-            '',
-        ), )
+        self.makefile.updateleft(
+            ('QUICK', '', ),
+        )
 
         self.makefile.add_target(
             'install', InstallScript(), phony=True, doc='''Installs the local project dependencies.'''
