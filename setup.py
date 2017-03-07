@@ -10,9 +10,12 @@ tolines = lambda c: list(filter(None, map(lambda s: s.strip(), c.split('\n'))))
 
 
 def read(filename, flt=None):
-    with open(filename) as f:
-        content = f.read().strip()
-        return flt(content) if callable(flt) else content
+    try:
+        with open(filename) as f:
+            content = f.read().strip()
+            return flt(content) if callable(flt) else content
+    except FileNotFoundError:
+        return ''
 
 
 # Py3 compatibility hacks, borrowed from IPython.
@@ -22,12 +25,16 @@ except NameError:
 
     def execfile(fname, globs, locs=None):
         locs = locs or globs
-        exec(compile(open(fname).read(), fname, "exec"), globs, locs)
+        exec (compile(open(fname).read(), fname, "exec"), globs, locs)
 
 
 version_ns = {}
-execfile(os.path.join(root_dir, 'edgy/project/_version.py'), version_ns)
-version = version_ns.get('__version__', 'dev')
+try:
+    execfile(os.path.join(root_dir, 'edgy/project/_version.py'), version_ns)
+except FileNotFoundError:
+    version = 'dev'
+else:
+    version = version_ns.get('__version__', 'dev')
 
 setup(
     name='edgy.project',
@@ -35,9 +42,9 @@ setup(
     license='Apache License, Version 2.0',
     install_requires=[
         'blessings >=1.6,<1.7', 'edgy.event >=0.1,<0.2', 'jinja2 >=2.8,<3.0',
-        'six', 'stevedore >=1.19,<1.20', 'tornado >=4,<5', 'yapf >0,<1'
+        'six', 'stevedore >=1.19,<1.20', 'tornado >=4,<5', 'yapf'
     ],
-    namespace_packages=['edgy'],
+    namespace_packages=[u'edgy'],
     version=version,
     long_description=read('README.rst'),
     classifiers=read('classifiers.txt', tolines),
@@ -55,13 +62,13 @@ setup(
         'edgy.project.feature': [
             'flake8 = edgy.project.feature.flake8:Flake8Feature',
             'git = edgy.project.feature.git:GitFeature',
-            'make = edgy.project.feature.make:MakeFeature', 'nosetests = '
-            'edgy.project.feature.nosetests:NosetestsFeature',
+            'make = edgy.project.feature.make:MakeFeature',
+            'nosetests = edgy.project.feature.nosetests:NosetestsFeature',
             'pylint = edgy.project.feature.pylint:PylintFeature',
             'pytest = edgy.project.feature.pytest:PytestFeature',
             'python = edgy.project.feature.python:PythonFeature',
-            'sphinx = edgy.project.feature.sphinx:SphinxFeature', 'tornado = '
-            'edgy.project.feature.tornado:TornadoFeature',
+            'sphinx = edgy.project.feature.sphinx:SphinxFeature',
+            'tornado = edgy.project.feature.tornado:TornadoFeature',
             'yapf = edgy.project.feature.yapf:YapfFeature'
         ]
     },

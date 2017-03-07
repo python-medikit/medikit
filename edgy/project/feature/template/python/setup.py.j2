@@ -9,9 +9,12 @@ root_dir = os.path.dirname(os.path.abspath(__file__))
 tolines = lambda c: list(filter(None, map(lambda s: s.strip(), c.split('\n'))))
 
 def read(filename, flt=None):
-    with open(filename) as f:
-        content = f.read().strip()
-        return flt(content) if callable(flt) else content
+    try:
+        with open(filename) as f:
+            content = f.read().strip()
+            return flt(content) if callable(flt) else content
+    except FileNotFoundError:
+        return ''
 
 # Py3 compatibility hacks, borrowed from IPython.
 try:
@@ -22,8 +25,12 @@ except NameError:
         exec(compile(open(fname).read(), fname, "exec"), globs, locs)
 
 version_ns = {}
-execfile(os.path.join(root_dir, '{{ setup['name'].replace('.', '/') }}/_version.py'), version_ns)
-version = version_ns.get('__version__', 'dev')
+try:
+    execfile(os.path.join(root_dir, '{{ setup['name'].replace('.', '/') }}/_version.py'), version_ns)
+except FileNotFoundError:
+    version = 'dev'
+else:
+    version = version_ns.get('__version__', 'dev')
 
 setup(
     {% for k, v in setup.items() -%}
