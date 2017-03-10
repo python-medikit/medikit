@@ -27,7 +27,7 @@ except NameError:
 version_ns = {}
 try:
     execfile(os.path.join(root_dir, '{{ setup['name'].replace('.', '/') }}/_version.py'), version_ns)
-except FileNotFoundError:
+except OSError:
     version = 'dev'
 else:
     version = version_ns.get('__version__', 'dev')
