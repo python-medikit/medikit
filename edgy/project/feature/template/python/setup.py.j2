@@ -13,7 +13,7 @@ def read(filename, flt=None):
         with open(filename) as f:
             content = f.read().strip()
             return flt(content) if callable(flt) else content
-    except OSError:
+    except EnvironmentError:
         return ''
 
 # Py3 compatibility hacks, borrowed from IPython.
@@ -27,7 +27,7 @@ except NameError:
 version_ns = {}
 try:
     execfile(os.path.join(root_dir, '{{ setup['name'].replace('.', '/') }}/_version.py'), version_ns)
-except OSError:
+except EnvironmentError:
     version = 'dev'
 else:
     version = version_ns.get('__version__', 'dev')
