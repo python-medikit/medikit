@@ -1,11 +1,12 @@
 How to make a release?
 ======================
 
-1. Pull!
+1. Pull and check dependencies are there.
 
 .. code-block:: shell-session
 
    git pull
+   pip install -U twine git-semver
 
 2. Update version.txt with the new version number
 
