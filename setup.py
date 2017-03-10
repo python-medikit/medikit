@@ -25,7 +25,7 @@ except NameError:
 
     def execfile(fname, globs, locs=None):
         locs = locs or globs
-        exec (compile(open(fname).read(), fname, "exec"), globs, locs)
+        exec(compile(open(fname).read(), fname, "exec"), globs, locs)
 
 
 version_ns = {}
@@ -44,7 +44,7 @@ setup(
         'blessings >=1.6,<1.7', 'edgy.event >=0.1,<0.2', 'jinja2 >=2.8,<3.0', 'six', 'stevedore >=1.19,<1.20',
         'tornado >=4,<5', 'yapf'
     ],
-    namespace_packages=[u'edgy'],
+    namespace_packages=['edgy'],
     version=version,
     long_description=read('README.rst'),
     classifiers=read('classifiers.txt', tolines),
@@ -60,11 +60,11 @@ setup(
         'console_scripts': ['edgy-project=edgy.project.__main__:main'],
         'edgy.project.feature': [
             'flake8 = edgy.project.feature.flake8:Flake8Feature', 'git = edgy.project.feature.git:GitFeature',
-            'make = edgy.project.feature.make:MakeFeature',
-            'nosetests = edgy.project.feature.nosetests:NosetestsFeature',
-            'pylint = edgy.project.feature.pylint:PylintFeature', 'pytest = edgy.project.feature.pytest:PytestFeature',
-            'python = edgy.project.feature.python:PythonFeature', 'sphinx = edgy.project.feature.sphinx:SphinxFeature',
-            'tornado = edgy.project.feature.tornado:TornadoFeature', 'yapf = edgy.project.feature.yapf:YapfFeature'
+            'make = edgy.project.feature.make:MakeFeature', 'nosetests = '
+            'edgy.project.feature.nosetests:NosetestsFeature', 'pylint = edgy.project.feature.pylint:PylintFeature',
+            'pytest = edgy.project.feature.pytest:PytestFeature', 'python = edgy.project.feature.python:PythonFeature',
+            'sphinx = edgy.project.feature.sphinx:SphinxFeature', 'tornado = '
+            'edgy.project.feature.tornado:TornadoFeature', 'yapf = edgy.project.feature.yapf:YapfFeature'
         ]
     },
     url='https://github.com/python-edgy/project',

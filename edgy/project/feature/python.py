@@ -55,6 +55,7 @@ class PythonFeature(Feature):
 
         # Package manager
         event.makefile['PIP'] = '$(VIRTUAL_ENV)/bin/pip'
+        event.makefile['PIP_INSTALL_OPTIONS'] = ''
 
         # Virtualenv, with external virtual env support.
         event.makefile.add_target(
@@ -69,11 +70,14 @@ class PythonFeature(Feature):
         '''
         )
         event.makefile.set_deps('install', ('$(VIRTUAL_ENV)', ))
-        event.makefile.get_target('install').install = ['$(PIP) install -U pip wheel -r $(PYTHON_REQUIREMENTS_FILE)']
+        event.makefile.get_target('install').install = [
+            '$(PIP) install -U pip wheel $(PIP_INSTALL_OPTIONS) -r $(PYTHON_REQUIREMENTS_FILE)'
+        ]
 
         event.makefile.set_deps('install-dev', ('$(VIRTUAL_ENV)', ))
-        event.makefile.get_target('install-dev'
-                                  ).install = ['$(PIP) install -U pip wheel -r $(PYTHON_REQUIREMENTS_DEV_FILE)']
+        event.makefile.get_target('install-dev').install = [
+            '$(PIP) install -U pip wheel $(PIP_INSTALL_OPTIONS) -r $(PYTHON_REQUIREMENTS_DEV_FILE)'
+        ]
 
     @subscribe('edgy.project.on_start', priority=ABSOLUTE_PRIORITY)
     def on_start(self, event):
