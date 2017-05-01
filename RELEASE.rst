@@ -6,7 +6,7 @@ How to make a release?
 .. code-block:: shell-session
 
    git pull
-   pip install -U twine git-semver
+   pip install -U pip wheel twine git-semver 
 
 2. Update version.txt with the new version number
 
