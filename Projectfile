@@ -24,7 +24,7 @@ install_requires = [
     'edgy.event >=0.1,<0.2',
     'jinja2 >=2.8,<3.0',
     'six',
-    'stevedore >=1.19,<1.20',
+    'stevedore >=1,<2',
     'tornado >=4,<5',
     'yapf',
 ]
