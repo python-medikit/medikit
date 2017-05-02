@@ -16,7 +16,7 @@ class Flake8Feature(Feature):
         makefile.add_target(
             'lint',
             '''
-            $(VIRTUAL_ENV)/bin/flake8 {name}
+            $(PYTHON_DIRNAME)/flake8 {name}
         '''.format(name=event.package_name),
             deps=('install', ),
             phony=True

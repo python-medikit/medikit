@@ -12,15 +12,15 @@ class SphinxFeature(Feature):
     def on_make_generate(self, event):
         makefile = event.makefile
 
-        makefile['SPHINX_OPTS'] = ''
-        makefile['SPHINX_BUILD'] = '$(VIRTUAL_ENV)/bin/sphinx-build'
+        makefile['SPHINX_BUILD'] = '$(PYTHON_DIRNAME)/sphinx-build'
+        makefile['SPHINX_OPTIONS'] = ''
         makefile['SPHINX_SOURCEDIR'] = 'docs'
         makefile['SPHINX_BUILDDIR'] = '$(SPHINX_SOURCEDIR)/_build'
 
         makefile.add_target(
             '$(SPHINX_SOURCEDIR)',
             '''
-            $(SPHINX_BUILD) -b html -D latex_paper_size=a4 $(SPHINX_OPTS) $(SPHINX_SOURCEDIR) $(SPHINX_BUILDDIR)/html
+            $(SPHINX_BUILD) -b html -D latex_paper_size=a4 $(SPHINX_OPTIONS) $(SPHINX_SOURCEDIR) $(SPHINX_BUILDDIR)/html
         ''',
             deps=('install-dev', ),
             phony=True

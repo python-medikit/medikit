@@ -20,8 +20,8 @@ class PytestFeature(Feature):
     @subscribe('edgy.project.feature.make.on_generate', priority=SUPPORT_PRIORITY)
     def on_make_generate(self, event):
         makefile = event.makefile
-        makefile['PYTEST'] = '$(VIRTUAL_ENV)/bin/pytest'
-        makefile['PYTEST_OPTIONS'] = '--capture=no --cov={path} --cov-report html'.format(
+        makefile['PYTEST'] = '$(PYTHON_DIRNAME)/pytest'
+        makefile['PYTEST_OPTIONS'] = '--capture=no --cov=$(PACKAGE) --cov-report html'.format(
             path=event.package_name.replace('.', os.sep)
         )
         makefile.add_target(

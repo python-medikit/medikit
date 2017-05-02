@@ -13,7 +13,7 @@ class YapfFeature(Feature):
     @subscribe('edgy.project.feature.make.on_generate', priority=SUPPORT_PRIORITY)
     def on_make_generate(self, event):
         makefile = event.makefile
-        makefile['YAPF'] = '$(VIRTUAL_ENV)/bin/yapf'
+        makefile['YAPF'] = '$(PYTHON_DIRNAME)/yapf'
         makefile['YAPF_OPTIONS'] = '-rip'
         makefile.add_target(
             'format', '''

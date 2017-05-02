@@ -146,11 +146,11 @@ class CleanScript(Script):
     remove = [
         'build',
         'dist',
+        '*.egg-info',
     ]
 
     def __iter__(self):
-        for target in self.remove:
-            yield 'rm -rf {}'.format(target)
+        yield 'rm -rf {}'.format(' '.join(self.remove))
 
 
 class MakeFeature(Feature):

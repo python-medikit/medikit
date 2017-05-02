@@ -16,7 +16,7 @@ class PylintFeature(Feature):
         makefile.add_target(
             'lint',
             '''
-            $(VIRTUAL_ENV)/bin/pylint --py3k {name} -f html > pylint.html
+            $(PYTHON_DIRNAME)/pylint --py3k $(PACKAGE) -f html > pylint.html
         '''.format(name=event.package_name),
             deps=('install-dev', ),
             phony=True

@@ -33,7 +33,6 @@ class TestPythonFeature(FeatureTestCase):
         make_feature.on_start(ProjectEvent(setup={'name': PACKAGE_NAME}))
 
         assert sorted(dict(make_feature.makefile.targets).keys()) == [
-            '$(VIRTUAL_ENV)',
             'clean',
             'install',
             'install-dev',

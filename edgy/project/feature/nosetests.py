@@ -17,7 +17,7 @@ class NosetestsFeature(Feature):
         makefile.add_target(
             'test',
             '''
-            $(VIRTUAL_ENV)/bin/nosetests -q --with-doctest --with-coverage --cover-package={name}
+            $(PYTHON_DIRNAME)/nosetests -q --with-doctest --with-coverage --cover-package=$(PACKAGE)
         '''.format(name=event.package_name),
             deps=('install-dev', ),
             phony=True

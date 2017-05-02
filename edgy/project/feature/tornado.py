@@ -20,7 +20,7 @@ class TornadoFeature(Feature):
         makefile.add_target(
             'serve',
             '''
-            $(VIRTUAL_ENV)/bin/python -m {name}.app
+            $(PYTHON_DIRNAME)/python -m {name}.app
         '''.format(name=event.package_name),
             deps=('install', ),
             phony=True
@@ -29,7 +29,7 @@ class TornadoFeature(Feature):
         makefile.add_target(
             'serve-wsgi',
             '''
-            $(VIRTUAL_ENV)/bin/python -m {name}.wsgi
+            $(PTYHON_DIRNAME)/python -m {name}.wsgi
         '''.format(name=event.package_name),
             deps=('install', ),
             phony=True

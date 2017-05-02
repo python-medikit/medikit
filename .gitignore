@@ -4,6 +4,7 @@
 /.cache
 /.coverage
 /.idea
+/.release
 /.virtualenv-python*
 /build
 /dist

@@ -30,53 +30,44 @@ class PythonFeature(Feature):
         """
         **Environment variables**
 
+        - ``PACKAGE``
         - ``PYTHON``
         - ``PYTHON_BASENAME``
+        - ``PYTHON_DIR``
         - ``PYTHON_REQUIREMENTS_FILE``
         - ``PYTHON_REQUIREMENTS_DEV_FILE``
-        - ``PIP`` (should it be renamed to PYTHON_PIP to match the naming pattern?)
+        
+        **Shortcuts**
+        - ``PIP``
+        - ``PIP_INSTALL_OPTIONS``
 
         **Make targets**
 
         - ``install``
         - ``install-dev``
-        - ``$(VIRTUAL_ENV)``: either a local brand new python virtualenv or your currently activated virtualenv.
 
         :param MakefileEvent event:
 
         """
         # Python related environment
         event.makefile.updateleft(
+            ('PACKAGE', event.package_name, ),
             ('PYTHON', '$(shell which python)', ),
             ('PYTHON_BASENAME', '$(shell basename $(PYTHON))', ),
+            ('PYTHON_DIRNAME', '$(shell dirname $(PYTHON))', ),
             ('PYTHON_REQUIREMENTS_FILE', 'requirements.txt', ),
             ('PYTHON_REQUIREMENTS_DEV_FILE', 'requirements-dev.txt', ),
         )
 
-        # Package manager
-        event.makefile['PIP'] = '$(VIRTUAL_ENV)/bin/pip'
+        event.makefile['PIP'] = '$(PYTHON_DIRNAME)/pip'
         event.makefile['PIP_INSTALL_OPTIONS'] = ''
 
-        # Virtualenv, with external virtual env support.
-        event.makefile.add_target(
-            '$(VIRTUAL_ENV)',
-            '''
-            virtualenv -p $(PYTHON) $(VIRTUAL_ENV)
-            $(PIP) install -U pip wheel
-            ln -fs $(VIRTUAL_ENV)/bin/activate activate-$(PYTHON_BASENAME)
-        ''',
-            doc='''
-            Setup the local virtualenv, or use the one provided by the current environment.
-        '''
-        )
-        event.makefile.set_deps('install', ('$(VIRTUAL_ENV)', ))
         event.makefile.get_target('install').install = [
-            '$(PIP) install -U pip wheel $(PIP_INSTALL_OPTIONS) -r $(PYTHON_REQUIREMENTS_FILE)'
+            '$(PIP) install -U pip wheel $(PYTHON_PIP_INSTALL_OPTIONS) -r $(PYTHON_REQUIREMENTS_FILE)'
         ]
 
-        event.makefile.set_deps('install-dev', ('$(VIRTUAL_ENV)', ))
         event.makefile.get_target('install-dev').install = [
-            '$(PIP) install -U pip wheel $(PIP_INSTALL_OPTIONS) -r $(PYTHON_REQUIREMENTS_DEV_FILE)'
+            '$(PIP) install -U pip wheel $(PYTHON_PIP_INSTALL_OPTIONS) -r $(PYTHON_REQUIREMENTS_DEV_FILE)'
         ]
 
     @subscribe('edgy.project.on_start', priority=ABSOLUTE_PRIORITY)

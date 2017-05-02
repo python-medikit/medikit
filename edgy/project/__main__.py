@@ -35,7 +35,7 @@ def _read_configuration(dispatcher, config_filename):
     if not os.path.exists(config_filename):
         raise IOError('Could not find project description file (looked in {})'.format(config_filename))
 
-    variables = OrderedDict((('virtual_env', '.virtualenv-$(PYTHON_BASENAME)', ), ))
+    variables = OrderedDict()
 
     files = {filename: '' for filename in DEFAULT_FILES}
 
