@@ -1,11 +1,13 @@
 How to make a release?
 ======================
 
+Considering the main project repository is setup as "upstream" remote for git...
+
 1. Pull and check dependencies are there.
 
 .. code-block:: shell-session
 
-   git pull
+   git pull upstream
    pip install -U pip wheel twine git-semver 
 
 2. Update version.txt with the new version number
@@ -13,7 +15,7 @@ How to make a release?
 .. code-block:: shell-session
 
    VERSION_FILE=version.txt
-   git fetch --tags
+   git fetch upstream --tags
    git semver --next-patch > $VERSION_FILE
    git add $VERSION_FILE
    
@@ -22,7 +24,7 @@ How to make a release?
 .. code-block:: shell-session
 
    VERSION_FILE=`python setup.py --name | sed s@\\\.@/@g`/_version.py
-   git fetch --tags
+   git fetch upstream --tags
    echo "__version__ = '"`git semver --next-patch`"'" > $VERSION_FILE
    git add $VERSION_FILE
    
@@ -31,6 +33,12 @@ If you have formating to do, now is the time...
 .. code-block:: shell-session
 
    QUICK=1 make format && git add -p .
+
+You can also edit the changelog ...
+
+.. code-block:: shell-session
+
+   vim docs/changelog.rst  
 
 3. Run a full test, from a clean virtualenv
 
@@ -44,7 +52,7 @@ If you have formating to do, now is the time...
 
    git commit -m "release: "`python setup.py --version`
    git tag -am `python setup.py --version` `python setup.py --version`
-   git push && git push --tags
+   git push upstream && git push upstream --tags
 
 5. (open-source) Create the distribution & upload to PyPI
 
