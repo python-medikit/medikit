@@ -23,10 +23,11 @@ install_requires = [
     'blessings >=1.6,<1.7',
     'edgy.event >=0.1,<0.2',
     'jinja2 >=2.8,<3.0',
-    'six',
+    'pip-tools >=1.9,<2.0',
+    'six >=1,<2',
     'stevedore >=1,<2',
     'tornado >=4,<5',
-    'yapf',
+    'yapf >=0.16',
 ]
 
 extras_require = {
