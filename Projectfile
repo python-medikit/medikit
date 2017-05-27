@@ -1,25 +1,35 @@
-name = 'edgy.project'
-description = 'Strongly opinionated python project management.'
-license = 'Apache License, Version 2.0'
+from edgy.project import require
 
-# Project site and download urls
-url = 'https://github.com/python-edgy/project'
-download_url = 'https://github.com/python-edgy/project/tarball/{version}'
+git = require('git')
+make = require('make')
+pytest = require('pytest')
+python = require('python')
+sphinx = require('sphinx')
+yapf = require('yapf')
 
-# Author informations (for setup.py, not yet implemented)
-author = 'Romain Dorgueil'
-author_email = 'edgy@rdc.li'
-
-enable_features = {
-    'git',
-    'make',
-    'pytest',
-    'python',
-    'sphinx',
-    'yapf',
-}
-
-install_requires = [
+python.setup(
+    name='edgy.project',
+    description='Strongly opinionated python project management.',
+    license='Apache License, Version 2.0',
+    url='https://github.com/python-edgy/project',
+    download_url='https://github.com/python-edgy/project/tarball/{version}',
+    author='Romain Dorgueil',
+    author_email='edgy@rdc.li',
+    entry_points={
+        'console_scripts': ['edgy-project=edgy.project.__main__:main'],
+        'edgy.project.feature': [
+            'docker = edgy.project.feature.docker:DockerFeature',
+            'git = edgy.project.feature.git:GitFeature',
+            'make = edgy.project.feature.make:MakeFeature',
+            'pylint = edgy.project.feature.pylint:PylintFeature',
+            'pytest = edgy.project.feature.pytest:PytestFeature',
+            'python = edgy.project.feature.python:PythonFeature',
+            'sphinx = edgy.project.feature.sphinx:SphinxFeature',
+            'yapf = edgy.project.feature.yapf:YapfFeature',
+        ],
+    }
+)
+python.add_requirements(
     'blessings >=1.6,<1.7',
     'edgy.event >=0.1,<0.2',
     'jinja2 >=2.8,<3.0',
@@ -28,34 +38,8 @@ install_requires = [
     'stevedore >=1,<2',
     'tornado >=4,<5',
     'yapf >=0.16',
-]
+)
 
-extras_require = {
-    'dev': [
-        'coverage >=4.2,<4.3',
-        'mock >=2.0,<2.1',
-        'pylint >=1.6,<1.7',
-        'pytest >=3.0,<3.1',
-        'pytest-cov >=2.3,<2.4',
-        'sphinx',
-        'sphinx_rtd_theme',
-    ]
-}
+sphinx.set_theme('sphinx_rtd_theme >=0.2,<1.0')
 
-entry_points = {
-    'console_scripts': [
-        'edgy-project=edgy.project.__main__:main'
-    ],
-    'edgy.project.feature': [
-        'flake8 = edgy.project.feature.flake8:Flake8Feature',
-        'git = edgy.project.feature.git:GitFeature',
-        'make = edgy.project.feature.make:MakeFeature',
-        'nosetests = edgy.project.feature.nosetests:NosetestsFeature',
-        'pylint = edgy.project.feature.pylint:PylintFeature',
-        'pytest = edgy.project.feature.pytest:PytestFeature',
-        'python = edgy.project.feature.python:PythonFeature',
-        'sphinx = edgy.project.feature.sphinx:SphinxFeature',
-        'tornado = edgy.project.feature.tornado:TornadoFeature',
-        'yapf = edgy.project.feature.yapf:YapfFeature',
-    ],
-}
+

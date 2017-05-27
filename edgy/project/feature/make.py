@@ -154,6 +154,10 @@ class CleanScript(Script):
 
 
 class MakeFeature(Feature):
+    class Config(Feature.Config):
+        def __init__(self):
+            pass
+
     def configure(self):
         self.makefile = Makefile()
 

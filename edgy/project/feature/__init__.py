@@ -7,6 +7,7 @@ import logging
 import os
 import textwrap
 import tokenize
+from contextlib import ContextDecorator
 
 import six
 from blessings import Terminal
@@ -40,6 +41,16 @@ class Feature(object):
     conflicts = set()
 
     file_type = staticmethod(File)
+
+    class Config(ContextDecorator):
+        def __init__(self):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
 
     def __init__(self, dispatcher):
         """

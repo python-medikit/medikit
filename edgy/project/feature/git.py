@@ -41,5 +41,8 @@ class GitFeature(Feature):
     def on_file_change(self, event):
         os.system('git add {}'.format(event.filename))
 
+    @subscribe('edgy.project.feature.make.on_generate')
+    def on_make_generate(self, event):
+        event.makefile['VERSION'] = "$(shell git describe 2>/dev/null || echo dev)"
 
 __feature__ = GitFeature

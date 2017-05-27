@@ -49,9 +49,9 @@ def _read_configuration(dispatcher, config_filename):
 
     setup = OrderedDict(
         (
-            ('name', None, ), ('description', None, ), ('license', None, ), ('entry_points', {}, ),
-            ('install_requires', [], ), ('extras_require', {}, ), ('data_files', [], ),
-            ('url', 'http://example.com/', ), ('download_url', 'http://example.com/', ),
+            ('name', None,), ('description', None,), ('license', None,), ('entry_points', {},),
+            ('install_requires', [],), ('extras_require', {},), ('data_files', [],),
+            ('url', 'http://example.com/',), ('download_url', 'http://example.com/',),
         )
     )
 
@@ -109,8 +109,8 @@ def handle_init(config_filename, **kwargs):
 
 
 def handle_reqs(config_filename, extra=None, **kwargs):
-    dispatcher = LoggingDispatcher()
-    variables, features, files, setup = _read_configuration(dispatcher, config_filename)
+    config = handle_update(config_filename=config_filename)
+
     pip_command = get_pip_command()
     pip_options, _ = pip_command.parse_args([])
     session = pip_command._build_session(pip_options)
@@ -118,9 +118,9 @@ def handle_reqs(config_filename, extra=None, **kwargs):
 
     tmpfile = tempfile.NamedTemporaryFile(mode='wt', delete=False)
     if extra:
-        tmpfile.write('\n'.join(setup['extras_require'][extra]))
+        tmpfile.write('\n'.join(config['python'].get_requirements(extra=extra)))
     else:
-        tmpfile.write('\n'.join(setup['install_requires']))
+        tmpfile.write('\n'.join(config['python'].get_requirements()))
     tmpfile.flush()
     constraints = list(
         parse_requirements(tmpfile.name, finder=repository.finder, session=repository.session, options=pip_options)
@@ -135,15 +135,13 @@ def handle_reqs(config_filename, extra=None, **kwargs):
 def handle_update(config_filename, **kwargs):
     dispatcher = LoggingDispatcher()
 
-    variables, features, files, setup = _read_configuration(dispatcher, config_filename)
+    variables, features, files, setup, config = _read_configuration(dispatcher, config_filename)
 
     feature_instances = {}
     logger.info(
         'Updating {} with {} features'.
-        format(t.bold(setup['name']), ', '.join(t.bold(t.green(feature_name)) for feature_name in sorted(features)))
+            format(t.bold(setup['name']), ', '.join(t.bold(t.green(feature_name)) for feature_name in sorted(features)))
     )
-
-    sorted_features = sorted(features)
 
     all_features = {}
 
@@ -153,6 +151,7 @@ def handle_update(config_filename, **kwargs):
     mgr = ExtensionManager(namespace='edgy.project.feature')
     mgr.map(register_feature)
 
+    sorted_features = sorted(features)  # sort to have a predictable display order
     for feature_name in sorted_features:
         logger.debug('Initializing feature {}...'.format(t.bold(t.green(feature_name))))
         try:
@@ -173,7 +172,7 @@ def handle_update(config_filename, **kwargs):
         else:
             raise RuntimeError('Required feature {} not found.'.format(feature_name))
 
-    event = ProjectEvent()
+    event = ProjectEvent(config=config)
     event.variables, event.files, event.setup = variables, files, setup
 
     # todo: add listener dump list in debug/verbose mode ?
@@ -183,6 +182,7 @@ def handle_update(config_filename, **kwargs):
     dispatcher.dispatch('edgy.project.on_end', event)
 
     logger.info(u'Done.')
+    return config
 
 
 if __name__ == '__main__':

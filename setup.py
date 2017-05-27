@@ -18,13 +18,19 @@ except NameError:
 
 
 # Get the long description from the README file
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
-    long_description = f.read()
+try:
+    with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
+        long_description = f.read()
+except:
+    long_description = ''
 
 # Get the classifiers from the classifiers file
 tolines = lambda c: list(filter(None, map(lambda s: s.strip(), c.split('\n'))))
-with open(path.join(here, 'classifiers.txt'), encoding='utf-8') as f:
-    classifiers = tolines(f.read())
+try:
+    with open(path.join(here, 'classifiers.txt'), encoding='utf-8') as f:
+        classifiers = tolines(f.read())
+except:
+    classifiers = []
 
 version_ns = {}
 try:
@@ -35,36 +41,42 @@ else:
     version = version_ns.get('__version__', 'dev')
 
 setup(
-    name='edgy.project',
+    author='Romain Dorgueil',
+    author_email='edgy@rdc.li',
     description='Strongly opinionated python project management.',
     license='Apache License, Version 2.0',
-    install_requires=[
-        'blessings >=1.6,<1.7', 'edgy.event >=0.1,<0.2', 'jinja2 >=2.8,<3.0', 'pip-tools >=1.9,<2.0', 'six >=1,<2',
-        'stevedore >=1,<2', 'tornado >=4,<5', 'yapf >=0.16'
-    ],
-    namespace_packages=['edgy'],
+    name='edgy.project',
     version=version,
     long_description=long_description,
     classifiers=classifiers,
     packages=find_packages(exclude=['ez_setup', 'example', 'test']),
     include_package_data=True,
+    install_requires=[
+        'blessings (>= 1.6, < 1.7)', 'edgy.event (>= 0.1, < 0.2)',
+        'jinja2 (>= 2.8, < 3.0)', 'pip-tools (>= 1.9, < 2.0)',
+        'six (>= 1, < 2)', 'stevedore (>= 1, < 2)', 'tornado (>= 4, < 5)',
+        'yapf (>= 0.16)'
+    ],
     extras_require={
         'dev': [
-            'coverage >=4.2,<4.3', 'mock >=2.0,<2.1', 'pylint >=1.6,<1.7', 'pytest >=3.0,<3.1', 'pytest-cov >=2.3,<2.4',
-            'sphinx', 'sphinx_rtd_theme'
+            'coverage (>= 4.4, < 5.0)', 'pytest (>= 3.1, < 4.0)',
+            'pytest-cov (>= 2.5, < 3.0)', 'sphinx (>= 1.6, < 2.0)',
+            'sphinx_rtd_theme (>= 0.2, < 1.0)'
         ]
     },
     entry_points={
         'console_scripts': ['edgy-project=edgy.project.__main__:main'],
         'edgy.project.feature': [
-            'flake8 = edgy.project.feature.flake8:Flake8Feature', 'git = edgy.project.feature.git:GitFeature',
-            'make = edgy.project.feature.make:MakeFeature', 'nosetests = '
-            'edgy.project.feature.nosetests:NosetestsFeature', 'pylint = edgy.project.feature.pylint:PylintFeature',
-            'pytest = edgy.project.feature.pytest:PytestFeature', 'python = edgy.project.feature.python:PythonFeature',
-            'sphinx = edgy.project.feature.sphinx:SphinxFeature', 'tornado = '
-            'edgy.project.feature.tornado:TornadoFeature', 'yapf = edgy.project.feature.yapf:YapfFeature'
+            'docker = edgy.project.feature.docker:DockerFeature',
+            'git = edgy.project.feature.git:GitFeature',
+            'make = edgy.project.feature.make:MakeFeature',
+            'pylint = edgy.project.feature.pylint:PylintFeature',
+            'pytest = edgy.project.feature.pytest:PytestFeature',
+            'python = edgy.project.feature.python:PythonFeature',
+            'sphinx = edgy.project.feature.sphinx:SphinxFeature',
+            'yapf = edgy.project.feature.yapf:YapfFeature'
         ]
     },
     url='https://github.com/python-edgy/project',
-    download_url='https://github.com/python-edgy/project/tarball/{version}'.format(version=version),
-)
+    download_url='https://github.com/python-edgy/project/tarball/{version}'.
+    format(version=version), )
