@@ -1,5 +1,4 @@
 -e .
-
 blessings==1.6
 click==6.7
 edgy.event==0.1.10

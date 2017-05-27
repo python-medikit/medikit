@@ -57,8 +57,9 @@ def read_configuration(dispatcher, filename, variables, features, files, setup):
         if k in ctx:
             variables[k] = ctx[k]
 
-    # deprecated way ...
-    features = (features | set(ctx.pop('enable_features', ()))) - set(ctx.pop('disable_features', ()))
+    # old, deprecated way ...
+    for feature in set(ctx.pop('enable_features', ())) - set(ctx.pop('disable_features', ())):
+        config.require(feature)
 
     # current way ...
     features = features | set(config.keys())

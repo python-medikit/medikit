@@ -10,13 +10,19 @@ TODO
 
 from __future__ import absolute_import, unicode_literals
 
+import itertools
 import os
+import tempfile
 from getpass import getuser
 
 from pip._vendor.distlib.util import parse_requirement
+from pip.req import parse_requirements
+from piptools.repositories import PyPIRepository
+from piptools.resolver import Resolver
+from piptools.scripts.compile import get_pip_command
+from piptools.utils import format_requirement
 
 from edgy.project.events import subscribe
-
 from . import ABSOLUTE_PRIORITY, Feature
 
 
@@ -60,6 +66,9 @@ class PythonFeature(Feature):
                     self._extras_require[extra][req.name] = req
 
             return self
+
+        def get_extras(self):
+            return self._extras_require.keys()
 
         def get_requirements(self, extra=None):
             reqs = self._install_requires if extra is None else self._extras_require[extra]
@@ -158,11 +167,6 @@ class PythonFeature(Feature):
                 '''
         )
 
-        # If requirements files are missing, let's create em with reasonable defaults.
-        # todo use reqs ?
-        self.render_file_inline('requirements.txt', '-e .')
-        self.render_file_inline('requirements-dev.txt', '-e .[dev]')
-
         # Explode package name so we know which python packages are namespaced and
         # which are not.
         package_bits = event.setup['name'].split('.')
@@ -218,6 +222,32 @@ class PythonFeature(Feature):
 
         # Render (with overwriting) the allmighty setup.py
         self.render_file('setup.py', 'python/setup.py.j2', context, override=True)
+
+    @subscribe('edgy.project.on_end', priority=ABSOLUTE_PRIORITY)
+    def on_end(self, event):
+        pip_command = get_pip_command()
+        pip_options, _ = pip_command.parse_args([])
+        session = pip_command._build_session(pip_options)
+        repository = PyPIRepository(pip_options, session)
+
+        for extra in itertools.chain((None,), event.config['python'].get_extras()):
+            tmpfile = tempfile.NamedTemporaryFile(mode='wt', delete=False)
+            if extra:
+                tmpfile.write('\n'.join(event.config['python'].get_requirements(extra=extra)))
+            else:
+                tmpfile.write('\n'.join(event.config['python'].get_requirements()))
+            tmpfile.flush()
+            constraints = list(
+                parse_requirements(tmpfile.name, finder=repository.finder, session=repository.session,
+                                   options=pip_options)
+            )
+            resolver = Resolver(constraints, repository, prereleases=False, clear_caches=False, allow_unsafe=False)
+
+            self.render_file_inline('requirements{}.txt'.format('-' + extra if extra else ''),
+                                    '\n'.join((
+                                        '-e .{}'.format('[' + extra + ']' if extra else ''),
+                                        *sorted(format_requirement(req) for req in resolver.resolve(max_rounds=10)),
+                                    )))
 
 
 __feature__ = PythonFeature

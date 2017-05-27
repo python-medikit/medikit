@@ -5,21 +5,12 @@ from __future__ import absolute_import, print_function
 
 import argparse
 import logging
-import pprint
-import tempfile
-
 import os
 import sys
 from collections import OrderedDict
 
 import tornado.log
 from blessings import Terminal
-from piptools.repositories import PyPIRepository
-from piptools.resolver import Resolver
-from piptools.scripts.compile import get_pip_command
-
-from pip.req import parse_requirements
-from piptools.utils import format_requirement
 from stevedore import ExtensionManager
 
 from edgy.project.config import read_configuration
@@ -78,10 +69,6 @@ def main(args=None):
     parser_update = subparsers.add_parser('update', help='Update current project.')
     parser_update.set_defaults(handler=handle_update)
 
-    parser_reqs = subparsers.add_parser('reqs', help='List requirements.')
-    parser_reqs.set_defaults(handler=handle_reqs)
-    parser_reqs.add_argument('--extra', '-e', default=None)
-
     options = parser.parse_args(args if args is not None else sys.argv[1:])
     if options.verbose:
         logger.setLevel(logging.DEBUG)
@@ -106,30 +93,6 @@ def handle_init(config_filename, **kwargs):
     initializer = ProjectInitializer(dispatcher)
     initializer.execute()
     return handle_update(config_filename)
-
-
-def handle_reqs(config_filename, extra=None, **kwargs):
-    config = handle_update(config_filename=config_filename)
-
-    pip_command = get_pip_command()
-    pip_options, _ = pip_command.parse_args([])
-    session = pip_command._build_session(pip_options)
-    repository = PyPIRepository(pip_options, session)
-
-    tmpfile = tempfile.NamedTemporaryFile(mode='wt', delete=False)
-    if extra:
-        tmpfile.write('\n'.join(config['python'].get_requirements(extra=extra)))
-    else:
-        tmpfile.write('\n'.join(config['python'].get_requirements()))
-    tmpfile.flush()
-    constraints = list(
-        parse_requirements(tmpfile.name, finder=repository.finder, session=repository.session, options=pip_options)
-    )
-
-    resolver = Resolver(constraints, repository, prereleases=False, clear_caches=False, allow_unsafe=False)
-    print('-e .{}'.format('[' + extra + ']' if extra else ''))
-    print()
-    print('\n'.join(sorted(format_requirement(req) for req in resolver.resolve(max_rounds=10))))
 
 
 def handle_update(config_filename, **kwargs):
@@ -182,7 +145,6 @@ def handle_update(config_filename, **kwargs):
     dispatcher.dispatch('edgy.project.on_end', event)
 
     logger.info(u'Done.')
-    return config
 
 
 if __name__ == '__main__':
