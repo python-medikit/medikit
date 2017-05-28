@@ -58,7 +58,7 @@ You can also edit the changelog ...
 
 .. code-block:: shell
 
-   (VERSION=`python setup.py --version`; rm -rf .release; mkdir .release; git archive `git rev-parse $VERSION` | tar xf - -C .release; cd .release/; python setup.py sdist bdist bdist_egg bdist_wheel; twine upload dist/*-`python setup.py --version`*)
+   (VERSION=`python setup.py --version`; pip install -U twine; rm -rf .release; mkdir .release; git archive `git rev-parse $VERSION` | tar xf - -C .release; cd .release/; python setup.py sdist bdist bdist_egg bdist_wheel; twine upload dist/*-`python setup.py --version`*)
 
 5. (private) Build containers, push and patch kubernetes
 
