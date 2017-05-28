@@ -19,11 +19,13 @@ class PytestFeature(Feature):
 
     @subscribe('edgy.project.feature.python.on_generate')
     def on_python_generate(self, event):
-        event.config['python'].add_requirements(dev=[
-            'coverage >=4.4,<5.0',
-            'pytest >=3.1,<4.0',
-            'pytest-cov >=2.5,<3.0',
-        ])
+        event.config['python'].add_requirements(
+            dev=[
+                'coverage >=4.4,<5.0',
+                'pytest >=3.1,<4.0',
+                'pytest-cov >=2.5,<3.0',
+            ]
+        )
 
     @subscribe('edgy.project.feature.make.on_generate', priority=SUPPORT_PRIORITY)
     def on_make_generate(self, event):
@@ -35,7 +37,7 @@ class PytestFeature(Feature):
         makefile.add_target(
             'test', '''
             $(PYTEST) $(PYTEST_OPTIONS) tests
-        ''', deps=('install-dev',), phony=True
+        ''', deps=('install-dev', ), phony=True
         )
 
     @subscribe('edgy.project.on_start', priority=SUPPORT_PRIORITY)

@@ -40,9 +40,9 @@ def _read_configuration(dispatcher, config_filename):
 
     setup = OrderedDict(
         (
-            ('name', None,), ('description', None,), ('license', None,), ('entry_points', {},),
-            ('install_requires', [],), ('extras_require', {},), ('data_files', [],),
-            ('url', 'http://example.com/',), ('download_url', 'http://example.com/',),
+            ('name', None, ), ('description', None, ), ('license', None, ), ('entry_points', {}, ),
+            ('install_requires', [], ), ('extras_require', {}, ), ('data_files', [], ),
+            ('url', 'http://example.com/', ), ('download_url', 'http://example.com/', ),
         )
     )
 
@@ -103,7 +103,7 @@ def handle_update(config_filename, **kwargs):
     feature_instances = {}
     logger.info(
         'Updating {} with {} features'.
-            format(t.bold(setup['name']), ', '.join(t.bold(t.green(feature_name)) for feature_name in sorted(features)))
+        format(t.bold(setup['name']), ', '.join(t.bold(t.green(feature_name)) for feature_name in sorted(features)))
     )
 
     all_features = {}

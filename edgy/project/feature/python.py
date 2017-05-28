@@ -43,10 +43,7 @@ class PythonFeature(Feature):
             if item == 'install_requires':
                 return list(self.get_requirements())
             if item == 'extras_require':
-                return {
-                    extra: list(self.get_requirements(extra=extra))
-                    for extra in sorted(self._extras_require)
-                }
+                return {extra: list(self.get_requirements(extra=extra)) for extra in sorted(self._extras_require)}
             return self._setup[item]
 
         def add_requirements(self, *reqs, **kwargs):
@@ -108,12 +105,12 @@ class PythonFeature(Feature):
         """
         # Python related environment
         event.makefile.updateleft(
-            ('PACKAGE', event.package_name,),
-            ('PYTHON', '$(shell which python)',),
-            ('PYTHON_BASENAME', '$(shell basename $(PYTHON))',),
-            ('PYTHON_DIRNAME', '$(shell dirname $(PYTHON))',),
-            ('PYTHON_REQUIREMENTS_FILE', 'requirements.txt',),
-            ('PYTHON_REQUIREMENTS_DEV_FILE', 'requirements-dev.txt',),
+            ('PACKAGE', event.package_name, ),
+            ('PYTHON', '$(shell which python)', ),
+            ('PYTHON_BASENAME', '$(shell basename $(PYTHON))', ),
+            ('PYTHON_DIRNAME', '$(shell dirname $(PYTHON))', ),
+            ('PYTHON_REQUIREMENTS_FILE', 'requirements.txt', ),
+            ('PYTHON_REQUIREMENTS_DEV_FILE', 'requirements-dev.txt', ),
         )
 
         event.makefile['PIP'] = '$(PYTHON_DIRNAME)/pip'
@@ -230,7 +227,7 @@ class PythonFeature(Feature):
         session = pip_command._build_session(pip_options)
         repository = PyPIRepository(pip_options, session)
 
-        for extra in itertools.chain((None,), event.config['python'].get_extras()):
+        for extra in itertools.chain((None, ), event.config['python'].get_extras()):
             tmpfile = tempfile.NamedTemporaryFile(mode='wt', delete=False)
             if extra:
                 tmpfile.write('\n'.join(event.config['python'].get_requirements(extra=extra)))
@@ -238,16 +235,21 @@ class PythonFeature(Feature):
                 tmpfile.write('\n'.join(event.config['python'].get_requirements()))
             tmpfile.flush()
             constraints = list(
-                parse_requirements(tmpfile.name, finder=repository.finder, session=repository.session,
-                                   options=pip_options)
+                parse_requirements(
+                    tmpfile.name, finder=repository.finder, session=repository.session, options=pip_options
+                )
             )
             resolver = Resolver(constraints, repository, prereleases=False, clear_caches=False, allow_unsafe=False)
 
-            self.render_file_inline('requirements{}.txt'.format('-' + extra if extra else ''),
-                                    '\n'.join((
-                                        '-e .{}'.format('[' + extra + ']' if extra else ''),
-                                        *sorted(format_requirement(req) for req in resolver.resolve(max_rounds=10)),
-                                    )))
+            self.render_file_inline(
+                'requirements{}.txt'.format('-' + extra if extra else ''),
+                '\n'.join(
+                    (
+                        '-e .{}'.format('[' + extra + ']' if extra else ''),
+                        *sorted(format_requirement(req) for req in resolver.resolve(max_rounds=10)),
+                    )
+                )
+            )
 
 
 __feature__ = PythonFeature

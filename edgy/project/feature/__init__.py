@@ -104,7 +104,9 @@ class Feature(object):
         with self.file(target, override=override) as f:
             content = format_file_content(Template(template_string).render(**(context or {})))
             if force_python or target.endswith('.py'):
-                content, modified = yapf_api.FormatCode(content, filename=target, style_config=settings.YAPF_STYLE_CONFIG)
+                content, modified = yapf_api.FormatCode(
+                    content, filename=target, style_config=settings.YAPF_STYLE_CONFIG
+                )
             f.write(content)
             self._log_file(target, override, content)
 

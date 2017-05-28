@@ -12,9 +12,7 @@ class PylintFeature(Feature):
 
     @subscribe('edgy.project.feature.python.on_generate')
     def on_python_generate(self, event):
-        event.config['python'].add_requirements(dev=[
-            'pylint >=1.6,<1.7'
-        ])
+        event.config['python'].add_requirements(dev=['pylint >=1.6,<1.7'])
 
     @subscribe('edgy.project.feature.make.on_generate', priority=SUPPORT_PRIORITY)
     def on_make_generate(self, event):

@@ -43,7 +43,7 @@ class SphinxFeature(Feature):
             '''
             $(SPHINX_BUILD) -b html -D latex_paper_size=a4 $(SPHINX_OPTIONS) $(SPHINX_SOURCEDIR) $(SPHINX_BUILDDIR)/html
         ''',
-            deps=('install-dev',),
+            deps=('install-dev', ),
             phony=True
         )
 

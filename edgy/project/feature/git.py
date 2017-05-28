@@ -45,4 +45,5 @@ class GitFeature(Feature):
     def on_make_generate(self, event):
         event.makefile['VERSION'] = "$(shell git describe 2>/dev/null || echo dev)"
 
+
 __feature__ = GitFeature

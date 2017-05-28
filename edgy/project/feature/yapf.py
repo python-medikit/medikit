@@ -29,21 +29,25 @@ class YapfFeature(Feature):
         makefile['YAPF'] = '$(PYTHON_DIRNAME)/yapf'
         makefile['YAPF_OPTIONS'] = '-rip'
         makefile.add_target(
-            'format', '''
+            'format',
+            '''
             $(YAPF) $(YAPF_OPTIONS) .
             $(YAPF) $(YAPF_OPTIONS) Projectfile
-        ''', deps=('install-dev',), phony=True
+        ''',
+            deps=('install-dev', ),
+            phony=True
         )
 
     @subscribe('edgy.project.on_start', priority=SUPPORT_PRIORITY)
     def on_start(self, event):
         self.render_file('.style.yapf', 'yapf/style.yapf.j2')
 
-    @subscribe('edgy.project.on_start', priority=ABSOLUTE_PRIORITY-1)
+    @subscribe('edgy.project.on_start', priority=ABSOLUTE_PRIORITY - 1)
     def on_before_start(self, event):
         style_config = os.path.join(os.getcwd(), '.style.yapf')
         if os.path.exists(style_config):
-            self.dispatcher.info('YAPF_STYLE_CONFIG = '+style_config)
+            self.dispatcher.info('YAPF_STYLE_CONFIG = ' + style_config)
             settings.YAPF_STYLE_CONFIG = style_config
+
 
 __feature__ = YapfFeature

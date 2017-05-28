@@ -52,31 +52,24 @@ setup(
     packages=find_packages(exclude=['ez_setup', 'example', 'test']),
     include_package_data=True,
     install_requires=[
-        'blessings (>= 1.6, < 1.7)', 'edgy.event (>= 0.1, < 0.2)',
-        'jinja2 (>= 2.8, < 3.0)', 'pip-tools (>= 1.9, < 2.0)',
-        'six (>= 1, < 2)', 'stevedore (>= 1, < 2)', 'tornado (>= 4, < 5)',
-        'yapf (>= 0.16)'
+        'blessings (>= 1.6, < 1.7)', 'edgy.event (>= 0.1, < 0.2)', 'jinja2 (>= 2.8, < 3.0)',
+        'pip-tools (>= 1.9, < 2.0)', 'six (>= 1, < 2)', 'stevedore (>= 1, < 2)', 'tornado (>= 4, < 5)', 'yapf (>= 0.16)'
     ],
     extras_require={
         'dev': [
-            'coverage (>= 4.4, < 5.0)', 'pytest (>= 3.1, < 4.0)',
-            'pytest-cov (>= 2.5, < 3.0)', 'sphinx (>= 1.6, < 2.0)',
-            'sphinx_rtd_theme (>= 0.2, < 1.0)'
+            'coverage (>= 4.4, < 5.0)', 'pytest (>= 3.1, < 4.0)', 'pytest-cov (>= 2.5, < 3.0)',
+            'sphinx (>= 1.6, < 2.0)', 'sphinx_rtd_theme (>= 0.2, < 1.0)'
         ]
     },
     entry_points={
         'console_scripts': ['edgy-project=edgy.project.__main__:main'],
         'edgy.project.feature': [
-            'docker = edgy.project.feature.docker:DockerFeature',
-            'git = edgy.project.feature.git:GitFeature',
-            'make = edgy.project.feature.make:MakeFeature',
-            'pylint = edgy.project.feature.pylint:PylintFeature',
-            'pytest = edgy.project.feature.pytest:PytestFeature',
-            'python = edgy.project.feature.python:PythonFeature',
-            'sphinx = edgy.project.feature.sphinx:SphinxFeature',
-            'yapf = edgy.project.feature.yapf:YapfFeature'
+            'docker = edgy.project.feature.docker:DockerFeature', 'git = edgy.project.feature.git:GitFeature',
+            'make = edgy.project.feature.make:MakeFeature', 'pylint = edgy.project.feature.pylint:PylintFeature',
+            'pytest = edgy.project.feature.pytest:PytestFeature', 'python = edgy.project.feature.python:PythonFeature',
+            'sphinx = edgy.project.feature.sphinx:SphinxFeature', 'yapf = edgy.project.feature.yapf:YapfFeature'
         ]
     },
     url='https://github.com/python-edgy/project',
-    download_url='https://github.com/python-edgy/project/tarball/{version}'.
-    format(version=version), )
+    download_url='https://github.com/python-edgy/project/tarball/{version}'.format(version=version),
+)
