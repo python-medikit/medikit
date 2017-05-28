@@ -10,3 +10,5 @@ DEFAULT_FILES = {
     'classifiers',
     'version',
 }
+
+YAPF_STYLE_CONFIG = 'pep8'
