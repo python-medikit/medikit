@@ -14,15 +14,6 @@ Considering the main project repository is setup as "upstream" remote for git...
 
 .. code-block:: shell-session
 
-   VERSION_FILE=version.txt
-   git fetch upstream --tags
-   git semver --next-patch > $VERSION_FILE
-   git add $VERSION_FILE
-   
-2. (alt) Or with _version.py...
-
-.. code-block:: shell-session
-
    VERSION_FILE=`python setup.py --name | sed s@\\\.@/@g`/_version.py
    git fetch upstream --tags
    echo "__version__ = '"`git semver --next-patch`"'" > $VERSION_FILE
