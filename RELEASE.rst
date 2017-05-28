@@ -44,7 +44,7 @@ You can also edit the changelog ...
 
 .. code-block:: shell
 
-   make clean install lint test docs
+   make clean install test docs
 
 4. Create the git release
 
