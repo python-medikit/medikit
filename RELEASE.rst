@@ -18,18 +18,19 @@ Considering the main project repository is setup as "upstream" remote for git...
    git fetch upstream --tags
    echo "__version__ = '"`git semver --next-patch`"'" > $VERSION_FILE
    git add $VERSION_FILE
-   
+
+Edit the changelog ...
+
+.. code-block:: shell-session
+
+   git log --oneline --no-merges 0.2.2..
+   vim docs/changelog.rst
+
 If you have formating to do, now is the time...
 
 .. code-block:: shell-session
 
    QUICK=1 make format && git add -p .
-
-You can also edit the changelog ...
-
-.. code-block:: shell-session
-
-   vim docs/changelog.rst  
 
 3. Run a full test, from a clean virtualenv
 
