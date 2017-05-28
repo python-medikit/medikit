@@ -54,14 +54,7 @@ You can also edit the changelog ...
    git tag -am `python setup.py --version` `python setup.py --version`
    git push upstream && git push upstream --tags
 
-5. (open-source) Create the distribution & upload to PyPI
-
-.. code-block:: shell
-
-   python setup.py sdist bdist bdist_egg bdist_wheel
-   twine upload dist/*-`python setup.py --version`*
-
-5. (open-source, paranoid) Create the distribution & upload to PyPI in a brand new clone.
+5. (open-source) Create the distribution in a sandbox directory & upload to PyPI.
 
 .. code-block:: shell
 
