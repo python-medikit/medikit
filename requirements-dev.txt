@@ -18,7 +18,7 @@ requests==2.16.1
 six==1.10.0
 snowballstemmer==1.2.1
 sphinx-rtd-theme==0.2.4
-sphinx==1.6.1
+sphinx==1.6.2
 sphinxcontrib-websupport==1.0.1
 typing==3.6.1
 urllib3==1.21.1
