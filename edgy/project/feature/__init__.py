@@ -7,6 +7,7 @@ import logging
 import os
 import textwrap
 import tokenize
+from contextlib import ContextDecorator
 
 import six
 from blessings import Terminal
@@ -17,6 +18,7 @@ from edgy.project.events import attach_subscriptions
 from edgy.project.file import File
 from edgy.project.settings import DEFAULT_FEATURES
 from edgy.project.util import format_file_content
+from edgy.project import settings
 
 ABSOLUTE_PRIORITY = -100
 HIGH_PRIORITY = -80
@@ -40,6 +42,16 @@ class Feature(object):
     conflicts = set()
 
     file_type = staticmethod(File)
+
+    class Config(ContextDecorator):
+        def __init__(self):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
 
     def __init__(self, dispatcher):
         """
@@ -92,7 +104,9 @@ class Feature(object):
         with self.file(target, override=override) as f:
             content = format_file_content(Template(template_string).render(**(context or {})))
             if force_python or target.endswith('.py'):
-                content, modified = yapf_api.FormatCode(content, filename=target, style_config='pep8')
+                content, modified = yapf_api.FormatCode(
+                    content, filename=target, style_config=settings.YAPF_STYLE_CONFIG
+                )
             f.write(content)
             self._log_file(target, override, content)
 

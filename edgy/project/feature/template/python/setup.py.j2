@@ -39,7 +39,7 @@ else:
     version = version_ns.get('__version__', 'dev')
 
 setup(
-    {% for k, v in setup.items() -%}
+    {% for k, v in setup.items()|sort -%}
         {{ k }} = {{ v | pprint }},{{ '\n    ' }}
     {%- endfor -%}
     version = version,
@@ -47,9 +47,6 @@ setup(
     classifiers = classifiers,
     packages = find_packages(exclude=['ez_setup', 'example', 'test']),
     include_package_data = True,
-    {% if data_files -%}
-        data_files = {{ data_files | pprint }},{{ '\n    ' }}
-    {%- endif -%}
     {% if install_requires -%}
         install_requires = {{ install_requires | pprint }},{{ '\n    ' }}
     {%- endif -%}

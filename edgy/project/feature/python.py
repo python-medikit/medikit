@@ -10,11 +10,19 @@ TODO
 
 from __future__ import absolute_import, unicode_literals
 
+import itertools
 import os
+import tempfile
 from getpass import getuser
 
-from edgy.project.events import subscribe
+from pip._vendor.distlib.util import parse_requirement
+from pip.req import parse_requirements
+from piptools.repositories import PyPIRepository
+from piptools.resolver import Resolver
+from piptools.scripts.compile import get_pip_command
+from piptools.utils import format_requirement
 
+from edgy.project.events import subscribe
 from . import ABSOLUTE_PRIORITY, Feature
 
 
@@ -24,6 +32,52 @@ class PythonFeature(Feature):
     generation, a few metadata files used by setuptools...
 
     """
+
+    class Config(Feature.Config):
+        def __init__(self):
+            self._setup = {}
+            self._install_requires = {}
+            self._extras_require = {}
+
+        def get(self, item):
+            if item == 'install_requires':
+                return list(self.get_requirements())
+            if item == 'extras_require':
+                return {extra: list(self.get_requirements(extra=extra)) for extra in sorted(self._extras_require)}
+            return self._setup[item]
+
+        def add_requirements(self, *reqs, **kwargs):
+            for req in reqs:
+                req = parse_requirement(req)
+                if req.name in self._install_requires:
+                    raise ValueError('duplicate requirement for {}'.format(req.name))
+                self._install_requires[req.name] = req
+
+            for extra, reqs in kwargs.items():
+                if not extra in self._extras_require:
+                    self._extras_require[extra] = {}
+                for req in reqs:
+                    req = parse_requirement(req)
+                    if req.name in self._extras_require[extra]:
+                        raise ValueError('duplicate requirement for {}'.format(req.name))
+                    self._extras_require[extra][req.name] = req
+
+            return self
+
+        def get_extras(self):
+            return self._extras_require.keys()
+
+        def get_requirements(self, extra=None):
+            reqs = self._install_requires if extra is None else self._extras_require[extra]
+            for req in sorted(reqs):
+                yield reqs[req].requirement
+
+        def setup(self, **kwargs):
+            self._setup.update(kwargs)
+            return self
+
+        def get_setup(self):
+            return self._setup
 
     @subscribe('edgy.project.feature.make.on_generate', priority=ABSOLUTE_PRIORITY)
     def on_make_generate(self, event):
@@ -110,10 +164,6 @@ class PythonFeature(Feature):
                 '''
         )
 
-        # If requirements files are missing, let's create em with reasonable defaults.
-        self.render_file_inline('requirements.txt', '-e .')
-        self.render_file_inline('requirements-dev.txt', '-e .[dev]')
-
         # Explode package name so we know which python packages are namespaced and
         # which are not.
         package_bits = event.setup['name'].split('.')
@@ -143,30 +193,63 @@ class PythonFeature(Feature):
             version = '0.0.0'
         self.render_file_inline(os.path.join(package_dir, '_version.py'), "__version__ = '{}'".format(version))
 
+        setup = event.config['python'].get_setup()
+
         context = {
-            'url': event.setup.pop('url', 'http://example.com/'),
-            'download_url': event.setup.pop('download_url', 'http://example.com/'),
+            'url': setup.pop('url', 'http://example.com/'),
+            'download_url': setup.pop('download_url', 'http://example.com/'),
         }
 
         for k, v in context.items():
             context[k] = context[k].format(
-                name=event.setup['name'],
+                name=setup['name'],
                 user=getuser(),
                 version='{version}',
             )
 
         context.update(
             {
-                'data_files': event.setup.pop('data_files', {}),
-                'entry_points': event.setup.pop('entry_points', {}),
-                'extras_require': event.setup.pop('extras_require', {}),
-                'install_require': event.setup.pop('install_require', {}),
-                'setup': event.setup,
+                'data_files': setup.pop('data_files', {}),
+                'entry_points': setup.pop('entry_points', {}),
+                'extras_require': event.config['python'].get('extras_require'),
+                'install_requires': event.config['python'].get('install_requires'),
+                'setup': setup,
             }
         )
 
         # Render (with overwriting) the allmighty setup.py
         self.render_file('setup.py', 'python/setup.py.j2', context, override=True)
+
+    @subscribe('edgy.project.on_end', priority=ABSOLUTE_PRIORITY)
+    def on_end(self, event):
+        pip_command = get_pip_command()
+        pip_options, _ = pip_command.parse_args([])
+        session = pip_command._build_session(pip_options)
+        repository = PyPIRepository(pip_options, session)
+
+        for extra in itertools.chain((None, ), event.config['python'].get_extras()):
+            tmpfile = tempfile.NamedTemporaryFile(mode='wt', delete=False)
+            if extra:
+                tmpfile.write('\n'.join(event.config['python'].get_requirements(extra=extra)))
+            else:
+                tmpfile.write('\n'.join(event.config['python'].get_requirements()))
+            tmpfile.flush()
+            constraints = list(
+                parse_requirements(
+                    tmpfile.name, finder=repository.finder, session=repository.session, options=pip_options
+                )
+            )
+            resolver = Resolver(constraints, repository, prereleases=False, clear_caches=False, allow_unsafe=False)
+
+            self.render_file_inline(
+                'requirements{}.txt'.format('-' + extra if extra else ''),
+                '\n'.join(
+                    (
+                        '-e .{}'.format('[' + extra + ']' if extra else ''),
+                        *sorted(format_requirement(req) for req in resolver.resolve(max_rounds=10)),
+                    )
+                )
+            )
 
 
 __feature__ = PythonFeature

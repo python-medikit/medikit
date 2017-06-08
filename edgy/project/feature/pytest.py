@@ -17,6 +17,16 @@ class PytestFeature(Feature):
     requires = {'python'}
     conflicts = {'nosetests'}
 
+    @subscribe('edgy.project.feature.python.on_generate')
+    def on_python_generate(self, event):
+        event.config['python'].add_requirements(
+            dev=[
+                'coverage >=4.4,<5.0',
+                'pytest >=3.1,<4.0',
+                'pytest-cov >=2.5,<3.0',
+            ]
+        )
+
     @subscribe('edgy.project.feature.make.on_generate', priority=SUPPORT_PRIORITY)
     def on_make_generate(self, event):
         makefile = event.makefile

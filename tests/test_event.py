@@ -22,9 +22,9 @@ class TestProjectEvent(TestCase):
         assert len(e.setup) == len(setup)
 
     def test_basics(self):
-        self._test_constructor()
-        self._test_constructor(variables={}, files={}, setup={})
-        self._test_constructor(variables={'foo': 'bar'}, files={}, setup={'name': 'my.pkg'})
+        self._test_constructor(config=None)
+        self._test_constructor(config=None, variables={}, files={}, setup={})
+        self._test_constructor(config=None, variables={'foo': 'bar'}, files={}, setup={'name': 'my.pkg'})
 
         with pytest.raises(TypeError):
             self._test_constructor(unknown='foo')
