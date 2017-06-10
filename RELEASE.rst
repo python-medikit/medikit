@@ -7,7 +7,7 @@ Considering the main project repository is setup as "upstream" remote for git...
 
 .. code-block:: shell-session
 
-   git pull upstream
+   git pull upstream `git rev-parse --abbrev-ref HEAD`
    pip install -U pip wheel twine git-semver 
 
 2. Update version.txt with the new version number
@@ -44,7 +44,12 @@ If you have formating to do, now is the time...
 
    git commit -m "release: "`python setup.py --version`
    git tag -am `python setup.py --version` `python setup.py --version`
-   git push upstream && git push upstream --tags
+   
+   # Push to origin
+   git push origin `git rev-parse --abbrev-ref HEAD` --tags
+   
+   # Push to upstream
+   git push upstream `git rev-parse --abbrev-ref HEAD` --tags
 
 5. (open-source) Create the distribution in a sandbox directory & upload to PyPI.
 
