@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.3.1
+:::::
+
+* Ignore the current package if it is a requirement of a dependency.
+
 0.3.0
 :::::
 

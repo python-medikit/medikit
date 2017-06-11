@@ -245,8 +245,10 @@ class PythonFeature(Feature):
                 'requirements{}.txt'.format('-' + extra if extra else ''),
                 '\n'.join(
                     (
-                        '-e .{}'.format('[' + extra + ']' if extra else ''),
-                        *sorted(format_requirement(req) for req in resolver.resolve(max_rounds=10)),
+                        '-e .{}'.format('[' + extra + ']' if extra else ''), *sorted(
+                            format_requirement(req) for req in resolver.resolve(max_rounds=10)
+                            if req.name != event.config['python'].get('name')
+                        ),
                     )
                 )
             )
