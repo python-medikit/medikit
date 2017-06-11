@@ -55,7 +55,13 @@ If you have formating to do, now is the time...
 
 .. code-block:: shell
 
-   (VERSION=`python setup.py --version`; rm -rf .release; mkdir .release; git archive `git rev-parse $VERSION` | tar xf - -C .release; cd .release/; python setup.py sdist bdist bdist_egg bdist_wheel; pip install -U twine; twine upload dist/*-`python setup.py --version`*)
+    (VERSION=`python setup.py --version`; rm -rf .release; mkdir .release; git archive `git rev-parse $VERSION` | tar xf - -C .release; cd .release/; python setup.py sdist bdist bdist_egg bdist_wheel; pip install -U twine; twine upload dist/*-`python setup.py --version`*)
+
+Or multi version...
+
+.. code-block:: shell
+
+    pip install -U twine; (VERSION=`python setup.py --version`; rm -rf .release; mkdir .release; git archive `git rev-parse $VERSION` | tar xf - -C .release; cd .release/; for v in 3.5 3.6; do pip$v install -U wheel; python$v setup.py sdist bdist_egg bdist_wheel; done; twine upload dist/*-`python setup.py --version`*)
 
 5. (private) Build containers, push and patch kubernetes
 
