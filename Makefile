@@ -1,7 +1,7 @@
 # This file has been auto-generated.
 # All changes will be lost, see Projectfile.
 #
-# Updated at 2017-05-27 16:12:30.807763
+# Updated at 2017-06-11 09:57:42.506905
 
 PACKAGE ?= edgy.project
 PYTHON ?= $(shell which python)
@@ -48,3 +48,4 @@ $(SPHINX_SOURCEDIR): install-dev
 
 format: install-dev
 	$(YAPF) $(YAPF_OPTIONS) .
+	$(YAPF) $(YAPF_OPTIONS) Projectfile
