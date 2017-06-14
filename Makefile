@@ -1,7 +1,7 @@
 # This file has been auto-generated.
 # All changes will be lost, see Projectfile.
 #
-# Updated at 2017-06-11 09:57:42.506905
+# Updated at 2017-06-14 19:06:12.296444
 
 PACKAGE ?= edgy.project
 PYTHON ?= $(shell which python)
@@ -18,7 +18,7 @@ SPHINX_BUILD ?= $(PYTHON_DIRNAME)/sphinx-build
 SPHINX_OPTIONS ?= 
 SPHINX_SOURCEDIR ?= docs
 SPHINX_BUILDDIR ?= $(SPHINX_SOURCEDIR)/_build
-YAPF ?= $(PYTHON_DIRNAME)/yapf
+YAPF ?= $(PYTHON) -m yapf
 YAPF_OPTIONS ?= -rip
 VERSION ?= $(shell git describe 2>/dev/null || echo dev)
 

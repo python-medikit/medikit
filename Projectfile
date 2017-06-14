@@ -41,5 +41,3 @@ python.add_requirements(
 )
 
 sphinx.set_theme('sphinx_rtd_theme >=0.2,<1.0')
-
-
