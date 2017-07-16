@@ -19,6 +19,12 @@ Considering the main project repository is setup as "upstream" remote for git...
    echo "__version__ = '"`git semver --next-patch`"'" > $VERSION_FILE
    git add $VERSION_FILE
 
+And maybe update the frozen dependencies and makefile content (edgy-project managed projects only)
+
+.. code-block:: shell-session
+
+    rm requirements*; edgy-project update
+
 Edit the changelog ...
 
 .. code-block:: shell-session
