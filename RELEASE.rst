@@ -29,7 +29,7 @@ Edit the changelog ...
 
 .. code-block:: shell-session
 
-   git log --oneline --no-merges 0.2.2..
+   git log --oneline --no-merges --pretty=format:"* %s (%an)" `git tag | tail -n 1`..
    vim docs/changelog.rst
 
 If you have formating to do, now is the time...
