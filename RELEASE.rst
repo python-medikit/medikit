@@ -25,11 +25,16 @@ And maybe update the frozen dependencies and makefile content (edgy-project mana
 
     rm requirements*; edgy-project update
 
-Edit the changelog ...
+Generate a changelog...
 
 .. code-block:: shell-session
 
    git log --oneline --no-merges --pretty=format:"* %s (%an)" `git tag | tail -n 1`..
+   
+And paste it to project changelog, then format a bit. Everything that only concerns non-code stuff should be removed (documentation, etc.) and maybe some commits grouped so it's more readable for an human, and more logically organized than the raw git log.
+
+.. code-block:: shell-session
+
    vim docs/changelog.rst
 
 If you have formating to do, now is the time...
