@@ -8,6 +8,6 @@ markupsafe==1.0
 pbr==3.0.1
 pip-tools==1.9.0
 six==1.10.0
-stevedore==1.23.0
+stevedore==1.25.0
 tornado==4.5.1
 yapf==0.16.2
