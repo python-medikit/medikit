@@ -19,11 +19,22 @@ Considering the main project repository is setup as "upstream" remote for git...
    echo "__version__ = '"`git semver --next-patch`"'" > $VERSION_FILE
    git add $VERSION_FILE
 
-Edit the changelog ...
+And maybe update the frozen dependencies and makefile content (edgy-project managed projects only)
 
 .. code-block:: shell-session
 
-   git log --oneline --no-merges 0.2.2..
+    rm requirements*; edgy-project update
+
+Generate a changelog...
+
+.. code-block:: shell-session
+
+   git log --oneline --no-merges --pretty=format:"* %s (%an)" `git tag | tail -n 1`..
+   
+And paste it to project changelog, then format a bit. Everything that only concerns non-code stuff should be removed (documentation, etc.) and maybe some commits grouped so it's more readable for an human, and more logically organized than the raw git log.
+
+.. code-block:: shell-session
+
    vim docs/changelog.rst
 
 If you have formating to do, now is the time...
@@ -67,7 +78,7 @@ And maybe, test that the release is now installable...
 
 .. code-block:: shell
 
-    (name=`python setup.py --name`; for v in 3.5 3.6; do python$v -m pip install -U virtualenv; python$v -m virtualenv -p python$v .rtest$v; cd .rtest$v; bin/pip install $name; bin/python -c "import $name; print($name.__name__, $name.__version__);"; cd ..; rm -rf .rtest$v; done; )
+    (name=`python setup.py --name`; for v in 3.5 3.6; do python$v -m pip install -U virtualenv; python$v -m virtualenv -p python$v .rtest$v; cd .rtest$v; bin/pip --no-cache-dir install $name; bin/python -c "import $name; print($name.__name__, $name.__version__);"; cd ..; rm -rf .rtest$v; done; )
 
 5. (private) Build containers, push and patch kubernetes
 
