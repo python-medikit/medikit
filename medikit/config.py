@@ -13,7 +13,7 @@ class ConfigurationRegistry():
         def register_feature(ext):
             self._features[ext.name] = ext.plugin
 
-        mgr = ExtensionManager(namespace='edgy.project.feature')
+        mgr = ExtensionManager(namespace='medikit.feature')
         mgr.map(register_feature)
 
     def __getitem__(self, item):
@@ -42,16 +42,16 @@ class ConfigurationRegistry():
 def read_configuration(dispatcher, filename, variables, features, files, setup):
     config = ConfigurationRegistry()
 
-    import edgy.project
-    _require_backup = edgy.project.require
-    edgy.project.listen = dispatcher.listen
-    edgy.project.require = config.require
+    import medikit
+    _require_backup = medikit.require
+    medikit.listen = dispatcher.listen
+    medikit.require = config.require
     # todo runpy ?
     with open(filename) as f:
         code = compile(f.read(), filename, 'exec')
     ctx = {'listen': dispatcher.listen}
     exec(code, ctx)
-    edgy.project.require = _require_backup
+    medikit.require = _require_backup
 
     for k in variables.keys():
         if k in ctx:

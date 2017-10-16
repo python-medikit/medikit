@@ -1,2 +1,2 @@
 include *.txt
-recursive-include edgy/project *.j2
+recursive-include medikit *.j2

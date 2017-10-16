@@ -1,4 +1,6 @@
-from edgy.project import require
+# medikit (see github.com/python-edgy/medikit)
+
+from medikit import require
 
 git = require('git')
 make = require('make')
@@ -8,24 +10,27 @@ sphinx = require('sphinx')
 yapf = require('yapf')
 
 python.setup(
-    name='edgy.project',
-    description='Strongly opinionated python project management.',
+    name='medikit',
+    description='Opinionated python 3.5+ project management.',
     license='Apache License, Version 2.0',
-    url='https://github.com/python-edgy/project',
-    download_url='https://github.com/python-edgy/project/tarball/{version}',
+    url='https://github.com/python-medikit/medikit',
+    download_url='https://github.com/python-medikit/medikit/tarball/{version}',
     author='Romain Dorgueil',
-    author_email='edgy@rdc.li',
+    author_email='medikit@rdc.li',
     entry_points={
-        'console_scripts': ['edgy-project=edgy.project.__main__:main'],
-        'edgy.project.feature': [
-            'docker = edgy.project.feature.docker:DockerFeature',
-            'git = edgy.project.feature.git:GitFeature',
-            'make = edgy.project.feature.make:MakeFeature',
-            'pylint = edgy.project.feature.pylint:PylintFeature',
-            'pytest = edgy.project.feature.pytest:PytestFeature',
-            'python = edgy.project.feature.python:PythonFeature',
-            'sphinx = edgy.project.feature.sphinx:SphinxFeature',
-            'yapf = edgy.project.feature.yapf:YapfFeature',
+        'console_scripts': ['medikit=medikit.__main__:main'],
+        'medikit.feature': [
+            'django = medikit.feature.django:DjangoFeature',
+            'docker = medikit.feature.docker:DockerFeature',
+            'git = medikit.feature.git:GitFeature',
+            'make = medikit.feature.make:MakeFeature',
+            'nodejs = medikit.feature.nodejs:NodeJSFeature',
+            'pylint = medikit.feature.pylint:PylintFeature',
+            'pytest = medikit.feature.pytest:PytestFeature',
+            'python = medikit.feature.python:PythonFeature',
+            'sphinx = medikit.feature.sphinx:SphinxFeature',
+            'webpack = medikit.feature.webpack:WebpackFeature',
+            'yapf = medikit.feature.yapf:YapfFeature',
         ],
     }
 )
@@ -34,10 +39,11 @@ python.add_requirements(
     'edgy.event >=0.1,<0.2',
     'jinja2 >=2.8,<3.0',
     'pip-tools >=1.9,<2.0',
-    'six >=1,<2',
     'stevedore >=1,<2',
     'tornado >=4,<5',
     'yapf >=0.16',
 )
 
 sphinx.set_theme('sphinx_rtd_theme >=0.2,<1.0')
+
+# vim: ft=python:

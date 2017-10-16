@@ -1,9 +1,7 @@
 # This file has been auto-generated.
 # All changes will be lost, see Projectfile.
-#
-# Updated at 2017-06-14 19:06:12.296444
 
-PACKAGE ?= edgy.project
+PACKAGE ?= medikit
 PYTHON ?= $(shell which python)
 PYTHON_BASENAME ?= $(shell basename $(PYTHON))
 PYTHON_DIRNAME ?= $(shell dirname $(PYTHON))
@@ -27,13 +25,13 @@ VERSION ?= $(shell git describe 2>/dev/null || echo dev)
 # Installs the local project dependencies.
 install:
 	if [ -z "$(QUICK)" ]; then \
-	    $(PIP) install -U pip wheel $(PYTHON_PIP_INSTALL_OPTIONS) -r $(PYTHON_REQUIREMENTS_FILE) ; \
+	    $(PIP) install -U pip wheel $(PIP_INSTALL_OPTIONS) -r $(PYTHON_REQUIREMENTS_FILE) ; \
 	fi
 
 # Installs the local project dependencies, including development-only libraries.
 install-dev:
 	if [ -z "$(QUICK)" ]; then \
-	    $(PIP) install -U pip wheel $(PYTHON_PIP_INSTALL_OPTIONS) -r $(PYTHON_REQUIREMENTS_DEV_FILE) ; \
+	    $(PIP) install -U pip wheel $(PIP_INSTALL_OPTIONS) -r $(PYTHON_REQUIREMENTS_DEV_FILE) ; \
 	fi
 
 # Cleans up the local mess.

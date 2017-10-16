@@ -4,13 +4,13 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import os
 
-from edgy.project.events import subscribe
+from medikit.events import subscribe
 
 from . import ABSOLUTE_PRIORITY, Feature
 
 
 class GitFeature(Feature):
-    @subscribe('edgy.project.on_start', priority=ABSOLUTE_PRIORITY)
+    @subscribe('medikit.on_start', priority=ABSOLUTE_PRIORITY)
     def on_start(self, event):
         if not os.path.exists('.git'):
             self.dispatcher.info('git', 'Creating git repository...')
@@ -18,7 +18,7 @@ class GitFeature(Feature):
             os.system('git add Projectfile')
             os.system('git commit -m "initial commit"')
 
-    @subscribe('edgy.project.on_end')
+    @subscribe('medikit.on_end')
     def on_end(self, event):
         self.render_file_inline(
             '.gitignore', '''
@@ -37,11 +37,11 @@ class GitFeature(Feature):
         ''', event.variables
         )
 
-    @subscribe('edgy.project.on_file_closed')
+    @subscribe('medikit.on_file_closed')
     def on_file_change(self, event):
         os.system('git add {}'.format(event.filename))
 
-    @subscribe('edgy.project.feature.make.on_generate')
+    @subscribe('medikit.feature.make.on_generate')
     def on_make_generate(self, event):
         event.makefile['VERSION'] = "$(shell git describe 2>/dev/null || echo dev)"
 

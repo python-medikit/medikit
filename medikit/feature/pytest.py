@@ -1,23 +1,16 @@
-# coding: utf-8
-"""
-TODO:
-
-* http://docs.pytest.org/en/latest/goodpractices.html#integrating-with-setuptools-python-setup-py-test-pytest-runner
-"""
-
-from __future__ import absolute_import, print_function, unicode_literals
-
 import os
-from edgy.project.events import subscribe
+from medikit.events import subscribe
 
 from . import Feature, SUPPORT_PRIORITY
 
 
 class PytestFeature(Feature):
+    # TODO: http://docs.pytest.org/en/latest/goodpractices.html#integrating-with-setuptools-python-setup-py-test-pytest-runner
+
     requires = {'python'}
     conflicts = {'nosetests'}
 
-    @subscribe('edgy.project.feature.python.on_generate')
+    @subscribe('medikit.feature.python.on_generate')
     def on_python_generate(self, event):
         event.config['python'].add_requirements(
             dev=[
@@ -27,7 +20,7 @@ class PytestFeature(Feature):
             ]
         )
 
-    @subscribe('edgy.project.feature.make.on_generate', priority=SUPPORT_PRIORITY)
+    @subscribe('medikit.feature.make.on_generate', priority=SUPPORT_PRIORITY)
     def on_make_generate(self, event):
         makefile = event.makefile
         makefile['PYTEST'] = '$(PYTHON_DIRNAME)/pytest'
@@ -40,7 +33,7 @@ class PytestFeature(Feature):
         ''', deps=('install-dev', ), phony=True
         )
 
-    @subscribe('edgy.project.on_start', priority=SUPPORT_PRIORITY)
+    @subscribe('medikit.on_start', priority=SUPPORT_PRIORITY)
     def on_start(self, event):
         tests_dir = 'tests'
         if not os.path.exists(tests_dir):

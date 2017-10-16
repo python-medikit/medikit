@@ -20,11 +20,11 @@ def File(dispatcher, name, override=False):
     if event.override or not os.path.exists(event.filename):
         with open(event.filename, 'w+') as f:
             event.file = f
-            event = dispatcher.dispatch('edgy.project.on_file_opened', event)
+            event = dispatcher.dispatch('medikit.on_file_opened', event)
             yield f
             event.file = None
 
-        dispatcher.dispatch('edgy.project.on_file_closed', event)
+        dispatcher.dispatch('medikit.on_file_closed', event)
     else:
         yield open('/dev/null', 'w')
 
@@ -36,10 +36,10 @@ def NullFile(dispatcher, name, override=False):
     if event.override or not os.path.exists(event.filename):
         with open('/dev/null', 'w') as f:
             event.file = f
-            event = dispatcher.dispatch('edgy.project.on_file_opened', event)
+            event = dispatcher.dispatch('medikit.on_file_opened', event)
             yield f
             event.file = None
 
-        dispatcher.dispatch('edgy.project.on_file_closed', event)
+        dispatcher.dispatch('medikit.on_file_closed', event)
     else:
         yield open('/dev/null', 'w')

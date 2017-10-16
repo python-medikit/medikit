@@ -2,12 +2,12 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from edgy.project.events import subscribe
+from medikit.events import subscribe
 from . import Feature
 
 
 class DockerFeature(Feature):
-    @subscribe('edgy.project.feature.make.on_generate')
+    @subscribe('medikit.feature.make.on_generate')
     def on_make_generate(self, event):
         event.makefile['DOCKER'] = "$(shell which docker)"
         event.makefile['DOCKER_PUSH'] = "$(DOCKER) push"

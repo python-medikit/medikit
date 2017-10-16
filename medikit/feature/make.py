@@ -1,7 +1,3 @@
-# coding: utf-8
-
-from __future__ import absolute_import, print_function, unicode_literals
-
 import datetime
 import itertools
 import textwrap
@@ -9,7 +5,7 @@ from collections import deque
 
 import six
 from edgy.event import Event
-from edgy.project.events import subscribe
+from medikit.events import subscribe
 
 from . import Feature, HIGH_PRIORITY, Script
 
@@ -161,7 +157,7 @@ class MakeFeature(Feature):
     def configure(self):
         self.makefile = Makefile()
 
-    @subscribe('edgy.project.on_start', priority=HIGH_PRIORITY)
+    @subscribe('medikit.on_start', priority=HIGH_PRIORITY)
     def on_start(self, event):
         """
         :param ProjectEvent event:

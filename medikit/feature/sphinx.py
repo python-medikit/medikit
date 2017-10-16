@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from pip._vendor.distlib.util import parse_requirement
 
-from edgy.project.events import subscribe
+from medikit.events import subscribe
 from . import Feature, SUPPORT_PRIORITY
 
 
@@ -19,7 +19,7 @@ class SphinxFeature(Feature):
         def get_theme(self):
             return self._theme
 
-    @subscribe('edgy.project.feature.python.on_generate')
+    @subscribe('medikit.feature.python.on_generate')
     def on_python_generate(self, event):
         event.config['python'].add_requirements(dev=[
             'sphinx >=1.6,<2.0',
@@ -29,7 +29,7 @@ class SphinxFeature(Feature):
         if theme:
             event.config['python'].add_requirements(dev=[theme.requirement])
 
-    @subscribe('edgy.project.feature.make.on_generate', priority=SUPPORT_PRIORITY)
+    @subscribe('medikit.feature.make.on_generate', priority=SUPPORT_PRIORITY)
     def on_make_generate(self, event):
         makefile = event.makefile
 

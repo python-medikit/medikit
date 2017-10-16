@@ -1,17 +1,17 @@
-edgy.project
-============
+Medikit
+=======
 
-Strongly opinionated python project management.
+Strongly opinionated python 3.5+ project management.
 
-.. image:: https://travis-ci.org/python-edgy/project.svg?branch=master
-    :target: https://travis-ci.org/python-edgy/project
+.. image:: https://travis-ci.org/python-medikit/medikit.svg?branch=master
+    :target: https://travis-ci.org/python-medikit/medikit
     :alt: Continuous Integration Status
 
-.. image:: https://coveralls.io/repos/github/python-edgy/project/badge.svg?branch=master
-    :target: https://coveralls.io/github/python-edgy/project?branch=master
+.. image:: https://coveralls.io/repos/github/python-medikit/medikit/badge.svg?branch=master
+    :target: https://coveralls.io/github/python-medikit/medikit?branch=master
     :alt: Coverage Status
 
-.. image:: https://readthedocs.org/projects/edgyproject/badge/?version=latest
+.. image:: https://readthedocs.org/projects/medikit/badge/?version=latest
     :target: http://edgyproject.readthedocs.org/en/latest/?badge=latest
     :alt: Documentation Status
 
@@ -32,7 +32,7 @@ are installed and available to be used in your current environment.
 
 .. code-block:: shell
 
-    pip install edgy.project
+    pip install medikit
 
 Now, you may want to bootstrap a python package source tree.
 
@@ -40,7 +40,7 @@ Now, you may want to bootstrap a python package source tree.
 
     mkdir my.awesome.pkg
     cd my.awesome.pkg
-    edgy-project init
+    medikit init
 
 You're done with the bootstrap. You can now run:
 
@@ -61,7 +61,7 @@ the generator again.
 
 .. code-block:: shell
 
-    edgy-project update
+    medikit update
 
 To better control what changes are made, I suggest that you run it on a clean git
 repository, then look at the dofferences using:
@@ -131,7 +131,7 @@ F.A.Q
 
 * Do you support python 3?
 
-  * Yes, edgy.project run both with python 2.7+ and python 3.4+, but we don't
+  * Yes, medikit run both with python 2.7+ and python 3.4+, but we don't
     generate version specific code. For example, we don't support generating
     namespace packages that does not have __init__.py files with the python
     namespace package boilerplate.

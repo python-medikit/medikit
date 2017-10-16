@@ -1,7 +1,3 @@
-# coding: utf-8
-
-from __future__ import absolute_import, print_function, unicode_literals
-
 import keyword
 import logging
 import os
@@ -11,14 +7,13 @@ from contextlib import ContextDecorator
 
 import six
 from blessings import Terminal
+from medikit import settings
+from medikit.events import attach_subscriptions
+from medikit.file import File
+from medikit.settings import DEFAULT_FEATURES
+from medikit.util import format_file_content
 from jinja2 import Environment, PackageLoader, Template
 from yapf import yapf_api
-
-from edgy.project.events import attach_subscriptions
-from edgy.project.file import File
-from edgy.project.settings import DEFAULT_FEATURES
-from edgy.project.util import format_file_content
-from edgy.project import settings
 
 ABSOLUTE_PRIORITY = -100
 HIGH_PRIORITY = -80
@@ -157,16 +152,34 @@ def is_identifier(ident):
 
 
 class ProjectInitializer(Feature):
+    def __init__(self, dispatcher, options):
+        super().__init__(dispatcher)
+        self.options = options
+        print('Options:', self.options)
+
     def execute(self):
         context = {}
 
-        context['name'] = input('Name: ')
-        while not is_identifier(context['name']):
-            logging.error('Invalid name. Please only use valid python identifiers.')
+        if self.options['name']:
+            if not is_identifier(self.options['name']):
+                raise RuntimeError('Invalid package name {!r}.'.format(self.options['name']))
+            context['name'] = self.options['name']
+            logging.info('name = %s', context['name'])
+        else:
             context['name'] = input('Name: ')
+            while not is_identifier(context['name']):
+                logging.error('Invalid name. Please only use valid python identifiers.')
+                context['name'] = input('Name: ')
 
-        context['description'] = input('Description: ')
-        context['license'] = input('License [Apache License, Version 2.0]: ').strip() or 'Apache License, Version 2.0'
+        if self.options['description']:
+            context['description'] = self.options['description']
+        else:
+            context['description'] = input('Description: ')
+
+        if self.options['license']:
+            context['license'] = self.options['license']
+        else:
+            context['license'] = input('License [Apache License, Version 2.0]: ').strip() or 'Apache License, Version 2.0'
 
         context['url'] = ''
         context['download_url'] = ''
@@ -175,19 +188,11 @@ class ProjectInitializer(Feature):
         context['author_email'] = ''
 
         context['features'] = DEFAULT_FEATURES
+
+        if self.options['features']:
+            context['features'] = context['features'].union(self.options['features'])
         context['install_requires'] = []
-        context['extras_require'] = {
-            'dev': [
-                'coverage >=4.0,<4.2',
-                'mock >=2.0,<2.1',
-                'nose >=1.3,<1.4',
-                'pylint >=1.6,<1.7',
-                'pytest >=2.9,<2.10',
-                'pytest-cov >=2.3,<2.4',
-                'sphinx',
-                'sphinx_rtd_theme',
-            ]
-        }
+        context['extras_require'] = {'dev': []}
         context['entry_points'] = {}
 
         self.render_file('Projectfile', 'Projectfile.j2', context, override=True, force_python=True)

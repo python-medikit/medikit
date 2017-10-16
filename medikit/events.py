@@ -1,7 +1,3 @@
-# coding: utf-8
-
-from __future__ import absolute_import, print_function, unicode_literals
-
 import textwrap
 from collections import OrderedDict
 
@@ -41,7 +37,7 @@ class LoggingDispatcher(EventDispatcher):
         return '  ' * type(self).indent_level
 
     def dispatch(self, event_id, event=None):
-        should_log = not event_id.startswith('edgy.project.on_file_') or \
+        should_log = not event_id.startswith('medikit.on_file_') or \
                      self.logger.getEffectiveLevel() <= logging.DEBUG
         if should_log:
             self.logger.info(

@@ -1,8 +1,6 @@
-from __future__ import absolute_import
-
-from edgy.project.events import LoggingDispatcher
-from edgy.project.feature import Feature
-from edgy.project.file import NullFile
+from medikit.events import LoggingDispatcher
+from medikit.feature import Feature
+from medikit.file import NullFile
 from unittest import TestCase
 
 

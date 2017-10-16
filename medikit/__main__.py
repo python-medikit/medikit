@@ -13,10 +13,10 @@ import tornado.log
 from blessings import Terminal
 from stevedore import ExtensionManager
 
-from edgy.project.config import read_configuration
-from edgy.project.events import LoggingDispatcher, ProjectEvent
-from edgy.project.feature import ProjectInitializer
-from edgy.project.settings import DEFAULT_FEATURES, DEFAULT_FILES
+from medikit.config import read_configuration
+from medikit.events import LoggingDispatcher, ProjectEvent
+from medikit.feature import ProjectInitializer
+from medikit.settings import DEFAULT_FEATURES, DEFAULT_FILES
 
 # Globals
 logger = logging.getLogger()
@@ -40,9 +40,9 @@ def _read_configuration(dispatcher, config_filename):
 
     setup = OrderedDict(
         (
-            ('name', None, ), ('description', None, ), ('license', None, ), ('entry_points', {}, ),
-            ('install_requires', [], ), ('extras_require', {}, ), ('data_files', [], ),
-            ('url', 'http://example.com/', ), ('download_url', 'http://example.com/', ),
+            ('name', None,), ('description', None,), ('license', None,), ('entry_points', {},),
+            ('install_requires', [],), ('extras_require', {},), ('data_files', [],),
+            ('url', 'http://example.com/',), ('download_url', 'http://example.com/',),
         )
     )
 
@@ -65,6 +65,10 @@ def main(args=None):
 
     parser_init = subparsers.add_parser('init', help='Initialize a new project.')
     parser_init.set_defaults(handler=handle_init)
+    parser_init.add_argument('--name')
+    parser_init.add_argument('--description')
+    parser_init.add_argument('--license')
+    parser_init.add_argument('--feature', '-f', action='append', dest='features')
 
     parser_update = subparsers.add_parser('update', help='Update current project.')
     parser_update.set_defaults(handler=handle_update)
@@ -73,10 +77,14 @@ def main(args=None):
     if options.verbose:
         logger.setLevel(logging.DEBUG)
 
-    return options.handler(os.path.join(os.getcwd(), options.config), **vars(options))
+    options = vars(options)
+    handler = options.pop('handler')
+    config_filename = os.path.join(os.getcwd(), options.pop('config'))
+
+    return handler(config_filename, **options)
 
 
-def handle_init(config_filename, **kwargs):
+def handle_init(config_filename, **options):
     if os.path.exists(config_filename):
         raise IOError(
             'No config should be present in current directory to initialize (found {})'.format(config_filename)
@@ -90,7 +98,7 @@ def handle_init(config_filename, **kwargs):
     # - deps selection
     # - ...
     dispatcher = LoggingDispatcher()
-    initializer = ProjectInitializer(dispatcher)
+    initializer = ProjectInitializer(dispatcher, options)
     initializer.execute()
     return handle_update(config_filename)
 
@@ -103,7 +111,7 @@ def handle_update(config_filename, **kwargs):
     feature_instances = {}
     logger.info(
         'Updating {} with {} features'.
-        format(t.bold(setup['name']), ', '.join(t.bold(t.green(feature_name)) for feature_name in sorted(features)))
+            format(t.bold(setup['name']), ', '.join(t.bold(t.green(feature_name)) for feature_name in sorted(features)))
     )
 
     all_features = {}
@@ -111,7 +119,7 @@ def handle_update(config_filename, **kwargs):
     def register_feature(ext, all_features=all_features):
         all_features[ext.name] = ext.plugin
 
-    mgr = ExtensionManager(namespace='edgy.project.feature')
+    mgr = ExtensionManager(namespace='medikit.feature')
     mgr.map(register_feature)
 
     sorted_features = sorted(features)  # sort to have a predictable display order
@@ -140,9 +148,9 @@ def handle_update(config_filename, **kwargs):
 
     # todo: add listener dump list in debug/verbose mode ?
 
-    event = dispatcher.dispatch('edgy.project.on_start', event)
+    event = dispatcher.dispatch('medikit.on_start', event)
 
-    dispatcher.dispatch('edgy.project.on_end', event)
+    dispatcher.dispatch('medikit.on_end', event)
 
     logger.info(u'Done.')
 

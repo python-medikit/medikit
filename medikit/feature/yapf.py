@@ -4,8 +4,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import os
 
-from edgy.project import settings
-from edgy.project.events import subscribe
+from medikit import settings
+from medikit.events import subscribe
 
 from . import Feature, SUPPORT_PRIORITY, ABSOLUTE_PRIORITY
 
@@ -13,7 +13,7 @@ from . import Feature, SUPPORT_PRIORITY, ABSOLUTE_PRIORITY
 class YapfFeature(Feature):
     requires = {'python'}
 
-    @subscribe('edgy.project.feature.python.on_generate')
+    @subscribe('medikit.feature.python.on_generate')
     def on_python_generate(self, event):
         if not 'extras_require' in event.setup:
             event.setup['extras_require'] = {}
@@ -23,7 +23,7 @@ class YapfFeature(Feature):
 
         event.setup['extras_require']['dev'].append('yapf')
 
-    @subscribe('edgy.project.feature.make.on_generate', priority=SUPPORT_PRIORITY)
+    @subscribe('medikit.feature.make.on_generate', priority=SUPPORT_PRIORITY)
     def on_make_generate(self, event):
         makefile = event.makefile
         makefile['YAPF'] = '$(PYTHON) -m yapf'
@@ -38,11 +38,11 @@ class YapfFeature(Feature):
             phony=True
         )
 
-    @subscribe('edgy.project.on_start', priority=SUPPORT_PRIORITY)
+    @subscribe('medikit.on_start', priority=SUPPORT_PRIORITY)
     def on_start(self, event):
         self.render_file('.style.yapf', 'yapf/style.yapf.j2')
 
-    @subscribe('edgy.project.on_start', priority=ABSOLUTE_PRIORITY - 1)
+    @subscribe('medikit.on_start', priority=ABSOLUTE_PRIORITY - 1)
     def on_before_start(self, event):
         style_config = os.path.join(os.getcwd(), '.style.yapf')
         if os.path.exists(style_config):

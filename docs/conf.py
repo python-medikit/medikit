@@ -32,12 +32,12 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'edgy.project'
+project = 'medikit'
 author = 'Romain Dorgueil'
 copyright = '2015-{}, {}'.format(datetime.datetime.now().year, author)
 
 # Version infos
-from edgy.project import _version
+from medikit import _version
 version = _version.__version__
 release = _version.__version__
 
@@ -113,7 +113,7 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
 #
-# html_title = 'edgy.project v1.0'
+# html_title = 'medikit v1.0'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #
@@ -213,7 +213,7 @@ html_static_path = ['_static']
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'edgyprojectdoc'
+htmlhelp_basename = 'medikitdoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -239,7 +239,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'edgyproject.tex', 'edgy.project Documentation', 'Romain Dorgueil', 'manual'),
+    (master_doc, 'medikit.tex', 'Medikit Documentation', 'Romain Dorgueil', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -278,7 +278,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, 'edgyproject', 'edgy.project Documentation', [author], 1)]
+man_pages = [(master_doc, 'medikit', 'Medikit Documentation', [author], 1)]
 
 # If true, show URL addresses after external links.
 #
@@ -291,7 +291,7 @@ man_pages = [(master_doc, 'edgyproject', 'edgy.project Documentation', [author],
 #  dir menu entry, description, category)
 texinfo_documents = [
     (
-        master_doc, 'edgyproject', 'edgy.project Documentation', author, 'edgyproject',
+        master_doc, 'medikit', 'medikit Documentation', author, 'medikit',
         'One line description of project.', 'Miscellaneous'
     ),
 ]

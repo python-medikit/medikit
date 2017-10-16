@@ -22,7 +22,7 @@ from piptools.resolver import Resolver
 from piptools.scripts.compile import get_pip_command
 from piptools.utils import format_requirement
 
-from edgy.project.events import subscribe
+from medikit.events import subscribe
 from . import ABSOLUTE_PRIORITY, Feature
 
 
@@ -32,6 +32,8 @@ class PythonFeature(Feature):
     generation, a few metadata files used by setuptools...
 
     """
+
+    requires = {'make'}
 
     class Config(Feature.Config):
         def __init__(self):
@@ -79,7 +81,7 @@ class PythonFeature(Feature):
         def get_setup(self):
             return self._setup
 
-    @subscribe('edgy.project.feature.make.on_generate', priority=ABSOLUTE_PRIORITY)
+    @subscribe('medikit.feature.make.on_generate', priority=ABSOLUTE_PRIORITY)
     def on_make_generate(self, event):
         """
         **Environment variables**
@@ -117,20 +119,20 @@ class PythonFeature(Feature):
         event.makefile['PIP_INSTALL_OPTIONS'] = ''
 
         event.makefile.get_target('install').install = [
-            '$(PIP) install -U pip wheel $(PYTHON_PIP_INSTALL_OPTIONS) -r $(PYTHON_REQUIREMENTS_FILE)'
+            '$(PIP) install -U pip wheel $(PIP_INSTALL_OPTIONS) -r $(PYTHON_REQUIREMENTS_FILE)'
         ]
 
         event.makefile.get_target('install-dev').install = [
-            '$(PIP) install -U pip wheel $(PYTHON_PIP_INSTALL_OPTIONS) -r $(PYTHON_REQUIREMENTS_DEV_FILE)'
+            '$(PIP) install -U pip wheel $(PIP_INSTALL_OPTIONS) -r $(PYTHON_REQUIREMENTS_DEV_FILE)'
         ]
 
-    @subscribe('edgy.project.on_start', priority=ABSOLUTE_PRIORITY)
+    @subscribe('medikit.on_start', priority=ABSOLUTE_PRIORITY)
     def on_start(self, event):
         """
         **Events**
 
-        - ``edgy.project.feature.python.on_generate`` (with the same ``ProjectEvent`` we got, todo: why not deprecate
-          it in favor of higher priority edgy.project.on_start?)
+        - ``medikit.feature.python.on_generate`` (with the same ``ProjectEvent`` we got, todo: why not deprecate
+          it in favor of higher priority medikit.on_start?)
 
         **Files**
 
@@ -220,7 +222,7 @@ class PythonFeature(Feature):
         # Render (with overwriting) the allmighty setup.py
         self.render_file('setup.py', 'python/setup.py.j2', context, override=True)
 
-    @subscribe('edgy.project.on_end', priority=ABSOLUTE_PRIORITY)
+    @subscribe('medikit.on_end', priority=ABSOLUTE_PRIORITY)
     def on_end(self, event):
         pip_command = get_pip_command()
         pip_options, _ = pip_command.parse_args([])
