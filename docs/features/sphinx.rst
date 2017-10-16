@@ -1,20 +1,20 @@
 .. comment:: This file is auto-generated, please do not change it directly.
 
-Python Feature
+Sphinx Feature
 ==============
 
-.. automodule:: medikit.feature.python
+.. automodule:: medikit.feature.sphinx
 
 Configuration
 :::::::::::::
 
-.. autoclass:: PythonConfig
+.. autoclass:: Config
     :members:
     :undoc-members:
 
 Implementation
 ::::::::::::::
 
-.. autoclass:: PythonFeature
+.. autoclass:: SphinxFeature
     :members:
     :undoc-members:

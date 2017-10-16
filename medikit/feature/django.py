@@ -1,6 +1,7 @@
-# coding: utf-8
+"""
+The «django» feature adds the django framework to your project.
 
-from __future__ import absolute_import, print_function, unicode_literals
+"""
 
 import os
 import random
@@ -16,13 +17,24 @@ def generate_secret_key():
     return ''.join(random.choice(chars) for i in range(64))
 
 
+class DjangoConfig(Feature.Config):
+    """ Configuration class for the “django” feature. """
+
+    use_jinja2 = True
+    """Whether or not to use the Jinja2 templating language (default: True)."""
+
+    use_whitenoise = True
+    """Whether or not to use Whitenoise for the static files (default: True)."""
+
+    def __init__(self):
+        self.use_jinja2 = self.use_jinja2
+        self.use_whitenoise = self.use_whitenoise
+
+
 class DjangoFeature(Feature):
     requires = {'python'}
 
-    class Config(Feature.Config):
-        def __init__(self):
-            self.use_jinja2 = True
-            self.use_whitenoise = True
+    Config = DjangoConfig
 
     @subscribe('medikit.feature.python.on_generate')
     def on_python_generate(self, event):

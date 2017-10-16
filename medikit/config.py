@@ -1,8 +1,6 @@
-from __future__ import absolute_import
-
 from stevedore import ExtensionManager
 
-from .util import format_file_content
+from medikit.util import format_file_content
 
 
 class ConfigurationRegistry():
@@ -79,3 +77,16 @@ def read_configuration(dispatcher, filename, variables, features, files, setup):
             raise ValueError('You must provide a value for the setup entry "{}" in your Projectfile.'.format(k))
 
     return variables, features, files, setup, config
+
+
+_all_features = {}
+
+
+def load_features():
+    if not _all_features:
+        def register_feature(ext, all_features=_all_features):
+            all_features[ext.name] = ext.plugin
+
+        mgr = ExtensionManager(namespace='medikit.feature')
+        mgr.map(register_feature)
+    return _all_features

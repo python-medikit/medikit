@@ -1,10 +1,17 @@
 Features Reference
 ==================
 
-All fea
-
 .. toctree::
     :maxdepth: 2
 
-    features/python
+    features/django
+    features/docker
+    features/git
     features/make
+    features/nodejs
+    features/pylint
+    features/pytest
+    features/python
+    features/sphinx
+    features/webpack
+    features/yapf

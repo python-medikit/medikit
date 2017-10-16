@@ -1,14 +1,31 @@
-# coding: utf-8
 """
-TODO
-====
+The «python» feature contains all the base logic associated to managing python package.
 
-* find a way to automate dependency check ?
-  https://blog.dbrgn.ch/2013/4/26/pip-list-outdated/
+Overview
+::::::::
+
+.. code-block:: python
+
+    from medikit import require
+
+    # load python feature (idempotent).
+    python = require('python')
+
+    # configure our package.
+    python.setup(
+        name = 'awesome-library',
+        author = 'Chuck Norris',
+    )
+
+    # add base and extras requirements, with "loose" versionning (the frozen version fits better in requirements*.txt)
+    python.add_requirements(
+        'django',
+        dev=[
+            'pytest',
+        ],
+    )
 
 """
-
-from __future__ import absolute_import, unicode_literals
 
 import itertools
 import os
@@ -23,63 +40,68 @@ from piptools.scripts.compile import get_pip_command
 from piptools.utils import format_requirement
 
 from medikit.events import subscribe
-from . import ABSOLUTE_PRIORITY, Feature
+from medikit.feature import Feature, ABSOLUTE_PRIORITY
+
+
+class PythonConfig(Feature.Config):
+    """ Configuration API for the «python» feature. """
+
+    def __init__(self):
+        self._setup = {}
+        self._install_requires = {}
+        self._extras_require = {}
+
+    def get(self, item):
+        if item == 'install_requires':
+            return list(self.get_requirements())
+        if item == 'extras_require':
+            return {extra: list(self.get_requirements(extra=extra)) for extra in sorted(self._extras_require)}
+        return self._setup[item]
+
+    def add_requirements(self, *reqs, **kwargs):
+        for req in reqs:
+            req = parse_requirement(req)
+            if req.name in self._install_requires:
+                raise ValueError('duplicate requirement for {}'.format(req.name))
+            self._install_requires[req.name] = req
+
+        for extra, reqs in kwargs.items():
+            if not extra in self._extras_require:
+                self._extras_require[extra] = {}
+            for req in reqs:
+                req = parse_requirement(req)
+                if req.name in self._extras_require[extra]:
+                    raise ValueError('duplicate requirement for {}'.format(req.name))
+                self._extras_require[extra][req.name] = req
+
+        return self
+
+    def get_extras(self):
+        return self._extras_require.keys()
+
+    def get_requirements(self, extra=None):
+        reqs = self._install_requires if extra is None else self._extras_require[extra]
+        for req in sorted(reqs):
+            yield reqs[req].requirement
+
+    def setup(self, **kwargs):
+        self._setup.update(kwargs)
+        return self
+
+    def get_setup(self):
+        return self._setup
 
 
 class PythonFeature(Feature):
     """
-    Basic python support for your project. Adds the requirements/requirements-dev logic, virtualenv support, setup.py
-    generation, a few metadata files used by setuptools...
+    Adds the requirements/requirements-dev logic, virtualenv support, setup.py generation, a few metadata files used by
+    setuptools...
 
     """
 
     requires = {'make'}
 
-    class Config(Feature.Config):
-        def __init__(self):
-            self._setup = {}
-            self._install_requires = {}
-            self._extras_require = {}
-
-        def get(self, item):
-            if item == 'install_requires':
-                return list(self.get_requirements())
-            if item == 'extras_require':
-                return {extra: list(self.get_requirements(extra=extra)) for extra in sorted(self._extras_require)}
-            return self._setup[item]
-
-        def add_requirements(self, *reqs, **kwargs):
-            for req in reqs:
-                req = parse_requirement(req)
-                if req.name in self._install_requires:
-                    raise ValueError('duplicate requirement for {}'.format(req.name))
-                self._install_requires[req.name] = req
-
-            for extra, reqs in kwargs.items():
-                if not extra in self._extras_require:
-                    self._extras_require[extra] = {}
-                for req in reqs:
-                    req = parse_requirement(req)
-                    if req.name in self._extras_require[extra]:
-                        raise ValueError('duplicate requirement for {}'.format(req.name))
-                    self._extras_require[extra][req.name] = req
-
-            return self
-
-        def get_extras(self):
-            return self._extras_require.keys()
-
-        def get_requirements(self, extra=None):
-            reqs = self._install_requires if extra is None else self._extras_require[extra]
-            for req in sorted(reqs):
-                yield reqs[req].requirement
-
-        def setup(self, **kwargs):
-            self._setup.update(kwargs)
-            return self
-
-        def get_setup(self):
-            return self._setup
+    Config = PythonConfig
 
     @subscribe('medikit.feature.make.on_generate', priority=ABSOLUTE_PRIORITY)
     def on_make_generate(self, event):
@@ -107,12 +129,12 @@ class PythonFeature(Feature):
         """
         # Python related environment
         event.makefile.updateleft(
-            ('PACKAGE', event.package_name, ),
-            ('PYTHON', '$(shell which python)', ),
-            ('PYTHON_BASENAME', '$(shell basename $(PYTHON))', ),
-            ('PYTHON_DIRNAME', '$(shell dirname $(PYTHON))', ),
-            ('PYTHON_REQUIREMENTS_FILE', 'requirements.txt', ),
-            ('PYTHON_REQUIREMENTS_DEV_FILE', 'requirements-dev.txt', ),
+            ('PACKAGE', event.package_name,),
+            ('PYTHON', '$(shell which python)',),
+            ('PYTHON_BASENAME', '$(shell basename $(PYTHON))',),
+            ('PYTHON_DIRNAME', '$(shell dirname $(PYTHON))',),
+            ('PYTHON_REQUIREMENTS_FILE', 'requirements.txt',),
+            ('PYTHON_REQUIREMENTS_DEV_FILE', 'requirements-dev.txt',),
         )
 
         event.makefile['PIP'] = '$(PYTHON_DIRNAME)/pip'
@@ -229,7 +251,7 @@ class PythonFeature(Feature):
         session = pip_command._build_session(pip_options)
         repository = PyPIRepository(pip_options, session)
 
-        for extra in itertools.chain((None, ), event.config['python'].get_extras()):
+        for extra in itertools.chain((None,), event.config['python'].get_extras()):
             tmpfile = tempfile.NamedTemporaryFile(mode='wt', delete=False)
             if extra:
                 tmpfile.write('\n'.join(event.config['python'].get_requirements(extra=extra)))

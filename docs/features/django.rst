@@ -1,20 +1,20 @@
 .. comment:: This file is auto-generated, please do not change it directly.
 
-Python Feature
+Django Feature
 ==============
 
-.. automodule:: medikit.feature.python
+.. automodule:: medikit.feature.django
 
 Configuration
 :::::::::::::
 
-.. autoclass:: PythonConfig
+.. autoclass:: DjangoConfig
     :members:
     :undoc-members:
 
 Implementation
 ::::::::::::::
 
-.. autoclass:: PythonFeature
+.. autoclass:: DjangoFeature
     :members:
     :undoc-members:

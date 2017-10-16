@@ -1,0 +1,48 @@
+{%- extends "alabaster/layout.html" %}
+
+
+{%- block extrahead %}
+{{ super() }}
+<style>
+    div.related {
+        width: 940px;
+        margin: 30px auto 0 auto;
+    }
+
+    @media screen and (max-width: 875px) {
+        div.related {
+            visibility: hidden;
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{%- block footer %}
+{{ relbar() }}
+
+<div class="footer">
+    &copy; 2015-2017, <a href="https://romain.dorgueil.net" target="_blank">Romain Dorgueil</a>
+
+    {%- if show_source and has_source and sourcename %}
+    | <a href="{{ pathto('_sources/' + sourcename, true)|e }}" rel="nofollow" target="_blank">{{ _('Page source') }}</a>
+    {%- endif %}
+</div>
+
+<a href="https://github.com/python-medikit/medikit" class="github">
+    <img style="position: absolute; top: 0; right: 0; border: 0;"
+         src="{{ pathto('_static/' ~ theme_github_banner, 1) if theme_github_banner|lower != 'true' else 'https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png' }}"
+         alt="Fork me on GitHub" class="github"/>
+</a>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-4678258-15"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-4678258-15');
+</script>
+
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+{%- endblock %}

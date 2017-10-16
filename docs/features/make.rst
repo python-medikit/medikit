@@ -1,13 +1,20 @@
+.. comment:: This file is auto-generated, please do not change it directly.
+
 Make Feature
 ============
 
-.. automodule:: edgy.project.feature.make
+.. automodule:: medikit.feature.make
+
+Configuration
+:::::::::::::
+
+.. autoclass:: Config
+    :members:
+    :undoc-members:
+
+Implementation
+::::::::::::::
 
 .. autoclass:: MakeFeature
     :members:
-
-.. autoclass:: Makefile
-    :members:
-
-.. autoclass:: MakefileEvent
-    :members:
+    :undoc-members:

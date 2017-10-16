@@ -6,12 +6,12 @@ Documentation
 .. toctree::
     :maxdepth: 2
 
-    overview
     install
-    kickstart
+    guide
+    commands
     config
     features
-    faq
+    events
 
 Indices and tables
 ::::::::::::::::::

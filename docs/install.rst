@@ -1,5 +1,5 @@
-Configuration Reference
-=======================
+Quick Start
+===========
 
 Installation
 ::::::::::::

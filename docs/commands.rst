@@ -1,5 +1,5 @@
-Configuration Reference
-=======================
+Commands Reference
+==================
 
 Installation
 ::::::::::::

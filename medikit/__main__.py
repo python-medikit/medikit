@@ -11,9 +11,8 @@ from collections import OrderedDict
 
 import tornado.log
 from blessings import Terminal
-from stevedore import ExtensionManager
 
-from medikit.config import read_configuration
+from medikit.config import read_configuration, load_features
 from medikit.events import LoggingDispatcher, ProjectEvent
 from medikit.feature import ProjectInitializer
 from medikit.settings import DEFAULT_FEATURES, DEFAULT_FILES
@@ -114,13 +113,7 @@ def handle_update(config_filename, **kwargs):
             format(t.bold(setup['name']), ', '.join(t.bold(t.green(feature_name)) for feature_name in sorted(features)))
     )
 
-    all_features = {}
-
-    def register_feature(ext, all_features=all_features):
-        all_features[ext.name] = ext.plugin
-
-    mgr = ExtensionManager(namespace='medikit.feature')
-    mgr.map(register_feature)
+    all_features = load_features()
 
     sorted_features = sorted(features)  # sort to have a predictable display order
     for feature_name in sorted_features:

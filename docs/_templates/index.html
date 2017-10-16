@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% set title = _('Medikit — Opinionated project management.') %}
+
+{% block body %}
+<h1 style="text-align: center">
+    <img class="logo" src="{{ pathto('_static/medikit.png', 1) }}" title="Medikit" alt="Medikit"
+         style=" width: 128px; height: 128px;"/>
+</h1>
+
+<p>
+    {% trans %}
+    <b>Medikit</b> helps you managing your Python (3.5+) projects, using combinable features (includes python, pytest,
+    django, nodejs, webpack, sphinx, gnu make ... or your own!).
+    {% endtrans %}
+</p>
+<p>
+    {% trans %}
+    Unlike project generators like cookiecutter (which it does not replace), Medikit manage your project's common files during
+    its whole lifetime.
+    {% endtrans %}
+</p>
+
+<p>
+    {% trans %}
+    <b>Medikit</b> can help you format your code, manage your releases and versions, update requirements and their
+    frozen counterparts in requirements*.txt, and overall, keep in one place the logic you're using on all your projects.
+    {% endtrans %}
+</p>
+
+<h2 style="margin-bottom: 0">{% trans %}Documentation{% endtrans %}</h2>
+
+<table class="contentstable">
+    <tr>
+        <td>
+            <p class="biglink"><a class="biglink" href="{{ pathto("install") }}">{% trans %}Quick Start{% endtrans %}</a><br/>
+                <span class="linkdescr">{% trans %}install medikit and get started{% endtrans %}</span></p>
+        </td>
+        <td>
+            <p class="biglink"><a class="biglink" href="{{ pathto("guide") }}">{% trans %}Definitive Guide{% endtrans %}</a><br/>
+                <span class="linkdescr">{% trans %}dive into medikit{% endtrans %}</span></p>
+        </td>
+    </tr>
+</table>
+
+<h2 style="margin-bottom: 0">{% trans %}Four steps to the Mastery{% endtrans %}</h2>
+
+<table class="contentstable">
+    <tr>
+        <td>
+            <p class="biglink"><a class="biglink" href="{{ pathto("commands") }}">{% trans %}Commands{% endtrans %}</a><br/>
+                <span class="linkdescr">{% trans %}command line interface mastery{% endtrans %}</span></p>
+        </td>
+        <td>
+            <p class="biglink"><a class="biglink" href="{{ pathto("config") }}">{% trans %}Configuration{% endtrans %}</a><br/>
+                <span class="linkdescr">{% trans %}projectfile mastery{% endtrans %}</span></p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p class="biglink"><a class="biglink" href="{{ pathto("features") }}">{% trans %}Features{% endtrans %}</a><br/>
+                <span class="linkdescr">{% trans %}built-in features mastery{% endtrans %}</span></p>
+        </td>
+        <td>
+            <p class="biglink"><a class="biglink" href="{{ pathto("events") }}">{% trans %}Events{% endtrans %}</a><br/>
+                <span class="linkdescr">{% trans %}extension hooks mastery{% endtrans %}</span></p>
+        </td>
+    </tr>
+</table>
+
+<h2 style="margin-bottom: 0">{% trans %}Indexes{% endtrans %}</h2>
+
+<table class="contentstable">
+    <tr>
+        <td>
+            <p class="biglink"><a class="biglink" href="{{ pathto("search") }}">{% trans %}
+                Search{% endtrans %}</a><br/>
+                <span class="linkdescr">{% trans %}search the documentation{% endtrans %}</span></p>
+        </td>
+        <td>
+            <p class="biglink"><a class="biglink" href="{{ pathto("genindex") }}">{% trans %}Index{% endtrans %}</a><br/>
+                <span class="linkdescr">{% trans %}general index{% endtrans %}</span></p>
+        </td>
+    </tr>
+</table>
+
+{% endblock %}
