@@ -7,7 +7,7 @@ dependencies:
 - pip:
   - blessings==1.6
   - click==6.7
-  - whistle==1.0a0
+  - whistle==1.0a3
   - first==2.0.1
   - jinja2==2.9.6
   - markupsafe==1.0
