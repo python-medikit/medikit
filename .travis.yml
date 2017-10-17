@@ -1,7 +1,5 @@
 language: python
 python:
-  - 2.7
-  - 3.4
   - 3.5
   - 3.5-dev
   - 3.6
@@ -10,11 +8,8 @@ python:
   - pypy
 install:
   - make install-dev
-  - python setup.py --name
-  - python setup.py --version
-  - pip --version
-  - pip install -U coveralls
+  - pip install coveralls
 script:
-  - make clean docs test
+  - make clean test
 after_success:
   - coveralls
