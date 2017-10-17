@@ -40,10 +40,8 @@ python.add_requirements(
     'pip-tools >=1.9,<2.0',
     'stevedore >=1,<2',
     'tornado >=4,<5',  # todo, move the logger and remove
-    'whistle ==1.0a2',  # todo, repackage
+    'whistle ==1.0a3',
     'yapf >=0.16',
 )
-
-sphinx.set_theme('sphinx_rtd_theme >=0.2,<1.0')
 
 # vim: ft=python:

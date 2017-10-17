@@ -17,7 +17,6 @@ pytz==2017.2
 requests==2.18.4
 six==1.11.0
 snowballstemmer==1.2.1
-sphinx-rtd-theme==0.2.4
 sphinx==1.6.4
 sphinxcontrib-websupport==1.0.1
 urllib3==1.22

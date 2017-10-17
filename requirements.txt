@@ -9,5 +9,5 @@ pip-tools==1.10.1
 six==1.11.0
 stevedore==1.27.1
 tornado==4.5.2
-whistle==1.0a2
+whistle==1.0a3
 yapf==0.19.0

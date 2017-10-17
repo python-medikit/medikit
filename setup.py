@@ -53,13 +53,11 @@ setup(
     include_package_data=True,
     install_requires=[
         'blessings (>= 1.6, < 1.7)', 'jinja2 (>= 2.8, < 3.0)', 'pip-tools (>= 1.9, < 2.0)', 'stevedore (>= 1, < 2)',
-        'tornado (>= 4, < 5)', 'whistle (== 1.0a2)', 'yapf (>= 0.16)'
+        'tornado (>= 4, < 5)', 'whistle (== 1.0a3)', 'yapf (>= 0.16)'
     ],
     extras_require={
-        'dev': [
-            'coverage (>= 4.4, < 5.0)', 'pytest (>= 3.1, < 4.0)', 'pytest-cov (>= 2.5, < 3.0)',
-            'sphinx (>= 1.6, < 2.0)', 'sphinx_rtd_theme (>= 0.2, < 1.0)'
-        ]
+        'dev':
+        ['coverage (>= 4.4, < 5.0)', 'pytest (>= 3.1, < 4.0)', 'pytest-cov (>= 2.5, < 3.0)', 'sphinx (>= 1.6, < 2.0)']
     },
     entry_points={
         'console_scripts': ['medikit=medikit.__main__:main'],
