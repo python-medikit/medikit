@@ -38,14 +38,10 @@ class DjangoFeature(Feature):
 
     @subscribe('medikit.feature.python.on_generate')
     def on_python_generate(self, event):
-        event.config['python'].add_requirements(
-            'django ==2.0a1',
-        )
+        event.config['python'].add_requirements('django ==2.0a1', )
 
         if event.config['django'].use_jinja2:
-            event.config['python'].add_requirements(
-                'Jinja2 >=2.9,<2.10',
-            )
+            event.config['python'].add_requirements('Jinja2 >=2.9,<2.10', )
 
         if event.config['django'].use_whitenoise:
             event.config['python'].add_requirements(
@@ -57,7 +53,7 @@ class DjangoFeature(Feature):
     def on_make_generate(self, event):
         makefile = event.makefile
         makefile['DJANGO'] = '$(PYTHON) bin/manage.py'
-        makefile.add_target('runserver', '''$(DJANGO) runserver''', deps=('install-dev',), phony=True)
+        makefile.add_target('runserver', '''$(DJANGO) runserver''', deps=('install-dev', ), phony=True)
 
     @subscribe('medikit.on_start')
     def on_start(self, event):
@@ -79,12 +75,19 @@ class DjangoFeature(Feature):
             os.makedirs(config_path)
 
         self.render_file('manage.py', 'django/manage.py.j2', context, force_python=True, override=True)
-        self.render_file(os.path.join(config_path, 'settings.py'), 'django/settings.py.j2', context, force_python=True,
-                         override=True)
-        self.render_file(os.path.join(config_path, 'urls.py'), 'django/urls.py.j2', context, force_python=True,
-                         override=True)
-        self.render_file(os.path.join(config_path, 'wsgi.py'), 'django/wsgi.py.j2', context, force_python=True,
-                         override=True)
+        self.render_file(
+            os.path.join(config_path, 'settings.py'),
+            'django/settings.py.j2',
+            context,
+            force_python=True,
+            override=True
+        )
+        self.render_file(
+            os.path.join(config_path, 'urls.py'), 'django/urls.py.j2', context, force_python=True, override=True
+        )
+        self.render_file(
+            os.path.join(config_path, 'wsgi.py'), 'django/wsgi.py.j2', context, force_python=True, override=True
+        )
 
         if context['use_jinja2']:
             templates_dir = os.path.join(name, 'jinja2', context['name'])

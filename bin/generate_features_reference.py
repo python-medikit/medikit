@@ -4,9 +4,10 @@ from jinja2 import Template, Environment
 from medikit.config import load_features
 
 env = Environment()
-env.filters['underline'] = lambda s, c: s + '\n' + c*len(s)
+env.filters['underline'] = lambda s, c: s + '\n' + c * len(s)
 
-TEMPLATE = env.from_string('''
+TEMPLATE = env.from_string(
+    '''
 .. comment:: This file is auto-generated, please do not change it directly.
 
 {{ title | underline('=') }}
@@ -31,7 +32,9 @@ Implementation
     :members:
     :undoc-members:
 
-'''.strip()+'\n\n')
+'''.strip() + '\n\n'
+)
+
 
 def main():
     root_path = os.path.realpath(os.path.join(os.path.dirname(os.path.join(os.getcwd(), __file__)), '..'))
@@ -46,14 +49,14 @@ def main():
         config_module = config.__module__
 
         rst = TEMPLATE.render(
-            title = feature.__name__.replace('Feature', ' Feature'),
-            module = module,
-            has_custom_config = (module == config_module),
-            config_class = config.__name__,
-            feature_class = feature.__name__,
+            title=feature.__name__.replace('Feature', ' Feature'),
+            module=module,
+            has_custom_config=(module == config_module),
+            config_class=config.__name__,
+            feature_class=feature.__name__,
         )
 
-        with open(os.path.join(doc_path, 'features', name+'.rst'), 'w+') as f:
+        with open(os.path.join(doc_path, 'features', name + '.rst'), 'w+') as f:
             f.write(rst)
 
 

@@ -1,9 +1,9 @@
-import textwrap
-from collections import OrderedDict
-
-from edgy.event import Event, EventDispatcher
 import logging
+import textwrap
+
 from blessings import Terminal
+from collections import OrderedDict
+from whistle import Event, EventDispatcher
 
 term = Terminal()
 logger = logging.getLogger()

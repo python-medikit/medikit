@@ -52,8 +52,8 @@ setup(
     packages=find_packages(exclude=['ez_setup', 'example', 'test']),
     include_package_data=True,
     install_requires=[
-        'blessings (>= 1.6, < 1.7)', 'edgy.event (>= 0.1, < 0.2)', 'jinja2 (>= 2.8, < 3.0)',
-        'pip-tools (>= 1.9, < 2.0)', 'stevedore (>= 1, < 2)', 'tornado (>= 4, < 5)', 'yapf (>= 0.16)'
+        'blessings (>= 1.6, < 1.7)', 'jinja2 (>= 2.8, < 3.0)', 'pip-tools (>= 1.9, < 2.0)', 'stevedore (>= 1, < 2)',
+        'tornado (>= 4, < 5)', 'whistle (== 1.0a2)', 'yapf (>= 0.16)'
     ],
     extras_require={
         'dev': [

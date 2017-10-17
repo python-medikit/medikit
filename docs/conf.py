@@ -300,8 +300,8 @@ man_pages = [(master_doc, 'medikit', 'Medikit Documentation', [author], 1)]
 #  dir menu entry, description, category)
 texinfo_documents = [
     (
-        master_doc, 'medikit', 'medikit Documentation', author, 'medikit',
-        'One line description of project.', 'Miscellaneous'
+        master_doc, 'medikit', 'medikit Documentation', author, 'medikit', 'One line description of project.',
+        'Miscellaneous'
     ),
 ]
 

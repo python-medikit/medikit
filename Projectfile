@@ -35,12 +35,12 @@ python.setup(
     }
 )
 python.add_requirements(
-    'blessings >=1.6,<1.7',
-    'edgy.event >=0.1,<0.2',
+    'blessings >=1.6,<1.7',  # todo, use colorama (or maybe repackage to mutualize with bonobo and the logger?)
     'jinja2 >=2.8,<3.0',
     'pip-tools >=1.9,<2.0',
     'stevedore >=1,<2',
-    'tornado >=4,<5',
+    'tornado >=4,<5',  # todo, move the logger and remove
+    'whistle ==1.0a2',  # todo, repackage
     'yapf >=0.16',
 )
 

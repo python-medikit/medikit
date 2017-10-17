@@ -2,10 +2,10 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from edgy.event import Event
-from edgy.project.events import ProjectEvent
-from edgy.project.feature.git import GitFeature
-from edgy.project.testing import FeatureTestCase
+from whistle import Event
+from medikit.events import ProjectEvent
+from medikit.feature.git import GitFeature
+from medikit.testing import FeatureTestCase
 from mock import patch
 
 PACKAGE_NAME = 'foo.bar'
@@ -18,9 +18,9 @@ class TestGitFeature(FeatureTestCase):
         feature, dispatcher = self.create_feature()
         listeners = dispatcher.get_listeners()
 
-        assert feature.on_start in listeners['edgy.project.on_start']
-        assert feature.on_end in listeners['edgy.project.on_end']
-        assert feature.on_file_change in listeners['edgy.project.on_file_closed']
+        assert feature.on_start in listeners['medikit.on_start']
+        assert feature.on_end in listeners['medikit.on_end']
+        assert feature.on_file_change in listeners['medikit.on_file_closed']
 
     def test_on_start(self):
         feature, dispatcher = self.create_feature()
@@ -41,7 +41,7 @@ class TestGitFeature(FeatureTestCase):
         feature, dispatcher = self.create_feature()
 
         commands = list()
-        with patch('edgy.project.file.FileEvent') as fe, \
+        with patch('medikit.file.FileEvent') as fe, \
                 patch('os.system', side_effect=commands.append) as os_system \
                 :
             feature.on_end(ProjectEvent(setup={'name': PACKAGE_NAME}))

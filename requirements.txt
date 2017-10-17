@@ -1,7 +1,6 @@
 -e .
 blessings==1.6
 click==6.7
-edgy.event==0.1.10
 first==2.0.1
 jinja2==2.9.6
 markupsafe==1.0
@@ -10,4 +9,5 @@ pip-tools==1.10.1
 six==1.11.0
 stevedore==1.27.1
 tornado==4.5.2
+whistle==1.0a2
 yapf==0.19.0

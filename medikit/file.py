@@ -1,9 +1,7 @@
-from __future__ import absolute_import, unicode_literals
-
 import contextlib
 import os
 
-from edgy.event import Event
+from whistle import Event
 
 
 class FileEvent(Event):

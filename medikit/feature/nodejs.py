@@ -33,7 +33,8 @@ class NodeJSFeature(Feature):
         }
 
         self.render_file_inline(
-            'package.json', json.dumps(package),
+            'package.json',
+            json.dumps(package),
         )
 
     @subscribe('medikit.on_end', priority=LAST_PRIORITY)
