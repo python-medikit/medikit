@@ -87,8 +87,8 @@ class Feature(object):
         os.path.join(os.path.dirname(__file__), 'template')
         return self.jinja.get_template(template).render(**(context or {}))
 
-    def render_file(self, target, template, context=None, override=False, force_python=False):
-        with self.file(target, override=override) as f:
+    def render_file(self, target, template, context=None, *, executable=False, override=False, force_python=False):
+        with self.file(target, executable=executable, override=override) as f:
             content = format_file_content(self.render(template, context))
             if force_python or target.endswith('.py'):
                 content, modified = yapf_api.FormatCode(content, filename=target)

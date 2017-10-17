@@ -1,9 +1,8 @@
-# coding: utf-8
-
-from __future__ import absolute_import, print_function, unicode_literals
-
+"""
+Not yet functional.
+"""
 from medikit.events import subscribe
-from . import Feature
+from medikit.feature import Feature
 
 
 class DockerFeature(Feature):

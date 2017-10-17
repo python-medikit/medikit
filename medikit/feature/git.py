@@ -1,12 +1,12 @@
-# coding: utf-8
+"""
+Git version control system support.
 
-from __future__ import absolute_import, print_function, unicode_literals
+"""
 
 import os
 
 from medikit.events import subscribe
-
-from . import ABSOLUTE_PRIORITY, Feature
+from medikit.feature import ABSOLUTE_PRIORITY, Feature
 
 
 class GitFeature(Feature):

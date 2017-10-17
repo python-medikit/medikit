@@ -1,13 +1,8 @@
-# coding: utf-8
-
-from __future__ import absolute_import, print_function, unicode_literals
-
 import os
 
 from medikit import settings
 from medikit.events import subscribe
-
-from . import Feature, SUPPORT_PRIORITY, ABSOLUTE_PRIORITY
+from medikit.feature import Feature, SUPPORT_PRIORITY, ABSOLUTE_PRIORITY
 
 
 class YapfFeature(Feature):

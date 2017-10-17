@@ -1,9 +1,13 @@
+"""
+NodeJS / Yarn support.
+
+"""
+
 import json
-
 import os
-from medikit.events import subscribe
 
-from . import Feature, LAST_PRIORITY
+from medikit.events import subscribe
+from medikit.feature import Feature, LAST_PRIORITY
 
 
 class NodeJSFeature(Feature):

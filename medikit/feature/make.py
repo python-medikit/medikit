@@ -1,13 +1,18 @@
+"""
+GNU Make support.
+
+"""
+
 import datetime
 import itertools
-import six
 import textwrap
-
 from collections import deque
-from whistle import Event
+
+import six
 
 from medikit.events import subscribe
 from medikit.feature import Feature, HIGH_PRIORITY, Script
+from whistle import Event
 
 
 @six.python_2_unicode_compatible

@@ -26,9 +26,13 @@ class DjangoConfig(Feature.Config):
     use_whitenoise = True
     """Whether or not to use Whitenoise for the static files (default: True)."""
 
+    version = '==2.0a1'
+    """Which django version requirement do you want? (default: ==2.0.a1)"""
+
     def __init__(self):
         self.use_jinja2 = self.use_jinja2
         self.use_whitenoise = self.use_whitenoise
+        self.version = self.version
 
 
 class DjangoFeature(Feature):
@@ -38,7 +42,7 @@ class DjangoFeature(Feature):
 
     @subscribe('medikit.feature.python.on_generate')
     def on_python_generate(self, event):
-        event.config['python'].add_requirements('django ==2.0a1', )
+        event.config['python'].add_requirements('django ' + event.config['django'].version)
 
         if event.config['django'].use_jinja2:
             event.config['python'].add_requirements('Jinja2 >=2.9,<2.10', )
@@ -48,6 +52,8 @@ class DjangoFeature(Feature):
                 'brotlipy >=0.7,<0.8',
                 'whitenoise >=3.3,<3.4',
             )
+
+        event.config['python'].add_requirements('django-extensions >=1.9,<1.10', )
 
     @subscribe('medikit.feature.make.on_generate', priority=SUPPORT_PRIORITY)
     def on_make_generate(self, event):
@@ -61,7 +67,6 @@ class DjangoFeature(Feature):
         context = {
             **event.setup,
             'config_package': 'config',
-            'django_version': '1.11',
             'secret_key': generate_secret_key(),
             'use_jinja2': event.config['django'].use_jinja2,
             'use_whitenoise': event.config['django'].use_whitenoise,
@@ -74,7 +79,7 @@ class DjangoFeature(Feature):
         if not os.path.exists(config_path):
             os.makedirs(config_path)
 
-        self.render_file('manage.py', 'django/manage.py.j2', context, force_python=True, override=True)
+        self.render_file('manage.py', 'django/manage.py.j2', context, executable=True, force_python=True, override=True)
         self.render_file(
             os.path.join(config_path, 'settings.py'),
             'django/settings.py.j2',
@@ -88,6 +93,8 @@ class DjangoFeature(Feature):
         self.render_file(
             os.path.join(config_path, 'wsgi.py'), 'django/wsgi.py.j2', context, force_python=True, override=True
         )
+
+        self.dispatcher.dispatch('medikit.feature.django.on_configure')
 
         if context['use_jinja2']:
             templates_dir = os.path.join(name, 'jinja2', context['name'])
