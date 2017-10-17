@@ -8,6 +8,7 @@ import logging
 import os
 import sys
 from collections import OrderedDict
+from contextlib import contextmanager
 
 from blessings import Terminal
 
@@ -98,6 +99,7 @@ def main(args=None):
 
     parser_init = subparsers.add_parser('init', help='Initialize a new project.')
     parser_init.set_defaults(handler=handle_init)
+    parser_init.add_argument('target')
     parser_init.add_argument('--name')
     parser_init.add_argument('--description')
     parser_init.add_argument('--license')
@@ -112,9 +114,20 @@ def main(args=None):
 
     options = vars(options)
     handler = options.pop('handler')
-    config_filename = os.path.join(os.getcwd(), options.pop('config'))
+
+    config_filename = os.path.join(os.getcwd(), options.pop('target', '.'), options.pop('config'))
 
     return handler(config_filename, **options)
+
+
+@contextmanager
+def _change_working_directory(path):
+    old_dir = os.getcwd()
+    os.chdir(path)
+    try:
+        yield
+    finally:
+        os.chdir(old_dir)
 
 
 def handle_init(config_filename, **options):
@@ -123,6 +136,10 @@ def handle_init(config_filename, **options):
             'No config should be present in current directory to initialize (found {})'.format(config_filename)
         )
 
+    config_dirname = os.path.dirname(config_filename)
+    if not os.path.exists(config_dirname):
+        os.makedirs(config_dirname)
+
     # Fast and dirty implementation
     # TODO
     # - input validation
@@ -130,10 +147,11 @@ def handle_init(config_filename, **options):
     # - dispatching something in selected features so maybe they can suggest deps
     # - deps selection
     # - ...
-    dispatcher = LoggingDispatcher()
-    initializer = ProjectInitializer(dispatcher, options)
-    initializer.execute()
-    return handle_update(config_filename)
+    with _change_working_directory(config_dirname):
+        dispatcher = LoggingDispatcher()
+        initializer = ProjectInitializer(dispatcher, options)
+        initializer.execute()
+        return handle_update(config_filename)
 
 
 def handle_update(config_filename, **kwargs):
