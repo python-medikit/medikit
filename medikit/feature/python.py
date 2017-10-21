@@ -49,7 +49,9 @@ class PythonConfig(Feature.Config):
     def __init__(self):
         self._setup = {}
         self._install_requires = {}
-        self._extras_require = {}
+        self._extras_require = {
+            'dev': {}
+        }
 
     def get(self, item):
         if item == 'install_requires':
@@ -269,7 +271,7 @@ class PythonFeature(Feature):
         session = pip_command._build_session(pip_options)
         repository = PyPIRepository(pip_options, session)
 
-        for extra in itertools.chain((None, ), event.config['python'].get_extras()):
+        for extra in itertools.chain((None,), event.config['python'].get_extras()):
             tmpfile = tempfile.NamedTemporaryFile(mode='wt', delete=False)
             if extra:
                 tmpfile.write('\n'.join(event.config['python'].get_requirements(extra=extra)))
