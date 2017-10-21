@@ -59,7 +59,7 @@ class DjangoFeature(Feature):
     def on_make_generate(self, event):
         makefile = event.makefile
         makefile['DJANGO'] = '$(PYTHON) bin/manage.py'
-        makefile.add_target('runserver', '''$(DJANGO) runserver''', deps=('install-dev', ), phony=True)
+        makefile.add_target('runserver', '''$(DJANGO) runserver''', deps=('install-dev',), phony=True)
 
     @subscribe('medikit.on_start')
     def on_start(self, event):
@@ -79,20 +79,10 @@ class DjangoFeature(Feature):
         if not os.path.exists(config_path):
             os.makedirs(config_path)
 
-        self.render_file('manage.py', 'django/manage.py.j2', context, executable=True, force_python=True, override=True)
-        self.render_file(
-            os.path.join(config_path, 'settings.py'),
-            'django/settings.py.j2',
-            context,
-            force_python=True,
-            override=True
-        )
-        self.render_file(
-            os.path.join(config_path, 'urls.py'), 'django/urls.py.j2', context, force_python=True, override=True
-        )
-        self.render_file(
-            os.path.join(config_path, 'wsgi.py'), 'django/wsgi.py.j2', context, force_python=True, override=True
-        )
+        self.render_file('manage.py', 'django/manage.py.j2', context, executable=True, force_python=True)
+        self.render_file(os.path.join(config_path, 'settings.py'), 'django/settings.py.j2', context, force_python=True)
+        self.render_file(os.path.join(config_path, 'urls.py'), 'django/urls.py.j2', context, force_python=True)
+        self.render_file(os.path.join(config_path, 'wsgi.py'), 'django/wsgi.py.j2', context, force_python=True)
 
         self.dispatcher.dispatch('medikit.feature.django.on_configure')
 
@@ -105,6 +95,19 @@ class DjangoFeature(Feature):
         if not os.path.exists(static_dir):
             os.makedirs(static_dir)
         self.render_empty_files(os.path.join(static_dir, 'favicon.ico'))
+
+    '''
+    XXX todo use yapf to adjust settings (for example, add some apps).
+    @subscribe('medikit.feature.django.on_configure')
+    def on_django_configure(self, event):
+        original_source, newline, encoding = yapf_api.ReadFile('config/settings.py')
+        print(original_source, newline, encoding)
+        reformatted_code, encoding, has_change = yapf_api.FormatFile(
+            'config/settings.py',
+            in_place=True,
+        )
+        print(reformatted_code, encoding, has_change)
+    '''
 
 
 __feature__ = DjangoFeature

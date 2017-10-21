@@ -1,6 +1,7 @@
 from stevedore import ExtensionManager
 
-from medikit.util import format_file_content
+from medikit.settings import DEFAULT_FEATURES
+from medikit.utils import format_file_content
 
 
 class ConfigurationRegistry():
@@ -55,6 +56,9 @@ def read_configuration(dispatcher, filename, variables, features, files, setup):
         if k in ctx:
             variables[k] = ctx[k]
 
+    for feature in DEFAULT_FEATURES:
+        config.require(feature)
+
     # old, deprecated way ...
     for feature in set(ctx.pop('enable_features', ())) - set(ctx.pop('disable_features', ())):
         config.require(feature)
@@ -90,4 +94,5 @@ def load_features():
 
         mgr = ExtensionManager(namespace='medikit.feature')
         mgr.map(register_feature)
+
     return _all_features

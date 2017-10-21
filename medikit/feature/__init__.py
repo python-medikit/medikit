@@ -1,19 +1,16 @@
-import keyword
 import logging
 import os
-import textwrap
-import tokenize
 from contextlib import ContextDecorator
 
-import six
 from blessings import Terminal
+from jinja2 import Environment, PackageLoader, Template
+from yapf import yapf_api
+
 from medikit import settings
 from medikit.events import attach_subscriptions
 from medikit.file import File
 from medikit.settings import DEFAULT_FEATURES
-from medikit.util import format_file_content
-from jinja2 import Environment, PackageLoader, Template
-from yapf import yapf_api
+from medikit.utils import is_identifier, format_file_content
 
 ABSOLUTE_PRIORITY = -100
 HIGH_PRIORITY = -80
@@ -21,11 +18,6 @@ MEDIUM_PRIORITY = -60
 LOW_PRIORITY = -60
 SUPPORT_PRIORITY = -20
 LAST_PRIORITY = 100
-
-try:
-    input = raw_input  # pylint: disable=raw_input-builtin
-except NameError:
-    input = input  # pylint: disable=input-builtin
 
 term = Terminal()
 
@@ -112,45 +104,6 @@ class Feature(object):
                 self._log_file(target, override)
 
 
-def is_identifier(ident):
-    """Determines, if string is valid Python identifier."""
-
-    # Smoke test — if it's not string, then it's not identifier, but we don't
-    # want to just silence exception. It's better to fail fast.
-    if not isinstance(ident, str):
-        raise TypeError('expected str, but got {!r}'.format(type(ident)))
-
-    # Quick test — if string is in keyword list, it's definitely not an ident.
-    if keyword.iskeyword(ident):
-        return False
-
-    readline = (lambda: (yield ident.encode('utf-8-sig')))().__next__
-    tokens = list(tokenize.tokenize(readline))
-
-    # You should get exactly 3 tokens
-    if len(tokens) != 3:
-        return False
-
-    # First one is ENCODING, it's always utf-8 because we explicitly passed in
-    # UTF-8 BOM with ident.
-    if tokens[0].type != tokenize.ENCODING:
-        return False
-
-    # Second is NAME, identifier.
-    if tokens[1].type != tokenize.NAME:
-        return False
-
-    # Name should span all the string, so there would be no whitespace.
-    if ident != tokens[1].string:
-        return False
-
-    # Third is ENDMARKER, ending stream
-    if tokens[2].type != tokenize.ENDMARKER:
-        return False
-
-    return True
-
-
 class ProjectInitializer(Feature):
     def __init__(self, dispatcher, options):
         super().__init__(dispatcher)
@@ -180,7 +133,7 @@ class ProjectInitializer(Feature):
             context['license'] = self.options['license']
         else:
             context['license'
-                    ] = input('License [Apache License, Version 2.0]: ').strip() or 'Apache License, Version 2.0'
+            ] = input('License [Apache License, Version 2.0]: ').strip() or 'Apache License, Version 2.0'
 
         context['url'] = ''
         context['download_url'] = ''
@@ -199,20 +152,3 @@ class ProjectInitializer(Feature):
         self.render_file('Projectfile', 'Projectfile.j2', context, override=True, force_python=True)
 
 
-@six.python_2_unicode_compatible
-class Script(object):
-    def __init__(self, script=None):
-        self.script = self.parse_script(script)
-
-    def parse_script(self, script):
-        if not script:
-            return []
-        script = textwrap.dedent(str(script)).strip()
-        return script.split('\n')
-
-    def __iter__(self):
-        for line in self.script:
-            yield line
-
-    def __str__(self):
-        return '\n'.join(self.__iter__())
