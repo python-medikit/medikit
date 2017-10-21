@@ -141,8 +141,7 @@ class InstallScript(Script):
     def __iter__(self):
         yield 'if [ -z "$(QUICK)" ]; then \\'
         for line in map(
-                lambda x: '    {} ; \\'.format(x),
-                itertools.chain(self.before_install, self.install, self.after_install)
+            lambda x: '    {} ; \\'.format(x), itertools.chain(self.before_install, self.install, self.after_install)
         ):
             yield line
         yield 'fi'
@@ -198,16 +197,26 @@ class MakeFeature(Feature):
         self.makefile.add_target('clean', CleanScript(), phony=True, doc='''Cleans up the local mess.''')
 
         if event.config['make'].include_medikit_targets:
-            self.makefile.add_target('update', '''
+            self.makefile.add_target(
+                'update',
+                '''
                 python -c 'import medikit; print(medikit.__version__)' || pip install medikit;
                 $(PYTHON) -m medikit update
-            ''', phony=True, doc='''Update project artifacts using medikit, after installing it eventually.''')
+            ''',
+                phony=True,
+                doc='''Update project artifacts using medikit, after installing it eventually.'''
+            )
 
-            self.makefile.add_target('update-requirements', '''
+            self.makefile.add_target(
+                'update-requirements',
+                '''
                 rm -rf requirements*.txt
                 $(MAKE) update
-            ''', phony=True,
-                                     doc='''Remove requirements files and update project artifacts using medikit, after installing it eventually.''')
+            ''',
+                phony=True,
+                doc=
+                '''Remove requirements files and update project artifacts using medikit, after installing it eventually.'''
+            )
 
         self.dispatcher.dispatch(__name__ + '.on_generate', MakefileEvent(event.setup['name'], self.makefile))
 

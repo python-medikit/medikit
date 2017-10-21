@@ -133,7 +133,7 @@ class ProjectInitializer(Feature):
             context['license'] = self.options['license']
         else:
             context['license'
-            ] = input('License [Apache License, Version 2.0]: ').strip() or 'Apache License, Version 2.0'
+                    ] = input('License [Apache License, Version 2.0]: ').strip() or 'Apache License, Version 2.0'
 
         context['url'] = ''
         context['download_url'] = ''
@@ -150,5 +150,3 @@ class ProjectInitializer(Feature):
         context['entry_points'] = {}
 
         self.render_file('Projectfile', 'Projectfile.j2', context, override=True, force_python=True)
-
-
