@@ -23,7 +23,7 @@ And maybe update the frozen dependencies and makefile content (medikit managed p
 
 .. code-block:: shell-session
 
-    rm requirements*; medikit update
+    make update-requirements
 
 Generate a changelog...
 
