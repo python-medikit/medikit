@@ -4,7 +4,7 @@ babel==2.4.0
 certifi==2017.4.17
 chardet==3.0.4
 coverage==4.4.1
-docutils==0.13.1
+docutils==0.14
 idna==2.5
 imagesize==0.7.1
 jinja2==2.9.6
