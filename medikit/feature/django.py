@@ -58,7 +58,7 @@ class DjangoFeature(Feature):
     @subscribe('medikit.feature.make.on_generate', priority=SUPPORT_PRIORITY)
     def on_make_generate(self, event):
         makefile = event.makefile
-        makefile['DJANGO'] = '$(PYTHON) bin/manage.py'
+        makefile['DJANGO'] = '$(PYTHON) manage.py'
         makefile.add_target('runserver', '''$(DJANGO) runserver''', deps=('install-dev', ), phony=True)
 
     @subscribe('medikit.on_start')
