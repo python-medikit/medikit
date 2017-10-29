@@ -32,6 +32,8 @@ import os
 import tempfile
 from getpass import getuser
 
+from medikit.events import subscribe
+from medikit.feature import Feature, ABSOLUTE_PRIORITY
 from pip._vendor.distlib.util import parse_requirement
 from pip.req import parse_requirements
 from piptools.repositories import PyPIRepository
@@ -39,50 +41,49 @@ from piptools.resolver import Resolver
 from piptools.scripts.compile import get_pip_command
 from piptools.utils import format_requirement
 
-from medikit.events import subscribe
-from medikit.feature import Feature, ABSOLUTE_PRIORITY
-
 
 class PythonConfig(Feature.Config):
     """ Configuration API for the «python» feature. """
 
     def __init__(self):
         self._setup = {}
-        self._install_requires = {}
-        self._extras_require = {'dev': {}}
+        self._requirements = {None: {}, 'dev': {}}
+        self._constraints = {}
 
     def get(self, item):
         if item == 'install_requires':
-            return list(self.get_requirements())
+            return list(self.get_requirements(with_constraints=True))
         if item == 'extras_require':
-            return {extra: list(self.get_requirements(extra=extra)) for extra in sorted(self._extras_require)}
+            return {
+                extra: list(self.get_requirements(extra=extra, with_constraints=True))
+                for extra in self.get_extras()
+            }
         return self._setup[item]
 
-    def add_requirements(self, *reqs, **kwargs):
-        for req in reqs:
-            req = parse_requirement(req)
-            if req.name in self._install_requires:
-                raise ValueError('duplicate requirement for {}'.format(req.name))
-            self._install_requires[req.name] = req
-
+    def add_constraints(self, *reqs, **kwargs):
+        self.__add_constraints(reqs)
         for extra, reqs in kwargs.items():
-            if not extra in self._extras_require:
-                self._extras_require[extra] = {}
-            for req in reqs:
-                req = parse_requirement(req)
-                if req.name in self._extras_require[extra]:
-                    raise ValueError('duplicate requirement for {}'.format(req.name))
-                self._extras_require[extra][req.name] = req
+            self.__add_constraints(reqs, extra=extra)
+        return self
 
+    def add_requirements(self, *reqs, **kwargs):
+        self.__add_requirements(reqs)
+        for extra, reqs in kwargs.items():
+            self.__add_requirements(reqs, extra=extra)
         return self
 
     def get_extras(self):
-        return self._extras_require.keys()
+        return sorted(filter(None, self._requirements.keys()))
 
-    def get_requirements(self, extra=None):
-        reqs = self._install_requires if extra is None else self._extras_require[extra]
-        for req in sorted(reqs):
-            yield reqs[req].requirement
+    def get_constraints(self, extra=None):
+        for name, req in sorted(self._constraints.get(extra, {}).items()):
+            yield req.requirement
+
+    def get_requirements(self, extra=None, with_constraints=False):
+        if with_constraints:
+            yield from self.get_constraints(extra=extra)
+        for name, req in sorted(self._requirements[extra].items()):
+            yield req.requirement
 
     def setup(self, **kwargs):
         self._setup.update(kwargs)
@@ -90,6 +91,26 @@ class PythonConfig(Feature.Config):
 
     def get_setup(self):
         return self._setup
+
+    def __add_constraints(self, reqs, extra=None):
+        if len(reqs):
+            if extra not in self._constraints:
+                self._constraints[extra] = {}
+        for req in reqs:
+            req = parse_requirement(req)
+            if req.name in self._constraints[extra]:
+                raise ValueError('Duplicate constraint for {}.'.format(req.name))
+            self._constraints[extra][req.name] = req
+
+    def __add_requirements(self, reqs, extra=None):
+        if len(reqs):
+            if extra not in self._requirements:
+                self._requirements[extra] = {}
+        for req in reqs:
+            req = parse_requirement(req)
+            if req.name in self._requirements[extra]:
+                raise ValueError('Duplicate requirement for {}.'.format(req.name))
+            self._requirements[extra][req.name] = req
 
 
 class PythonFeature(Feature):
