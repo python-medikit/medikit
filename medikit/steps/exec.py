@@ -49,4 +49,4 @@ class Commit(Step):
                 self.logger.info('git push {} {}...'.format(remote, branch))
                 os.system('git push {} {} --tags'.format(remote, branch))
 
-        print(meta)
+        self.set_complete()
