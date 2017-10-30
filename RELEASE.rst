@@ -8,7 +8,7 @@ Considering the main project repository is setup as "upstream" remote for git...
 .. code-block:: shell-session
 
    git pull upstream `git rev-parse --abbrev-ref HEAD`
-   pip install -U pip wheel twine git-semver 
+   pip install -U pip wheel twine git-semver medikit
 
 2. Update version.txt with the new version number
 
@@ -19,11 +19,11 @@ Considering the main project repository is setup as "upstream" remote for git...
    echo "__version__ = '"`git semver --next-patch`"'" > $VERSION_FILE
    git add $VERSION_FILE
 
-And maybe update the frozen dependencies and makefile content (edgy-project managed projects only)
+And maybe update the frozen dependencies and makefile content (medikit managed projects only)
 
 .. code-block:: shell-session
 
-    rm requirements*; edgy-project update
+    make update-requirements
 
 Generate a changelog...
 
