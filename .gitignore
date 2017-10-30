@@ -6,6 +6,7 @@
 /.cache
 /.coverage
 /.idea
+/.medikit-pipeline
 /.release
 /.virtualenv-python*
 /build

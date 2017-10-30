@@ -10,13 +10,7 @@ class YapfFeature(Feature):
 
     @subscribe('medikit.feature.python.on_generate')
     def on_python_generate(self, event):
-        if not 'extras_require' in event.setup:
-            event.setup['extras_require'] = {}
-
-        if not 'dev' in event.setup['extras_require']:
-            event.setup['extras_require']['dev'] = []
-
-        event.setup['extras_require']['dev'].append('yapf')
+        event.config['python'].add_requirements(dev=['yapf'])
 
     @subscribe('medikit.feature.make.on_generate', priority=SUPPORT_PRIORITY)
     def on_make_generate(self, event):
@@ -29,7 +23,7 @@ class YapfFeature(Feature):
             $(YAPF) $(YAPF_OPTIONS) .
             $(YAPF) $(YAPF_OPTIONS) Projectfile
         ''',
-            deps=('install-dev', ),
+            deps=('install-dev',),
             phony=True
         )
 

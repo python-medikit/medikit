@@ -60,6 +60,15 @@ class PythonConfig(Feature.Config):
             }
         return self._setup[item]
 
+    def __getitem__(self, item):
+        return self.get(item)
+
+    def __setitem__(self, key, value):
+        self.setup(key=value)
+
+    def __contains__(self, item):
+        return bool(self.get(item))
+
     def add_constraints(self, *reqs, **kwargs):
         self.__add_constraints(reqs)
         for extra, reqs in kwargs.items():
@@ -229,12 +238,11 @@ class PythonFeature(Feature):
 
         # Explode package name so we know which python packages are namespaced and
         # which are not.
-        package_bits = event.setup['name'].split('.')
+        package_bits = event.config['python'].get('name').split('.')
         if len(package_bits) > 1:
-            event.setup['namespace_packages'] = []
+            event.config['python']['namespace_packages'] = []
             for i in range(1, len(package_bits)):
-                # TODO convert to string type (six?) depending on python version
-                event.setup['namespace_packages'].append('.'.join(package_bits[0:i]))
+                event.config['python']['namespace_packages'].append('.'.join(package_bits[0:i]))
 
         package_dir = None  # useless, but helps showing the scope of this var
         for i in range(1, len(package_bits) + 1):

@@ -1,6 +1,6 @@
 # medikit (see github.com/python-edgy/medikit)
 
-from medikit import require
+from medikit import require, pipeline, steps
 
 git = require('git')
 make = require('make')
@@ -16,7 +16,7 @@ python.setup(
     url='https://github.com/python-medikit/medikit',
     download_url='https://github.com/python-medikit/medikit/tarball/{version}',
     author='Romain Dorgueil',
-    author_email='medikit@rdc.li',
+    author_email='romain@dorgueil.net',
     entry_points={
         'console_scripts': ['medikit=medikit.__main__:main'],
         'medikit.feature': [
@@ -36,12 +36,15 @@ python.setup(
 )
 python.add_requirements(
     'blessings >=1.6,<1.7',  # todo, use colorama (or maybe repackage to mutualize with bonobo and the logger?)
+    'git-semver >=0.1,<0.2',
     'jinja2 >=2.8,<3.0',
+    'mondrian >=0.2,<0.3',
     'pip-tools >=1.9,<2.0',
+    'semantic-version >=2.6,<2.7',
     'stevedore >=1,<2',
-    'tornado >=4,<5',  # todo, move the logger and remove
     'whistle ==1.0a3',
     'yapf >=0.16',
 )
+
 
 # vim: ft=python:

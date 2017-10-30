@@ -7,6 +7,7 @@ import os
 import random
 
 from medikit.events import subscribe
+
 from . import Feature, SUPPORT_PRIORITY
 
 random = random.SystemRandom()
@@ -65,7 +66,7 @@ class DjangoFeature(Feature):
     def on_start(self, event):
 
         context = {
-            **event.setup,
+            **event.config['python'].get_setup(),
             'config_package': 'config',
             'secret_key': generate_secret_key(),
             'use_jinja2': event.config['django'].use_jinja2,

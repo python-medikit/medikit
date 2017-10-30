@@ -1,5 +1,9 @@
+from contextlib import contextmanager
+
 from stevedore import ExtensionManager
 
+from medikit import steps
+from medikit.pipeline import Pipeline
 from medikit.settings import DEFAULT_FEATURES
 from medikit.utils import format_file_content
 
@@ -8,6 +12,7 @@ class ConfigurationRegistry():
     def __init__(self):
         self._configs = {}
         self._features = {}
+        self._pipelines = {}
 
         def register_feature(ext):
             self._features[ext.name] = ext.plugin
@@ -28,6 +33,16 @@ class ConfigurationRegistry():
             return tuple(map(self._require, args))
         raise ValueError('Empty.')
 
+    @contextmanager
+    def pipeline(self, name):
+        if not name in self._pipelines:
+            self._pipelines[name] = Pipeline()
+        yield self._pipelines[name]
+
+    @property
+    def pipelines(self):
+        return self._pipelines
+
     def _require(self, name):
         if not name in self._features:
             raise ValueError('Unknown feature {!r}.'.format(name))
@@ -38,19 +53,32 @@ class ConfigurationRegistry():
         return self._configs[name]
 
 
-def read_configuration(dispatcher, filename, variables, features, files, setup):
+def read_configuration(dispatcher, filename, variables, features, files):
     config = ConfigurationRegistry()
 
+    # monkey patch placeholders
     import medikit
-    _require_backup = medikit.require
-    medikit.listen = dispatcher.listen
-    medikit.require = config.require
-    # todo runpy ?
+    _listen, _pipeline, _require = medikit.listen, medikit.pipeline, medikit.require
+    medikit.listen, medikit.pipeline, medikit.require = dispatcher.listen, config.pipeline, config.require
+
+    # todo, move this in a configurable place
+    with medikit.pipeline('release') as release:
+        release.add(steps.Install())
+        release.add(steps.BumpVersion())
+        release.add(steps.Make('update-requirements'))
+        release.add(steps.Make('clean install'))  # test docs
+        release.add(steps.System('git add -p .'))
+        release.add(steps.Commit('Release: {version}', tag=True))
+
+    # read configuration
     with open(filename) as f:
+        # TODO use runpy?
         code = compile(f.read(), filename, 'exec')
     ctx = {'listen': dispatcher.listen}
     exec(code, ctx)
-    medikit.require = _require_backup
+
+    # restore old values
+    medikit.listen, medikit.pipeline, medikit.require = _listen, _pipeline, _require
 
     for k in variables.keys():
         if k in ctx:
@@ -70,17 +98,7 @@ def read_configuration(dispatcher, filename, variables, features, files, setup):
         if k in ctx:
             files[k] = format_file_content(ctx[k])
 
-    for k in setup.keys():
-        try:
-            setup[k] = config['python'].get(k)
-        except KeyError:
-            if k in ctx:  # BC
-                setup[k] = ctx[k]
-
-        if setup[k] is None:
-            raise ValueError('You must provide a value for the setup entry "{}" in your Projectfile.'.format(k))
-
-    return variables, features, files, setup, config
+    return variables, features, files, config
 
 
 _all_features = {}
@@ -88,7 +106,6 @@ _all_features = {}
 
 def load_features():
     if not _all_features:
-
         def register_feature(ext, all_features=_all_features):
             all_features[ext.name] = ext.plugin
 

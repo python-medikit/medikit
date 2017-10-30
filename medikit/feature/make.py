@@ -219,7 +219,9 @@ class MakeFeature(Feature):
                 '''Remove requirements files and update project artifacts using medikit, after installing it eventually.'''
             )
 
-        self.dispatcher.dispatch(__name__ + '.on_generate', MakefileEvent(event.setup['name'], self.makefile))
+        self.dispatcher.dispatch(
+            __name__ + '.on_generate', MakefileEvent(event.config['python'].get('name'), self.makefile)
+        )
 
         self.render_file_inline('Makefile', self.makefile.__str__(), override=True)
 

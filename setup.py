@@ -42,7 +42,7 @@ else:
 
 setup(
     author='Romain Dorgueil',
-    author_email='medikit@rdc.li',
+    author_email='romain@dorgueil.net',
     description='Opinionated python 3.5+ project management.',
     license='Apache License, Version 2.0',
     name='medikit',
@@ -52,12 +52,15 @@ setup(
     packages=find_packages(exclude=['ez_setup', 'example', 'test']),
     include_package_data=True,
     install_requires=[
-        'blessings (>= 1.6, < 1.7)', 'jinja2 (>= 2.8, < 3.0)', 'pip-tools (>= 1.9, < 2.0)', 'stevedore (>= 1, < 2)',
-        'tornado (>= 4, < 5)', 'whistle (== 1.0a3)', 'yapf (>= 0.16)'
+        'blessings (>= 1.6, < 1.7)', 'git-semver (>= 0.1, < 0.2)', 'jinja2 (>= 2.8, < 3.0)', 'mondrian (>= 0.2, < 0.3)',
+        'pip-tools (>= 1.9, < 2.0)', 'semantic-version (>= 2.6, < 2.7)', 'stevedore (>= 1, < 2)', 'whistle (== 1.0a3)',
+        'yapf (>= 0.16)'
     ],
     extras_require={
-        'dev':
-        ['coverage (>= 4.4, < 5.0)', 'pytest (>= 3.1, < 4.0)', 'pytest-cov (>= 2.5, < 3.0)', 'sphinx (>= 1.6, < 2.0)']
+        'dev': [
+            'coverage (>= 4.4, < 5.0)', 'pytest (>= 3.1, < 4.0)', 'pytest-cov (>= 2.5, < 3.0)',
+            'sphinx (>= 1.6, < 2.0)', 'yapf'
+        ]
     },
     entry_points={
         'console_scripts': ['medikit=medikit.__main__:main'],
