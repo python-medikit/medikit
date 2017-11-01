@@ -1,5 +1,5 @@
-Medikit
-=======
+✚ medikit ✚
+===========
 
 Strongly opinionated python 3.5+ project management.
 
