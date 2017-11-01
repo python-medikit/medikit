@@ -92,3 +92,7 @@ And maybe, test that the release is now installable...
 .. code-block:: shell
 
    cap (pre)prod deploy
+
+
+
+*All this process is currently being migrated to "medikit pipelines" (alpha feature).*
