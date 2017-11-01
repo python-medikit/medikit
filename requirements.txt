@@ -3,7 +3,7 @@ blessings==1.6
 click==6.7
 colorama==0.3.9
 first==2.0.1
-git-semver==0.2.0
+git-semver==0.2.1
 gitdb2==2.0.3
 gitpython==2.1.7
 jinja2==2.9.6
