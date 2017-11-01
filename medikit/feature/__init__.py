@@ -108,12 +108,11 @@ class ProjectInitializer(Feature):
     def __init__(self, dispatcher, options):
         super().__init__(dispatcher)
         self.options = options
-        print('Options:', self.options)
 
     def execute(self):
         context = {}
 
-        if self.options['name']:
+        if self.options.get('name'):
             if not is_identifier(self.options['name']):
                 raise RuntimeError('Invalid package name {!r}.'.format(self.options['name']))
             context['name'] = self.options['name']
@@ -124,12 +123,12 @@ class ProjectInitializer(Feature):
                 logging.error('Invalid name. Please only use valid python identifiers.')
                 context['name'] = input('Name: ')
 
-        if self.options['description']:
+        if self.options.get('description'):
             context['description'] = self.options['description']
         else:
             context['description'] = input('Description: ')
 
-        if self.options['license']:
+        if self.options.get('license'):
             context['license'] = self.options['license']
         else:
             context['license'
@@ -137,16 +136,13 @@ class ProjectInitializer(Feature):
 
         context['url'] = ''
         context['download_url'] = ''
-
         context['author'] = ''
         context['author_email'] = ''
 
         context['features'] = DEFAULT_FEATURES
-
-        if self.options['features']:
+        if self.options.get('features'):
             context['features'] = context['features'].union(self.options['features'])
-        context['install_requires'] = []
-        context['extras_require'] = {'dev': []}
-        context['entry_points'] = {}
+
+        context['requirements'] = self.options.get('requirements', [])
 
         self.render_file('Projectfile', 'Projectfile.j2', context, override=True, force_python=True)
