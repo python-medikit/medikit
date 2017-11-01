@@ -96,3 +96,9 @@ And maybe, test that the release is now installable...
 
 
 *All this process is currently being migrated to "medikit pipelines" (alpha feature).*
+
+.. code-block:: shell
+
+   medikit pipeline release start
+   
+*Use at own risks*
