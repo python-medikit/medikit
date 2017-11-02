@@ -40,7 +40,13 @@ def main(args=None):
     parser_pipeline = subparsers.add_parser('pipeline', help='Execute multi-steps pipelines (release, etc.).')
     parser_pipeline.set_defaults(handler=handle_pipeline)
     parser_pipeline.add_argument('pipeline')
-    parser_pipeline.add_argument('action', choices=(START, CONTINUE, ABORT,))
+    parser_pipeline.add_argument(
+        'action', choices=(
+            START,
+            CONTINUE,
+            ABORT,
+        )
+    )
     parser_pipeline.add_argument('--force', '-f', action='store_true')
 
     options, more_args = parser.parse_known_args(args if args is not None else sys.argv[1:])
