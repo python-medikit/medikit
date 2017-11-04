@@ -52,7 +52,7 @@ setup(
     packages=find_packages(exclude=['ez_setup', 'example', 'test']),
     include_package_data=True,
     install_requires=[
-        'git-semver (>= 0.2, < 0.3)', 'jinja2 (>= 2.8, < 3.0)', 'mondrian (== 0.4a1)', 'pip-tools (>= 1.9, < 2.0)',
+        'git-semver (>= 0.2, < 0.3)', 'jinja2 (>= 2.8, < 3.0)', 'mondrian (>= 0.4, < 0.5)', 'pip-tools (>= 1.9, < 2.0)',
         'semantic-version (>= 2.6, < 2.7)', 'stevedore (>= 1, < 2)', 'whistle (>= 1.0, < 1.1)', 'yapf (>= 0.16)'
     ],
     extras_require={
