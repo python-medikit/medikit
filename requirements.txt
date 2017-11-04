@@ -1,5 +1,4 @@
 -e .
-blessings==1.6
 click==6.7
 colorama==0.3.9
 first==2.0.1
@@ -8,7 +7,7 @@ gitdb2==2.0.3
 gitpython==2.1.7
 jinja2==2.9.6
 markupsafe==1.0
-mondrian==0.3.0
+mondrian==0.4a1
 pbr==3.1.1
 pip-tools==1.10.1
 semantic-version==2.6.0

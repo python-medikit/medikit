@@ -2,15 +2,15 @@ import logging
 import os
 from contextlib import ContextDecorator
 
-from blessings import Terminal
 from jinja2 import Environment, PackageLoader, Template
-from yapf import yapf_api
-
 from medikit import settings
 from medikit.events import attach_subscriptions
 from medikit.file import File
 from medikit.settings import DEFAULT_FEATURES
 from medikit.utils import is_identifier, format_file_content
+from yapf import yapf_api
+
+from mondrian import term
 
 ABSOLUTE_PRIORITY = -100
 HIGH_PRIORITY = -80
@@ -18,8 +18,6 @@ MEDIUM_PRIORITY = -60
 LOW_PRIORITY = -60
 SUPPORT_PRIORITY = -20
 LAST_PRIORITY = 100
-
-term = Terminal()
 
 
 class Feature(object):

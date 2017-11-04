@@ -2,20 +2,17 @@ import os
 from collections import OrderedDict
 from contextlib import contextmanager
 
-from blessings import Terminal
-
-import logging
 from medikit.config import read_configuration, load_features
 from medikit.events import LoggingDispatcher, ProjectEvent
 from medikit.feature import ProjectInitializer
 from medikit.pipeline import ConfiguredPipeline
 from medikit.settings import DEFAULT_FILES, DEFAULT_FEATURES
 
-t = Terminal()
+from mondrian import term
+
 START = 'start'
 CONTINUE = 'continue'
 ABORT = 'abort'
-logger = logging.getLogger()
 
 
 def _read_configuration(dispatcher, config_filename):
@@ -71,6 +68,9 @@ def handle_init(config_filename, **options):
 
 
 def handle_update(config_filename, **kwargs):
+    import logging
+    logger = logging.getLogger()
+
     dispatcher = LoggingDispatcher()
 
     variables, features, files, config = _read_configuration(dispatcher, config_filename)
@@ -78,8 +78,8 @@ def handle_update(config_filename, **kwargs):
     feature_instances = {}
     logger.info(
         'Updating {} with {} features'.format(
-            t.bold(config['python'].get('name')),
-            ', '.join(t.bold(t.green(feature_name)) for feature_name in sorted(features))
+            term.bold(config['python'].get('name')),
+            ', '.join(term.bold(term.green(feature_name)) for feature_name in sorted(features))
         )
     )
 
@@ -87,7 +87,7 @@ def handle_update(config_filename, **kwargs):
 
     sorted_features = sorted(features)  # sort to have a predictable display order
     for feature_name in sorted_features:
-        logger.debug('Initializing feature {}...'.format(t.bold(t.green(feature_name))))
+        logger.debug('Initializing feature {}...'.format(term.bold(term.green(feature_name))))
         try:
             feature = all_features[feature_name]
         except KeyError as exc:

@@ -7,12 +7,12 @@ import os
 import sys
 
 import mondrian
-
 from medikit.commands import START, CONTINUE, ABORT, handle_init, handle_update, handle_pipeline
 
 
 def main(args=None):
-    logger = mondrian.getLogger()
+    mondrian.setup(excepthook=True)
+    logger = logging.getLogger()
     logger.setLevel(logging.INFO)
 
     parser = argparse.ArgumentParser()

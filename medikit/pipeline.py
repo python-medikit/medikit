@@ -1,8 +1,17 @@
+"""
+Pipelines are a way to describe a simple step-by-step process, for example the release process.
+
+"""
 import datetime
 import json
 
 
 class Pipeline:
+    """
+    Class to configure a pipeline.
+
+    """
+
     def __init__(self):
         self.steps = []
 
@@ -16,6 +25,10 @@ def get_identity(step):
 
 
 class ConfiguredPipeline:
+    """
+    Used to actually load run and persist a configured pipeline.
+    """
+
     def __init__(self, name, pipeline):
         self.name = name
         self.steps = pipeline.steps

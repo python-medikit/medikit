@@ -35,10 +35,9 @@ python.setup(
     }
 )
 python.add_requirements(
-    'blessings >=1.6,<1.7',  # todo, use colorama (or maybe repackage to mutualize with bonobo and the logger?)
     'git-semver >=0.2,<0.3',
     'jinja2 >=2.8,<3.0',
-    'mondrian >=0.3,<0.4',
+    'mondrian ==0.4a1',
     'pip-tools >=1.9,<2.0',
     'semantic-version >=2.6,<2.7',
     'stevedore >=1,<2',

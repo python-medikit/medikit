@@ -1,11 +1,11 @@
 import logging
 import textwrap
 
-from blessings import Terminal
 from collections import OrderedDict
 from whistle import Event, EventDispatcher
 
-term = Terminal()
+from mondrian import term
+
 logger = logging.getLogger()
 
 
@@ -48,14 +48,14 @@ class LoggingDispatcher(EventDispatcher):
         event = super(LoggingDispatcher, self).dispatch(event_id, event)
         type(self).indent_level -= 1
         if should_log:
-            self.logger.info(self.indent + term.bold('<') + ' {}'.format(term.black('dispatched ' + event_id)))
+            self.logger.info(self.indent + term.bold('<') + ' {}'.format(term.lightblack('dispatched ' + event_id)))
         return event
 
     def debug(self, feature, *messages):
         return self.logger.debug('   ✔ ' + term.bold(term.green(feature.__shortname__)) + ' '.join(map(str, messages)))
 
     def info(self, *messages):
-        return self.logger.info(self.indent + term.black('∙') + ' ' + ' '.join(map(str, messages)))
+        return self.logger.info(self.indent + term.lightblack('∙') + ' ' + ' '.join(map(str, messages)))
 
 
 def subscribe(event_id, priority=0):
