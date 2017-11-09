@@ -46,7 +46,7 @@ class DjangoFeature(Feature):
         event.config['python'].add_requirements('django ' + event.config['django'].version)
 
         if event.config['django'].use_jinja2:
-            event.config['python'].add_requirements('Jinja2 >=2.9,<2.10', )
+            event.config['python'].add_requirements('Jinja2 >=2.10,<2.11', )
 
         if event.config['django'].use_whitenoise:
             event.config['python'].add_requirements(
