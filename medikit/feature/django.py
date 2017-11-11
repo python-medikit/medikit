@@ -22,13 +22,13 @@ class DjangoConfig(Feature.Config):
     """ Configuration class for the “django” feature. """
 
     use_jinja2 = True
-    """Whether or not to use the Jinja2 templating language (default: True)."""
+    """Whether or not to use the Jinja2 templating language."""
 
     use_whitenoise = True
-    """Whether or not to use Whitenoise for the static files (default: True)."""
+    """Whether or not to use Whitenoise for the static files."""
 
-    version = '==2.0a1'
-    """Which django version requirement do you want? (default: ==2.0.a1)"""
+    version = '==2.0b1'
+    """Which django version requirement do you want?"""
 
     def __init__(self):
         self.use_jinja2 = self.use_jinja2
