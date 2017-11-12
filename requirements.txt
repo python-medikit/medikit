@@ -5,7 +5,7 @@ first==2.0.1
 git-semver==0.2.1
 gitdb2==2.0.3
 gitpython==2.1.7
-jinja2==2.9.6
+jinja2==2.10
 markupsafe==1.0
 mondrian==0.4.0
 pbr==3.1.1

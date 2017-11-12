@@ -142,7 +142,8 @@ class InstallScript(Script):
     def __iter__(self):
         yield 'if [ -z "$(QUICK)" ]; then \\'
         for line in map(
-            lambda x: '    {} ; \\'.format(x), itertools.chain(self.before_install, self.install, self.after_install)
+                lambda x: '    {} ; \\'.format(x),
+                itertools.chain(self.before_install, self.install, self.after_install)
         ):
             yield line
         yield 'fi'
@@ -160,6 +161,8 @@ class CleanScript(Script):
 
 
 class MakeConfig(Feature.Config):
+    on_generate = __name__ + '.on_generate'
+
     def __init__(self):
         self.include_medikit_targets = True
 
@@ -219,9 +222,8 @@ class MakeFeature(Feature):
                 '''Remove requirements files and update project artifacts using medikit, after installing it eventually.'''
             )
 
-        self.dispatcher.dispatch(
-            __name__ + '.on_generate', MakefileEvent(event.config['python'].get('name'), self.makefile)
-        )
+        self.dispatcher.dispatch(MakeConfig.on_generate,
+                                 MakefileEvent(event.config['python'].get('name'), self.makefile))
 
         self.render_file_inline('Makefile', self.makefile.__str__(), override=True)
 

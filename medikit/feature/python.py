@@ -280,7 +280,6 @@ class PythonFeature(Feature):
 
         context.update(
             {
-                'data_files': setup.pop('data_files', {}),
                 'entry_points': setup.pop('entry_points', {}),
                 'extras_require': event.config['python'].get('extras_require'),
                 'install_requires': event.config['python'].get('install_requires'),

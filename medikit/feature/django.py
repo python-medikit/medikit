@@ -43,15 +43,24 @@ class DjangoFeature(Feature):
 
     @subscribe('medikit.feature.python.on_generate')
     def on_python_generate(self, event):
-        event.config['python'].add_requirements('django ' + event.config['django'].version)
+        event.config['python'].add_requirements(
+            'django ' + event.config['django'].version,
+            dev=[
+                'django-extensions >=1.9,<1.10',
+                'django-debug-toolbar >=1.8,<1.9',
+            ],
+            prod=[
+                'gunicorn ==19.7.1',
+            ],
+        )
 
         if event.config['django'].use_jinja2:
             event.config['python'].add_requirements('Jinja2 >=2.10,<2.11', )
 
         if event.config['django'].use_whitenoise:
             event.config['python'].add_requirements(
-                'brotlipy >=0.7,<0.8',
-                'whitenoise >=3.3,<3.4',
+                'brotli >=0.6,<0.7',
+                'whitenoise ==4.0b4',
             )
 
         event.config['python'].add_requirements('django-extensions >=1.9,<1.10', )
@@ -60,7 +69,7 @@ class DjangoFeature(Feature):
     def on_make_generate(self, event):
         makefile = event.makefile
         makefile['DJANGO'] = '$(PYTHON) manage.py'
-        makefile.add_target('runserver', '''$(DJANGO) runserver''', deps=('install-dev', ), phony=True)
+        makefile.add_target('runserver', '''$(DJANGO) runserver''', deps=('install-dev',), phony=True)
 
     @subscribe('medikit.on_start')
     def on_start(self, event):
