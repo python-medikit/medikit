@@ -62,13 +62,7 @@ If you have formating to do, now is the time...
    # Push to upstream
    git push upstream `git rev-parse --abbrev-ref HEAD` --tags
 
-5. (open-source) Create the distribution in a sandbox directory & upload to PyPI.
-
-.. code-block:: shell
-
-    (VERSION=`python setup.py --version`; rm -rf .release; mkdir .release; git archive `git rev-parse $VERSION` | tar xf - -C .release; cd .release/; python setup.py sdist bdist bdist_egg bdist_wheel; pip install -U twine; twine upload dist/*-`python setup.py --version`*)
-
-Or multi version...
+5. (open-source) Create the distribution in a sandbox directory & upload to PyPI (multi python versions).
 
 .. code-block:: shell
 
