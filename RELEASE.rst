@@ -62,23 +62,17 @@ If you have formating to do, now is the time...
    # Push to upstream
    git push upstream `git rev-parse --abbrev-ref HEAD` --tags
 
-5. (open-source) Create the distribution in a sandbox directory & upload to PyPI.
+5. (open-source) Create the distribution in a sandbox directory & upload to PyPI (multi python versions).
 
 .. code-block:: shell
 
-    (VERSION=`python setup.py --version`; rm -rf .release; mkdir .release; git archive `git rev-parse $VERSION` | tar xf - -C .release; cd .release/; python setup.py sdist bdist bdist_egg bdist_wheel; pip install -U twine; twine upload dist/*-`python setup.py --version`*)
-
-Or multi version...
-
-.. code-block:: shell
-
-    pip install -U twine; (VERSION=`python setup.py --version`; rm -rf .release; mkdir .release; git archive `git rev-parse $VERSION` | tar xf - -C .release; cd .release/; for v in 3.5 3.6; do pip$v install -U wheel; python$v setup.py sdist bdist_egg bdist_wheel; done; twine upload dist/*-`python setup.py --version`*)
+    pip install -U twine; (VERSION=`python setup.py --version`; rm -rf .release; mkdir .release; git archive `git rev-parse $VERSION` | tar xf - -C .release; cd .release/; for v in 3.5 3.6 3.7; do pip$v install -U wheel; python$v setup.py sdist bdist_egg bdist_wheel; done; twine upload dist/*-`python setup.py --version`*)
 
 And maybe, test that the release is now installable...
 
 .. code-block:: shell
 
-    (name=`python setup.py --name`; for v in 3.5 3.6; do python$v -m pip install -U virtualenv; python$v -m virtualenv -p python$v .rtest$v; cd .rtest$v; bin/pip --no-cache-dir install $name; bin/python -c "import $name; print($name.__name__, $name.__version__);"; cd ..; rm -rf .rtest$v; done; )
+    (name=`python setup.py --name`; for v in 3.5 3.6 3.7; do python$v -m pip install -U virtualenv; python$v -m virtualenv -p python$v .rtest$v; cd .rtest$v; bin/pip --no-cache-dir install $name; bin/python -c "import $name; print($name.__name__, $name.__version__);"; cd ..; rm -rf .rtest$v; done; )
 
 5. (private) Build containers, push and patch kubernetes
 
