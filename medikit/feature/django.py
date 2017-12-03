@@ -27,7 +27,7 @@ class DjangoConfig(Feature.Config):
     use_whitenoise = True
     """Whether or not to use Whitenoise for the static files."""
 
-    version = '==2.0b1'
+    version = '>=2.0,<2.1'
     """Which django version requirement do you want?"""
 
     def __init__(self):
@@ -59,7 +59,7 @@ class DjangoFeature(Feature):
 
         if event.config['django'].use_whitenoise:
             event.config['python'].add_requirements(
-                'brotli >=0.6,<0.7',
+                'brotli >=1.0,<1.1',
                 'whitenoise ==4.0b4',
             )
 
