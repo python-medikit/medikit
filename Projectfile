@@ -1,6 +1,6 @@
 # medikit (see github.com/python-edgy/medikit)
 
-from medikit import require, pipeline, steps
+from medikit import require
 
 git = require('git')
 make = require('make')

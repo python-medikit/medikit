@@ -9,9 +9,7 @@ Documentation
     install
     guide
     commands
-    config
     features
-    events
 
 Indices and tables
 ::::::::::::::::::
