@@ -19,6 +19,7 @@ dependencies:
   - semantic-version==2.6.0
   - six==1.11.0
   - smmap2==2.0.3
+  - sphinx-sitemap==0.2
   - stevedore==1.27.1
   - whistle==1.0.0
   - yapf==0.20.0
