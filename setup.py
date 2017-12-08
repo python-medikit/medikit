@@ -58,7 +58,7 @@ setup(
     extras_require={
         'dev': [
             'coverage (>= 4.4, < 5.0)', 'pytest (>= 3.1, < 4.0)', 'pytest-cov (>= 2.5, < 3.0)',
-            'sphinx (>= 1.6, < 2.0)', 'yapf'
+            'sphinx (>= 1.6, < 2.0)', 'sphinx-sitemap (>= 0.2, < 0.3)', 'yapf'
         ]
     },
     entry_points={

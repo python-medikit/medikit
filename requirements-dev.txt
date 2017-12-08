@@ -14,11 +14,12 @@ pluggy==0.6.0
 py==1.5.2
 pygments==2.2.0
 pytest-cov==2.5.1
-pytest==3.3.0
+pytest==3.3.1
 pytz==2017.3
 requests==2.18.4
 six==1.11.0
 snowballstemmer==1.2.1
+sphinx-sitemap==0.2
 sphinx==1.6.5
 sphinxcontrib-websupport==1.0.1
 urllib3==1.22
