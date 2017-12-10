@@ -19,8 +19,9 @@ SPHINX_SOURCEDIR ?= docs
 SPHINX_BUILDDIR ?= $(SPHINX_SOURCEDIR)/_build
 YAPF ?= $(PYTHON) -m yapf
 YAPF_OPTIONS ?= -rip
+SPHINX_AUTOBUILD ?= $(PYTHON_DIRNAME)/sphinx-autobuild
 
-.PHONY: $(SPHINX_SOURCEDIR) clean format install install-dev test update update-requirements
+.PHONY: $(SPHINX_SOURCEDIR) clean format install install-dev test update update-requirements watch-$(SPHINX_SOURCEDIR)
 
 # Installs the local project dependencies.
 install:
@@ -57,3 +58,6 @@ $(SPHINX_SOURCEDIR): install-dev
 format: install-dev
 	$(YAPF) $(YAPF_OPTIONS) .
 	$(YAPF) $(YAPF_OPTIONS) Projectfile
+
+watch-$(SPHINX_SOURCEDIR):
+	$(SPHINX_AUTOBUILD) $(SPHINX_SOURCEDIR) $(shell mktemp -d)

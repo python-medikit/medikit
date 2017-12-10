@@ -19,6 +19,7 @@ pytz==2017.3
 requests==2.18.4
 six==1.11.0
 snowballstemmer==1.2.1
+sphinx-sitemap==0.2
 sphinx==1.6.5
 sphinxcontrib-websupport==1.0.1
 urllib3==1.22

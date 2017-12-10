@@ -1,9 +1,9 @@
-name: py35
+name: py36
 dependencies:
-- pip=9.0.1=py35_0
-- python=3.5.4=0
-- setuptools=36.6.0=py35_0
-- wheel=0.30.0=py35_0
+- pip=9.0.1
+- python=3.6
+- setuptools=38.2.3
+- wheel=0.30.0
 - pip:
   - click==6.7
   - colorama==0.3.9
@@ -11,14 +11,15 @@ dependencies:
   - git-semver==0.2.1
   - gitdb2==2.0.3
   - gitpython==2.1.7
-  - jinja2==2.9.6
+  - jinja2==2.10
   - markupsafe==1.0
-  - mondrian==0.3.0
+  - mondrian==0.6.0
   - pbr==3.1.1
-  - pip-tools==1.10.1
+  - pip-tools==1.11.0
   - semantic-version==2.6.0
   - six==1.11.0
   - smmap2==2.0.3
+  - sphinx-sitemap==0.2
   - stevedore==1.27.1
-  - whistle==1.0a3
-  - yapf==0.19.0
+  - whistle==1.0.0
+  - yapf==0.20.0

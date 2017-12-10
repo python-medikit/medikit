@@ -162,6 +162,7 @@ class CleanScript(Script):
 
 class MakeConfig(Feature.Config):
     on_generate = __name__ + '.on_generate'
+    """Happens during the makefile generation."""
 
     def __init__(self):
         self.include_medikit_targets = True

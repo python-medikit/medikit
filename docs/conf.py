@@ -20,7 +20,10 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
+    'sphinx_sitemap',
 ]
+
+site_url = 'http://medikit.rdc.li/en/latest/'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

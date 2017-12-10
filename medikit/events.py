@@ -77,7 +77,7 @@ def subscribe(event_id, priority=0):
                 f.__doc__ += '\n'
 
         f.__subscriptions__[event_id] = priority
-        f.__doc__ += '\nListens to ``{}`` event *({})*'.format(event_id, priority)
+        f.__doc__ += '\nListens to ``{}`` event *(priority: {})*'.format(event_id, priority)
 
         return f
 

@@ -1,12 +1,7 @@
 Guides
 ======
 
-Installation
-::::::::::::
+This is a work in progress, and I'm afraid this section lacks content.
 
-First Steps
-:::::::::::
-
-Read Further
-::::::::::::
+Meanwhile, you can read the :doc:`features`.
 

@@ -1,6 +1,6 @@
 # medikit (see github.com/python-edgy/medikit)
 
-from medikit import require, pipeline, steps
+from medikit import listen, require
 
 git = require('git')
 make = require('make')
@@ -43,6 +43,18 @@ python.add_requirements(
     'stevedore ~=1.28',
     'whistle ~=1.0',
     'yapf ~=0.20',
+    dev=[
+        'sphinx-sitemap >=0.2,<0.3',
+    ]
 )
 
+@listen(make.on_generate)
+def on_make_generate(event):
+    event.makefile['SPHINX_AUTOBUILD'] = '$(PYTHON_DIRNAME)/sphinx-autobuild'
+    event.makefile.add_target('watch-$(SPHINX_SOURCEDIR)', '''
+        $(SPHINX_AUTOBUILD) $(SPHINX_SOURCEDIR) $(shell mktemp -d)
+    ''', phony=True)
+
+
 # vim: ft=python:
+

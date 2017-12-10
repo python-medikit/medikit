@@ -8,11 +8,22 @@ env.filters['underline'] = lambda s, c: s + '\n' + c * len(s)
 
 TEMPLATE = env.from_string(
     '''
-.. comment:: This file is auto-generated, please do not change it directly.
+.. comment:: This file is auto-generated (see bin/generate_apidoc.py), please do not change it.
 
 {{ title | underline('=') }}
 
 .. automodule:: {{ module }}
+
+Usage
+:::::
+
+To use the {{ title }} feature, make sure your **Projectfile** contains:
+
+.. code-block:: python
+
+    from medikit import require
+    
+    {{ name }} = require('{{ name }}')
 
 {% if has_custom_config -%}
 
@@ -49,6 +60,7 @@ def main():
         config_module = config.__module__
 
         rst = TEMPLATE.render(
+            name=name,
             title=feature.__name__.replace('Feature', ' Feature'),
             module=module,
             has_custom_config=(module == config_module),
