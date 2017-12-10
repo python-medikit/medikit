@@ -19,6 +19,12 @@ class Pipeline:
         self.steps.append(step)
         return self
 
+    def remove(self, identity):
+        for i in range(len(self.steps)):
+            if identity == get_identity(self.steps[i]):
+                del self.steps[i]
+                break
+
 
 def get_identity(step):
     return str(step)
