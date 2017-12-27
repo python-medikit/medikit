@@ -74,6 +74,12 @@ And maybe, test that the release is now installable...
 
     (name=`python setup.py --name`; for v in 3.5 3.6 3.7; do python$v -m pip install -U virtualenv; python$v -m virtualenv -p python$v .rtest$v; cd .rtest$v; bin/pip --no-cache-dir install $name; bin/python -c "import $name; print($name.__name__, $name.__version__);"; cd ..; rm -rf .rtest$v; done; )
 
+Note that for PRERELEASES, you must add `--pre` to `pip install` arguments.
+
+.. code-block:: shell
+
+    (name=`python setup.py --name`; for v in 3.5 3.6 3.7; do python$v -m pip install -U virtualenv; python$v -m virtualenv -p python$v .rtest$v; cd .rtest$v; bin/pip --no-cache-dir install --pre $name; bin/python -c "import $name; print($name.__name__, $name.__version__);"; cd ..; rm -rf .rtest$v; done; )
+
 5. (private) Build containers, push and patch kubernetes
 
 .. code-block:: shell
