@@ -6,6 +6,7 @@ import logging
 import os
 import sys
 
+import medikit
 import mondrian
 from medikit.commands import START, CONTINUE, ABORT, handle_init, handle_update, handle_pipeline
 
@@ -57,6 +58,8 @@ def main(args=None):
     command, handler = options.pop('command'), options.pop('handler')
 
     config_filename = os.path.join(os.getcwd(), options.pop('target', '.'), options.pop('config'))
+
+    print(mondrian.term.lightwhite_bg(mondrian.term.red('  ✚  Medikit v.' + medikit.__version__ +'  ✚  ')))
 
     if len(more_args):
         return handler(config_filename, more=more_args, **options)

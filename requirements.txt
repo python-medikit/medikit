@@ -4,7 +4,7 @@ colorama==0.3.9
 first==2.0.1
 git-semver==0.2.2
 gitdb2==2.0.3
-gitpython==2.1.7
+gitpython==2.1.8
 jinja2==2.10
 markupsafe==1.0
 mondrian==0.6.1
@@ -15,4 +15,4 @@ six==1.11.0
 smmap2==2.0.3
 stevedore==1.28.0
 whistle==1.0.0
-yapf==0.20.0
+yapf==0.20.1
