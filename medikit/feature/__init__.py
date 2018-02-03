@@ -29,9 +29,6 @@ class Feature(object):
     file_type = staticmethod(File)
 
     class Config(ContextDecorator):
-        def __init__(self):
-            pass
-
         def __enter__(self):
             return self
 
