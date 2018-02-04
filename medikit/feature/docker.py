@@ -1,10 +1,16 @@
 """
 Not yet functional.
 """
+from argparse import Namespace
+
 from medikit.events import subscribe
 from medikit.feature import Feature
+from medikit.structs import Script
 
 DEFAULT_NAME = '$(shell echo $(PACKAGE) | tr A-Z a-z)'
+
+DOCKER = 'docker'
+ROCKER = 'rocker'
 
 
 class DockerConfig(Feature.Config):
@@ -13,10 +19,67 @@ class DockerConfig(Feature.Config):
         self._user = None
         self._name = DEFAULT_NAME
 
+        self.use_default_builder()
+
     def set_remote(self, registry=None, user=None, name=DEFAULT_NAME):
         self._registry = registry
         self._user = user
         self._name = name
+
+    def _get_default_variables(self):
+        return dict(
+            DOCKER='$(shell which docker)',
+            DOCKER_BUILD='$(DOCKER) build',
+            DOCKER_BUILD_OPTIONS='',
+            DOCKER_PUSH='$(DOCKER) push',
+            DOCKER_PUSH_OPTIONS='',
+            DOCKER_RUN='$(DOCKER) run',
+            DOCKER_RUN_COMMAND='',
+            DOCKER_RUN_OPTIONS='',
+        )
+
+    def _get_default_image_variables(self):
+        return dict(
+            DOCKER_IMAGE=self.image,
+            DOCKER_TAG='$(VERSION)',
+        )
+
+    def use_default_builder(self):
+        self.builder = DOCKER
+
+        self._variables = [
+            self._get_default_variables(),
+            self._get_default_image_variables(),
+        ]
+
+        self.scripts = Namespace(
+            build=Script('$(DOCKER_BUILD) $(DOCKER_BUILD_OPTIONS) -t $(DOCKER_IMAGE):$(DOCKER_TAG) .'),
+            push=Script('$(DOCKER_PUSH) $(DOCKER_PUSH_OPTIONS) $(DOCKER_IMAGE):$(DOCKER_TAG)'),
+            run=Script('$(DOCKER_RUN) $(DOCKER_RUN_OPTIONS) -p 8080:8080 $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_RUN_COMMAND)'),
+            shell=Script('DOCKER_RUN_COMMAND="/bin/bash" DOCKER_RUN_OPTIONS="--interactive --tty" $(MAKE) docker-run'),
+        )
+
+    def use_rocker_builder(self):
+        self.builder = ROCKER
+
+        self._variables = [
+            self._get_default_variables(),
+            self._get_default_image_variables(),
+            {
+                'ROCKER': '$(shell which rocker)',
+                'ROCKER_BUILD': '$(ROCKER) build',
+                'ROCKER_BUILD_OPTIONS': '',
+                'ROCKER_BUILD_VARIABLES': '--var DOCKER_IMAGE=$(DOCKER_IMAGE) --var DOCKER_TAG=$(DOCKER_TAG) --var PYTHON_REQUIREMENTS_FILE=$(PYTHON_REQUIREMENTS_FILE)',
+            },
+        ]
+
+        self.scripts.build.set('$(ROCKER_BUILD) $(ROCKER_BUILD_OPTIONS) $(ROCKER_BUILD_VARIABLES) .')
+        self.scripts.push.set('ROCKER_BUILD_OPTIONS="$(ROCKER_BUILD_OPTIONS) --push" $(MAKE) docker-build')
+
+    @property
+    def variables(self):
+        for variables in self._variables:
+            yield from sorted(variables.items())
 
     @property
     def image(self):
@@ -30,59 +93,31 @@ class DockerFeature(Feature):
     def on_make_generate(self, event):
         docker_config = event.config['docker']
 
-        # Commands
-        event.makefile['DOCKER'] = '$(shell which docker)'
-        event.makefile['DOCKER_BUILD'] = '$(DOCKER) build'
-        event.makefile['DOCKER_BUILD_OPTIONS'] = ''
-        event.makefile['DOCKER_PUSH'] = '$(DOCKER) push'
-        event.makefile['DOCKER_PUSH_OPTIONS'] = ''
-        event.makefile['DOCKER_RUN'] = '$(DOCKER) run'
-        event.makefile['DOCKER_RUN_OPTIONS'] = ''
-
-        # Variables
-        event.makefile['DOCKER_IMAGE'] = docker_config.image
-        event.makefile['DOCKER_TAG'] = '$(VERSION)'
+        for var, val in docker_config.variables:
+            event.makefile[var] = val
 
         # Targets
-        event.makefile.add_target(
-            'docker-build',
-            '''
-            $(DOCKER_BUILD) $(DOCKER_BUILD_OPTIONS) -t $(DOCKER_IMAGE):$(DOCKER_TAG) .
-        ''',
-            phony=True
-        )
-
-        event.makefile.add_target(
-            'docker-push',
-            '''
-            $(DOCKER_PUSH) $(DOCKER_PUSH_OPTIONS) $(DOCKER_IMAGE):$(DOCKER_TAG)
-        ''',
-            phony=True
-        )
-
-        event.makefile.add_target(
-            'docker-run',
-            '''
-            $(DOCKER_RUN) -p 8080:8080 $(DOCKER_IMAGE):$(DOCKER_TAG)
-        ''',
-            phony=True
-        )
+        event.makefile.add_target('docker-build', docker_config.scripts.build, phony=True)
+        event.makefile.add_target('docker-push', docker_config.scripts.push, phony=True)
+        event.makefile.add_target('docker-run', docker_config.scripts.run, phony=True)
+        event.makefile.add_target('docker-shell', docker_config.scripts.shell, phony=True)
 
     @subscribe('medikit.on_end')
     def on_end(self, event):
+        docker_config = event.config['docker']
+
         self.render_file_inline(
             '.dockerignore', '''
             **/__pycache__
             *.egg-info
+            .cache
             .git
             .idea
-            assets.json
-            config/docker
-            http_cache.sqlite
+            /Dockerfile
+            /Projectfile
+            /Rockerfile
             node_modules
             static
-            static
-            touit/assets/dist
         ''', event.variables
         )
 
@@ -114,9 +149,45 @@ class DockerFeature(Feature):
         '''
         )
 
-        self.render_file_inline('Dockerfile', '''
-            FROM python:3
-        ''')
+        if docker_config.builder == DOCKER:
+            self.render_file_inline('Dockerfile', '''
+                FROM python:3
+            ''')
+        elif docker_config.builder == ROCKER:
+            self.render_file_inline('Rockerfile', '''
+                FROM python:3
+                 
+                # Mount cache volume to keep cache persistent from one build to another
+                MOUNT /app/.cache
+                WORKDIR /app
+                
+                # Create application user
+                RUN useradd --home-dir /app --group www-data app \
+                 && pip install -U pip wheel virtualenv \
+                 && mkdir /env \
+                 && chown app:www-data -R /app /env 
+                 
+                # Add and install python requirements in a virtualenv
+                USER app
+                RUN virtualenv -p python3 /env/
+                ADD setup.py *.txt /app/
+                RUN /env/bin/pip install -r {{ '{{ .PYTHON_REQUIREMENTS_FILE }}' }}
+
+                # Add everything else
+                USER root
+                ADD . /app
+                # IMPORT /static /app
+                # IMPORT /assets.json /app
+                RUN chown app:www-data -R /app
+
+                # Entrypoint
+                USER app
+                CMD /env/bin/gunicorn --bind 0.0.0.0:8080 --workers 4 config.wsgi
+                
+                PUSH {{ '{{ .DOCKER_IMAGE }}:{{ .DOCKER_TAG }}' }}
+            ''')
+        else:
+            raise NotImplementedError('Unknown builder {}'.format(docker_config.builder))
 
 
 __feature__ = DockerFeature
