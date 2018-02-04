@@ -69,7 +69,7 @@ class DockerConfig(Feature.Config):
                 'ROCKER': '$(shell which rocker)',
                 'ROCKER_BUILD': '$(ROCKER) build',
                 'ROCKER_BUILD_OPTIONS': '',
-                'ROCKER_BUILD_VARIABLES': '--var DOCKER_IMAGE=$(DOCKER_IMAGE) --var DOCKER_TAG=$(DOCKER_TAG) --var PYTHON_REQUIREMENTS_FILE=$(PYTHON_REQUIREMENTS_FILE)',
+                'ROCKER_BUILD_VARIABLES': '--var DOCKER_IMAGE=$(DOCKER_IMAGE) --var DOCKER_TAG=$(DOCKER_TAG) --var PYTHON_REQUIREMENTS_FILE=requirements-prod.txt',
             },
         ]
 
