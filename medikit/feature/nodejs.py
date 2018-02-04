@@ -30,8 +30,9 @@ class NodeJSConfig(Feature.Config):
         if base_dir:
             self.base_dir = base_dir
 
-    def add_dependencies(self, deps, **kwargs):
-        self.__add_dependencies(deps)
+    def add_dependencies(self, deps=None, **kwargs):
+        if deps:
+            self.__add_dependencies(deps)
         for deptype, deps in kwargs.items():
             self.__add_dependencies(deps, deptype=deptype)
         return self
@@ -70,9 +71,10 @@ class NodeJSFeature(Feature):
     @subscribe('medikit.on_start')
     def on_start(self, event):
         name = event.config['python'].get('name')
-        version_file = os.path.join(name.replace('.', '/'), '_version.py')
 
-        current_version = PythonVersion.coerce(runpy.run_path(version_file).get('__version__'), partial=True)
+        current_version = PythonVersion.coerce(
+            runpy.run_path(event.config['python'].version_file).get('__version__'), partial=True
+        )
         current_version.partial = False
 
         package = {

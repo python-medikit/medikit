@@ -59,7 +59,7 @@ def main(args=None):
 
     config_filename = os.path.join(os.getcwd(), options.pop('target', '.'), options.pop('config'))
 
-    print(mondrian.term.lightwhite_bg(mondrian.term.red('  ✚  Medikit v.' + medikit.__version__ +'  ✚  ')))
+    print(mondrian.term.lightwhite_bg(mondrian.term.red('  ✚  Medikit v.' + medikit.__version__ + '  ✚  ')))
 
     if len(more_args):
         return handler(config_filename, more=more_args, **options)

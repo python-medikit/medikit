@@ -125,9 +125,10 @@ class Makefile(object):
 
 
 class MakefileEvent(Event):
-    def __init__(self, package_name, makefile):
+    def __init__(self, package_name, makefile, config):
         self.package_name = package_name
         self.makefile = makefile
+        self.config = config
         super(MakefileEvent, self).__init__()
 
 
@@ -142,8 +143,7 @@ class InstallScript(Script):
     def __iter__(self):
         yield 'if [ -z "$(QUICK)" ]; then \\'
         for line in map(
-                lambda x: '    {} ; \\'.format(x),
-                itertools.chain(self.before_install, self.install, self.after_install)
+            lambda x: '    {} ; \\'.format(x), itertools.chain(self.before_install, self.install, self.after_install)
         ):
             yield line
         yield 'fi'
@@ -223,8 +223,9 @@ class MakeFeature(Feature):
                 '''Remove requirements files and update project artifacts using medikit, after installing it eventually.'''
             )
 
-        self.dispatcher.dispatch(MakeConfig.on_generate,
-                                 MakefileEvent(event.config['python'].get('name'), self.makefile))
+        self.dispatcher.dispatch(
+            MakeConfig.on_generate, MakefileEvent(event.config['python'].get('name'), self.makefile, event.config)
+        )
 
         self.render_file_inline('Makefile', self.makefile.__str__(), override=True)
 

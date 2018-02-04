@@ -25,7 +25,16 @@ class DjangoConfig(Feature.Config):
     """Which django version requirement do you want?"""
 
     def __init__(self):
+        self._static_dir = None
         self.version = self.version
+
+    @property
+    def static_dir(self):
+        return self._static_dir
+
+    @static_dir.setter
+    def static_dir(self, value):
+        self._static_dir = value
 
 
 class DjangoFeature(Feature):
@@ -46,18 +55,18 @@ class DjangoFeature(Feature):
     def on_make_generate(self, event):
         makefile = event.makefile
         makefile['DJANGO'] = '$(PYTHON) manage.py'
-        makefile.add_target('runserver', '''$(DJANGO) runserver''', deps=('install-dev',), phony=True)
+        makefile.add_target('runserver', '''$(DJANGO) runserver''', deps=('install-dev', ), phony=True)
 
     @subscribe('medikit.on_start')
     def on_start(self, event):
+        django_config = event.config['django']
+        python_config = event.config['python']
 
         context = {
-            **event.config['python'].get_setup(),
+            **python_config.get_setup(),
             'config_package': 'config',
             'secret_key': generate_secret_key(),
         }
-
-        name = context['name']
 
         # Create configuration
         config_path = 'config'
@@ -71,7 +80,7 @@ class DjangoFeature(Feature):
 
         self.dispatcher.dispatch('medikit.feature.django.on_configure')
 
-        static_dir = os.path.join(name, 'static')
+        static_dir = django_config.static_dir or os.path.join(python_config.package_dir, 'static')
         if not os.path.exists(static_dir):
             os.makedirs(static_dir)
         self.render_empty_files(os.path.join(static_dir, 'favicon.ico'))

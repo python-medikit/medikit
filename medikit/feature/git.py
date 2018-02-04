@@ -41,7 +41,7 @@ class GitFeature(Feature):
     def on_file_change(self, event):
         os.system('git add {}'.format(event.filename))
 
-    @subscribe('medikit.feature.make.on_generate', priority=ABSOLUTE_PRIORITY+1)
+    @subscribe('medikit.feature.make.on_generate', priority=ABSOLUTE_PRIORITY + 1)
     def on_make_generate(self, event):
         event.makefile['VERSION'] = "$(shell git describe 2>/dev/null || git rev-parse --short HEAD)"
 
