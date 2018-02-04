@@ -182,7 +182,7 @@ class DockerFeature(Feature):
 
                 # Entrypoint
                 USER app
-                CMD /env/bin/gunicorn --bind 0.0.0.0:8080 --workers 4 config.wsgi
+                CMD /env/bin/gunicorn config.wsgi --bind 0.0.0.0:8000 --workers 4
                 
                 PUSH {{ '{{ .DOCKER_IMAGE }}:{{ .DOCKER_TAG }}' }}
             ''')
