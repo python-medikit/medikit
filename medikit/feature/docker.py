@@ -55,7 +55,9 @@ class DockerConfig(Feature.Config):
         self.scripts = Namespace(
             build=Script('$(DOCKER_BUILD) $(DOCKER_BUILD_OPTIONS) -t $(DOCKER_IMAGE):$(DOCKER_TAG) .'),
             push=Script('$(DOCKER_PUSH) $(DOCKER_PUSH_OPTIONS) $(DOCKER_IMAGE):$(DOCKER_TAG)'),
-            run=Script('$(DOCKER_RUN) $(DOCKER_RUN_OPTIONS) --interactive --tty -p 8080:8080 $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_RUN_COMMAND)'),
+            run=Script(
+                '$(DOCKER_RUN) $(DOCKER_RUN_OPTIONS) --interactive --tty -p 8080:8080 $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_RUN_COMMAND)'
+            ),
             shell=Script('DOCKER_RUN_COMMAND="/bin/bash" $(MAKE) docker-run'),
         )
 
@@ -66,10 +68,14 @@ class DockerConfig(Feature.Config):
             self._get_default_variables(),
             self._get_default_image_variables(),
             {
-                'ROCKER': '$(shell which rocker)',
-                'ROCKER_BUILD': '$(ROCKER) build',
-                'ROCKER_BUILD_OPTIONS': '',
-                'ROCKER_BUILD_VARIABLES': '--var DOCKER_IMAGE=$(DOCKER_IMAGE) --var DOCKER_TAG=$(DOCKER_TAG) --var PYTHON_REQUIREMENTS_FILE=requirements-prod.txt',
+                'ROCKER':
+                '$(shell which rocker)',
+                'ROCKER_BUILD':
+                '$(ROCKER) build',
+                'ROCKER_BUILD_OPTIONS':
+                '',
+                'ROCKER_BUILD_VARIABLES':
+                '--var DOCKER_IMAGE=$(DOCKER_IMAGE) --var DOCKER_TAG=$(DOCKER_TAG) --var PYTHON_REQUIREMENTS_FILE=requirements-prod.txt',
             },
         ]
 
@@ -154,7 +160,8 @@ class DockerFeature(Feature):
                 FROM python:3
             ''')
         elif docker_config.builder == ROCKER:
-            self.render_file_inline('Rockerfile', '''
+            self.render_file_inline(
+                'Rockerfile', '''
                 FROM python:3
                  
                 # Mount cache volume to keep cache persistent from one build to another
@@ -185,7 +192,8 @@ class DockerFeature(Feature):
                 CMD /env/bin/gunicorn config.wsgi --bind 0.0.0.0:8000 --workers 4
                 
                 PUSH {{ '{{ .DOCKER_IMAGE }}:{{ .DOCKER_TAG }}' }}
-            ''')
+            '''
+            )
         else:
             raise NotImplementedError('Unknown builder {}'.format(docker_config.builder))
 

@@ -332,7 +332,7 @@ class PythonFeature(Feature):
         session = pip_command._build_session(pip_options)
         repository = PyPIRepository(pip_options, session)
 
-        for extra in itertools.chain((None,), python_config.get_extras()):
+        for extra in itertools.chain((None, ), python_config.get_extras()):
             tmpfile = tempfile.NamedTemporaryFile(mode='wt', delete=False)
             if extra:
                 tmpfile.write('\n'.join(python_config.get_requirements(extra=extra)))
@@ -351,7 +351,7 @@ class PythonFeature(Feature):
                 '\n'.join(
                     (
                         '-e .{}'.format('[' + extra + ']' if extra else ''),
-                        *(('-r requirements.txt',) if extra else ()),
+                        *(('-r requirements.txt', ) if extra else ()),
                         *sorted(
                             format_requirement(req) for req in resolver.resolve(max_rounds=10)
                             if req.name != python_config.get('name')

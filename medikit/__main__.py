@@ -66,13 +66,13 @@ def main(args=None):
     try:
         if os.path.exists(os.path.join(os.path.dirname(os.path.dirname(medikit.__file__)), '.git')):
             try:
-                version = check_output(['git', 'describe'],
-                                       cwd=os.path.dirname(os.path.dirname(medikit.__file__))).decode(
-                    'utf-8').strip() + ' (git)'
+                version = check_output(
+                    ['git', 'describe'], cwd=os.path.dirname(os.path.dirname(medikit.__file__))
+                ).decode('utf-8').strip() + ' (git)'
             except:
-                version = check_output(['git', 'rev-parse', 'HEAD'],
-                                       cwd=os.path.dirname(os.path.dirname(medikit.__file__))).decode(
-                    'utf-8').strip()[0:7] + ' (git)'
+                version = check_output(
+                    ['git', 'rev-parse', 'HEAD'], cwd=os.path.dirname(os.path.dirname(medikit.__file__))
+                ).decode('utf-8').strip()[0:7] + ' (git)'
     except:
         warnings.warn('Git repository found, but could not find version number from the repository.')
 
