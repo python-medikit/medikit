@@ -21,18 +21,10 @@ def generate_secret_key():
 class DjangoConfig(Feature.Config):
     """ Configuration class for the “django” feature. """
 
-    use_jinja2 = True
-    """Whether or not to use the Jinja2 templating language."""
-
-    use_whitenoise = True
-    """Whether or not to use Whitenoise for the static files."""
-
     version = '>=2.0,<2.1'
     """Which django version requirement do you want?"""
 
     def __init__(self):
-        self.use_jinja2 = self.use_jinja2
-        self.use_whitenoise = self.use_whitenoise
         self.version = self.version
 
 
@@ -45,25 +37,10 @@ class DjangoFeature(Feature):
     def on_python_generate(self, event):
         event.config['python'].add_requirements(
             'django ' + event.config['django'].version,
-            dev=[
-                'django-extensions >=1.9,<1.10',
-                'django-debug-toolbar >=1.8,<1.9',
-            ],
             prod=[
                 'gunicorn ==19.7.1',
             ],
         )
-
-        if event.config['django'].use_jinja2:
-            event.config['python'].add_requirements('Jinja2 >=2.10,<2.11', )
-
-        if event.config['django'].use_whitenoise:
-            event.config['python'].add_requirements(
-                'brotli >=1.0,<1.1',
-                'whitenoise ==4.0b4',
-            )
-
-        event.config['python'].add_requirements('django-extensions >=1.9,<1.10', )
 
     @subscribe('medikit.feature.make.on_generate', priority=SUPPORT_PRIORITY)
     def on_make_generate(self, event):
@@ -78,8 +55,6 @@ class DjangoFeature(Feature):
             **event.config['python'].get_setup(),
             'config_package': 'config',
             'secret_key': generate_secret_key(),
-            'use_jinja2': event.config['django'].use_jinja2,
-            'use_whitenoise': event.config['django'].use_whitenoise,
         }
 
         name = context['name']
@@ -95,11 +70,6 @@ class DjangoFeature(Feature):
         self.render_file(os.path.join(config_path, 'wsgi.py'), 'django/wsgi.py.j2', context, force_python=True)
 
         self.dispatcher.dispatch('medikit.feature.django.on_configure')
-
-        if context['use_jinja2']:
-            templates_dir = os.path.join(name, 'jinja2', context['name'])
-            if not os.path.exists(templates_dir):
-                os.makedirs(templates_dir)
 
         static_dir = os.path.join(name, 'static')
         if not os.path.exists(static_dir):
