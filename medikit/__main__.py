@@ -5,6 +5,7 @@ import argparse
 import logging
 import os
 import sys
+import warnings
 from subprocess import check_output
 
 import mondrian
@@ -61,17 +62,19 @@ def main(args=None):
 
     config_filename = os.path.join(os.getcwd(), options.pop('target', '.'), options.pop('config'))
 
-    if os.path.exists(os.path.join(os.path.dirname(os.path.dirname(medikit.__file__)), '.git')):
-        try:
-            version = check_output(['git', 'describe'], cwd=os.path.dirname(os.path.dirname(medikit.__file__))).decode(
-                'utf-8').strip() + ' (git)'
-        except:
-            version = check_output(['git', 'rev-parse', 'HEAD'],
-                                   cwd=os.path.dirname(os.path.dirname(medikit.__file__))).decode(
-                'utf-8').strip()[0:7] + ' (git)'
-
-    else:
-        version = medikit.__version__
+    version = medikit.__version__
+    try:
+        if os.path.exists(os.path.join(os.path.dirname(os.path.dirname(medikit.__file__)), '.git')):
+            try:
+                version = check_output(['git', 'describe'],
+                                       cwd=os.path.dirname(os.path.dirname(medikit.__file__))).decode(
+                    'utf-8').strip() + ' (git)'
+            except:
+                version = check_output(['git', 'rev-parse', 'HEAD'],
+                                       cwd=os.path.dirname(os.path.dirname(medikit.__file__))).decode(
+                    'utf-8').strip()[0:7] + ' (git)'
+    except:
+        warnings.warn('Git repository found, but could not find version number from the repository.')
 
     print(mondrian.term.lightwhite_bg(mondrian.term.red('  ✚  Medikit v.' + version + '  ✚  ')))
 
