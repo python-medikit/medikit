@@ -314,6 +314,7 @@ class PythonFeature(Feature):
                 'entry_points': setup.pop('entry_points', {}),
                 'extras_require': python_config.get('extras_require'),
                 'install_requires': python_config.get('install_requires'),
+                'python': python_config,
                 'setup': setup,
             }
         )

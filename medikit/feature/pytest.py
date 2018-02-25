@@ -1,6 +1,6 @@
 import os
-from medikit.events import subscribe
 
+from medikit.events import subscribe
 from . import Feature, SUPPORT_PRIORITY
 
 
@@ -14,9 +14,10 @@ class PytestFeature(Feature):
     def on_python_generate(self, event):
         event.config['python'].add_requirements(
             dev=[
-                'coverage >=4.4,<5.0',
-                'pytest >=3.1,<4.0',
-                'pytest-cov >=2.5,<3.0',
+                'coverage ~=4.4',
+                'pytest ~=3.4',
+                'pytest-cov ~=2.5',
+                'pytest-sugar ~=0.9.1'
             ]
         )
 
@@ -30,7 +31,7 @@ class PytestFeature(Feature):
         makefile.add_target(
             'test', '''
             $(PYTEST) $(PYTEST_OPTIONS) tests
-        ''', deps=('install-dev', ), phony=True
+        ''', deps=('install-dev',), phony=True
         )
 
     @subscribe('medikit.on_start', priority=SUPPORT_PRIORITY)

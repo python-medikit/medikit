@@ -56,7 +56,7 @@ class DockerConfig(Feature.Config):
             build=Script('$(DOCKER_BUILD) $(DOCKER_BUILD_OPTIONS) -t $(DOCKER_IMAGE):$(DOCKER_TAG) .'),
             push=Script('$(DOCKER_PUSH) $(DOCKER_PUSH_OPTIONS) $(DOCKER_IMAGE):$(DOCKER_TAG)'),
             run=Script(
-                '$(DOCKER_RUN) $(DOCKER_RUN_OPTIONS) --interactive --tty -p 8080:8080 $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_RUN_COMMAND)'
+                '$(DOCKER_RUN) $(DOCKER_RUN_OPTIONS) --interactive --tty -p 8000:8000 $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_RUN_COMMAND)'
             ),
             shell=Script('DOCKER_RUN_COMMAND="/bin/bash" $(MAKE) docker-run'),
         )
