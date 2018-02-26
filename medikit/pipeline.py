@@ -55,16 +55,15 @@ class ConfiguredPipeline:
             step.abort()
 
     def serialize(self):
-        return json.dumps({
-            'meta': {
-                **self.meta,
-                'updated': str(datetime.datetime.now()),
-            },
-            'steps': [
-                [get_identity(step), step.get_state()]
-                for step in self.steps
-            ]
-        })
+        return json.dumps(
+            {
+                'meta': {
+                    **self.meta,
+                    'updated': str(datetime.datetime.now()),
+                },
+                'steps': [[get_identity(step), step.get_state()] for step in self.steps]
+            }
+        )
 
     def unserialize(self, serialized):
         serialized = json.loads(serialized)

@@ -19,8 +19,11 @@ class TestPythonConfig(TestCase):
         config.setup(name=PACKAGE_NAME)
         init_files = list(config.get_init_files())
         assert init_files == [
-            ('foo', 'foo/__init__.py', {'is_namespace': True}),
-            ('foo/bar', 'foo/bar/__init__.py', {'is_namespace': False})
+            ('foo', 'foo/__init__.py', {
+                'is_namespace': True
+            }), ('foo/bar', 'foo/bar/__init__.py', {
+                'is_namespace': False
+            })
         ]
 
 
@@ -31,9 +34,7 @@ class TestPythonFeature(FeatureTestCase):
         config = super().create_config()
         config.require('make')
         python = config.require('python')
-        python.setup(
-            name=PACKAGE_NAME
-        )
+        python.setup(name=PACKAGE_NAME)
         return config
 
     def test_configure(self):

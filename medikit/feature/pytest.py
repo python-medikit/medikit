@@ -13,12 +13,7 @@ class PytestFeature(Feature):
     @subscribe('medikit.feature.python.on_generate')
     def on_python_generate(self, event):
         event.config['python'].add_requirements(
-            dev=[
-                'coverage ~=4.4',
-                'pytest ~=3.4',
-                'pytest-cov ~=2.5',
-                'pytest-sugar ~=0.9.1'
-            ]
+            dev=['coverage ~=4.4', 'pytest ~=3.4', 'pytest-cov ~=2.5', 'pytest-sugar ~=0.9.1']
         )
 
     @subscribe('medikit.feature.make.on_generate', priority=SUPPORT_PRIORITY)
@@ -31,7 +26,7 @@ class PytestFeature(Feature):
         makefile.add_target(
             'test', '''
             $(PYTEST) $(PYTEST_OPTIONS) tests
-        ''', deps=('install-dev',), phony=True
+        ''', deps=('install-dev', ), phony=True
         )
 
     @subscribe('medikit.on_start', priority=SUPPORT_PRIORITY)
