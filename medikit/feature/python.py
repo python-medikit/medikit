@@ -43,6 +43,13 @@ from medikit.events import subscribe
 from medikit.feature import Feature, ABSOLUTE_PRIORITY
 
 
+def _normalize_requirement(req):
+    bits = req.requirement.split()
+    if req.extras:
+        bits = [bits[0] + '[{}]'.format(','.join(req.extras))] + bits[1:]
+    return ' '.join(bits)
+
+
 class PythonConfig(Feature.Config):
     """ Configuration API for the «python» feature. """
 
@@ -126,13 +133,13 @@ class PythonConfig(Feature.Config):
 
     def get_constraints(self, extra=None):
         for name, req in sorted(self._constraints.get(extra, {}).items()):
-            yield req.requirement
+            yield _normalize_requirement(req)
 
     def get_requirements(self, extra=None, with_constraints=False):
         if with_constraints:
             yield from self.get_constraints(extra=extra)
         for name, req in sorted(self._requirements[extra].items()):
-            yield req.requirement
+            yield _normalize_requirement(req)
 
     def setup(self, **kwargs):
         self._setup.update(kwargs)
@@ -333,7 +340,7 @@ class PythonFeature(Feature):
         session = pip_command._build_session(pip_options)
         repository = PyPIRepository(pip_options, session)
 
-        for extra in itertools.chain((None, ), python_config.get_extras()):
+        for extra in itertools.chain((None,), python_config.get_extras()):
             tmpfile = tempfile.NamedTemporaryFile(mode='wt', delete=False)
             if extra:
                 tmpfile.write('\n'.join(python_config.get_requirements(extra=extra)))
@@ -352,7 +359,7 @@ class PythonFeature(Feature):
                 '\n'.join(
                     (
                         '-e .{}'.format('[' + extra + ']' if extra else ''),
-                        *(('-r requirements.txt', ) if extra else ()),
+                        *(('-r requirements.txt',) if extra else ()),
                         *sorted(
                             format_requirement(req) for req in resolver.resolve(max_rounds=10)
                             if req.name != python_config.get('name')
