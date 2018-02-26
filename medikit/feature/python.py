@@ -81,7 +81,7 @@ class PythonConfig(Feature.Config):
                 extra: list(self.get_requirements(extra=extra, with_constraints=True))
                 for extra in self.get_extras()
             }
-        return self._setup[item]
+        return self._setup.get(item)
 
     def get_init_files(self):
         # Explode package name so we know which python packages are namespaced and
@@ -104,7 +104,7 @@ class PythonConfig(Feature.Config):
         return self.get(item)
 
     def __setitem__(self, key, value):
-        self.setup(key=value)
+        self.setup(**{key: value})
 
     def __contains__(self, item):
         return bool(self.get(item))

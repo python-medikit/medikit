@@ -16,7 +16,7 @@ class ProjectEvent(Event):
     :attr OrderedDict setup:
     """
 
-    def __init__(self, *, config=None, variables=None, files=None, setup=None):
+    def __init__(self, *, config, variables=None, files=None, setup=None):
         """
         :param OrderedDict|NoneType variables:
         """

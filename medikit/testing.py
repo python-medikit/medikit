@@ -1,11 +1,14 @@
+from unittest import TestCase
+
+from medikit.config import ConfigurationRegistry
 from medikit.events import LoggingDispatcher
 from medikit.feature import Feature
 from medikit.file import NullFile
-from unittest import TestCase
 
 
 class FeatureTestCase(TestCase):
     feature_type = Feature
+    required_features = set()
 
     def create_dispatcher(self):
         return LoggingDispatcher()
@@ -15,3 +18,9 @@ class FeatureTestCase(TestCase):
         feature = (feature_type or self.feature_type)(dispatcher)
         feature.file_type = NullFile
         return feature, dispatcher
+
+    def create_config(self):
+        config = ConfigurationRegistry()
+        if len(self.required_features):
+            config.require(*self.required_features)
+        return config

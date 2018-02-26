@@ -1,12 +1,9 @@
-# coding: utf-8
-
-from __future__ import absolute_import, print_function, unicode_literals
-
 from collections import OrderedDict
 from unittest import TestCase
 
 import pytest
-from edgy.project.events import ProjectEvent
+
+from medikit.events import ProjectEvent
 
 
 class TestProjectEvent(TestCase):
