@@ -29,6 +29,7 @@ class NodeJSConfig(Feature.Config):
     def setup(self, *, base_dir=None):
         if base_dir:
             self.base_dir = base_dir
+        return self
 
     def add_dependencies(self, deps=None, **kwargs):
         if deps:
