@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fpython-medikit%2Fmedikit.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fpython-medikit%2Fmedikit?ref=badge_shield)
+
 ✚ medikit ✚
 ===========
 
@@ -137,3 +139,7 @@ F.A.Q
     namespace package boilerplate.
     
    
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fpython-medikit%2Fmedikit.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fpython-medikit%2Fmedikit?ref=badge_large)
