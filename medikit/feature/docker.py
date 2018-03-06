@@ -19,12 +19,26 @@ class DockerConfig(Feature.Config):
         self._user = None
         self._name = DEFAULT_NAME
 
+        self._compose_file = None
+
         self.use_default_builder()
 
     def set_remote(self, registry=None, user=None, name=DEFAULT_NAME):
         self._registry = registry
         self._user = user
         self._name = name
+
+    @property
+    def compose_file(self):
+        if self._compose_file is None:
+            return 'docker-compose.yml'
+        if self._compose_file is False:
+            return None
+        return self._compose_file
+
+    @compose_file.setter
+    def compose_file(self, value):
+        self._compose_file = value
 
     def _get_default_variables(self):
         return dict(
@@ -56,7 +70,7 @@ class DockerConfig(Feature.Config):
             build=Script('$(DOCKER_BUILD) $(DOCKER_BUILD_OPTIONS) -t $(DOCKER_IMAGE):$(DOCKER_TAG) .'),
             push=Script('$(DOCKER_PUSH) $(DOCKER_PUSH_OPTIONS) $(DOCKER_IMAGE):$(DOCKER_TAG)'),
             run=Script(
-                '$(DOCKER_RUN) $(DOCKER_RUN_OPTIONS) --interactive --tty -p 8000:8000 $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_RUN_COMMAND)'
+                '$(DOCKER_RUN) $(DOCKER_RUN_OPTIONS) --interactive --tty --rm --name=$(PACKAGE)_run -p 8000:8000 $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_RUN_COMMAND)'
             ),
             shell=Script('DOCKER_RUN_COMMAND="/bin/bash" $(MAKE) docker-run'),
         )
@@ -67,16 +81,12 @@ class DockerConfig(Feature.Config):
         self._variables = [
             self._get_default_variables(),
             self._get_default_image_variables(),
-            {
-                'ROCKER':
-                '$(shell which rocker)',
-                'ROCKER_BUILD':
-                '$(ROCKER) build',
-                'ROCKER_BUILD_OPTIONS':
-                '',
-                'ROCKER_BUILD_VARIABLES':
-                '--var DOCKER_IMAGE=$(DOCKER_IMAGE) --var DOCKER_TAG=$(DOCKER_TAG) --var PYTHON_REQUIREMENTS_FILE=requirements-prod.txt',
-            },
+            dict(
+                ROCKER='$(shell which rocker)',
+                ROCKER_BUILD='$(ROCKER) build',
+                ROCKER_BUILD_OPTIONS='',
+                ROCKER_BUILD_VARIABLES='--var DOCKER_IMAGE=$(DOCKER_IMAGE) --var DOCKER_TAG=$(DOCKER_TAG) --var PYTHON_REQUIREMENTS_FILE=requirements-prod.txt',
+            ),
         ]
 
         self.scripts.build.set('$(ROCKER_BUILD) $(ROCKER_BUILD_OPTIONS) $(ROCKER_BUILD_VARIABLES) .')
@@ -95,7 +105,7 @@ class DockerConfig(Feature.Config):
 class DockerFeature(Feature):
     Config = DockerConfig
 
-    @subscribe('medikit.feature.make.on_generate')
+    @subscribe('medikit.feature.make.on_generate', priority=-1)
     def on_make_generate(self, event):
         docker_config = event.config['docker']
 
@@ -127,33 +137,23 @@ class DockerFeature(Feature):
         ''', event.variables
         )
 
-        self.render_file_inline(
-            'docker-compose.yml', '''
-            version: '3'
+        if docker_config.compose_file:
+            self.render_file_inline(docker_config.compose_file, '''
+                version: '3'
 
-            volumes:
-            
-            #   postgres_data: {}
-            #   rabbitmq_data: {}
+                volumes:
+                
+                #   postgres_data: {}
 
-            services:
-            
-            #   postgres:
-            #     image: postgres:10
-            #     ports:
-            #       - 5432:5432
-            #     volumes:
-            #       - postgres_data:/var/lib/postgresql/data
-
-            #   rabbitmq:
-            #     image: rabbitmq:3
-            #     ports:
-            #      - 5672:5672
-            #    volumes:
-            #      - rabbitmq_data:/var/lib/rabbitmq
-        
-        '''
-        )
+                services:
+                
+                #   postgres:
+                #     image: postgres:10
+                #     ports:
+                #       - 5432:5432
+                #     volumes:
+                #       - postgres_data:/var/lib/postgresql/data
+            ''')
 
         if docker_config.builder == DOCKER:
             self.render_file_inline('Dockerfile', '''

@@ -53,6 +53,8 @@ def _normalize_requirement(req):
 class PythonConfig(Feature.Config):
     """ Configuration API for the «python» feature. """
 
+    on_generate = __name__ + '.on_generate'
+
     def __init__(self):
         self._setup = {}
         self._requirements = {None: {}, 'dev': {}}
