@@ -143,7 +143,8 @@ F.A.Q
     namespace package boilerplate.
 
 
-## License
+License
+=======
 
 .. image:: https://app.fossa.io/api/projects/git%2Bgithub.com%2Fpython-medikit%2Fmedikit.svg?type=large
     :target: https://app.fossa.io/projects/git%2Bgithub.com%2Fpython-medikit%2Fmedikit?ref=badge_large
