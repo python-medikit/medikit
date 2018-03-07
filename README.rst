@@ -1,4 +1,3 @@
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fpython-medikit%2Fmedikit.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fpython-medikit%2Fmedikit?ref=badge_shield)
 
 ✚ medikit ✚
 ===========
@@ -16,6 +15,11 @@ Strongly opinionated python 3.5+ project management.
 .. image:: https://readthedocs.org/projects/medikit/badge/?version=latest
     :target: http://edgyproject.readthedocs.org/en/latest/?badge=latest
     :alt: Documentation Status
+
+.. image:: https://app.fossa.io/api/projects/git%2Bgithub.com%2Fpython-medikit%2Fmedikit.svg?type=shield
+    :target: https://app.fossa.io/projects/git%2Bgithub.com%2Fpython-medikit%2Fmedikit?ref=badge_shield
+    :alt: License Status
+
 
 This package helps you create python source trees using best practices (or at
 least the practices we consider as best for us) in a breeze.
@@ -137,9 +141,11 @@ F.A.Q
     generate version specific code. For example, we don't support generating
     namespace packages that does not have __init__.py files with the python
     namespace package boilerplate.
-    
-   
 
 
 ## License
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fpython-medikit%2Fmedikit.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fpython-medikit%2Fmedikit?ref=badge_large)
+
+.. image:: https://app.fossa.io/api/projects/git%2Bgithub.com%2Fpython-medikit%2Fmedikit.svg?type=large
+    :target: https://app.fossa.io/projects/git%2Bgithub.com%2Fpython-medikit%2Fmedikit?ref=badge_large
+    :alt: License Status
+
