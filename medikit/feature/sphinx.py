@@ -1,7 +1,3 @@
-# coding: utf-8
-
-from __future__ import absolute_import, print_function, unicode_literals
-
 from pip._vendor.distlib.util import parse_requirement
 
 from medikit.events import subscribe

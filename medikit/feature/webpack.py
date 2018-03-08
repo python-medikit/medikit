@@ -1,10 +1,5 @@
-# coding: utf-8
-
-import os
-import random
-
 from medikit.events import subscribe
-from . import Feature, SUPPORT_PRIORITY
+from . import Feature
 
 
 class WebpackFeature(Feature):
