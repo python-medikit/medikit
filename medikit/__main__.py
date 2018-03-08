@@ -15,6 +15,10 @@ from medikit.commands import START, CONTINUE, ABORT, handle_init, handle_update,
 
 
 def main(args=None):
+    if not sys.warnoptions:
+        logging.captureWarnings(True)
+    warnings.simplefilter("default", DeprecationWarning)
+    warnings.simplefilter("default", PendingDeprecationWarning)
     mondrian.setup(excepthook=True)
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)

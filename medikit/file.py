@@ -30,7 +30,8 @@ def File(dispatcher, name, *, executable=False, override=False):
 
         dispatcher.dispatch('medikit.on_file_closed', event)
     else:
-        yield open('/dev/null', 'w')
+        with open('/dev/null', 'w') as f:
+            yield f
 
 
 @contextlib.contextmanager
@@ -46,4 +47,5 @@ def NullFile(dispatcher, name, *, executable=False, override=False):
 
         dispatcher.dispatch('medikit.on_file_closed', event)
     else:
-        yield open('/dev/null', 'w')
+        with open('/dev/null', 'w') as f:
+            yield f

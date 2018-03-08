@@ -1,4 +1,4 @@
-from ._version import __version__
+from medikit._version import __version__
 
 
 def listen(*args, **kwargs):

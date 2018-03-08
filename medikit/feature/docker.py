@@ -85,7 +85,8 @@ class DockerConfig(Feature.Config):
                 ROCKER='$(shell which rocker)',
                 ROCKER_BUILD='$(ROCKER) build',
                 ROCKER_BUILD_OPTIONS='',
-                ROCKER_BUILD_VARIABLES='--var DOCKER_IMAGE=$(DOCKER_IMAGE) --var DOCKER_TAG=$(DOCKER_TAG) --var PYTHON_REQUIREMENTS_FILE=requirements-prod.txt',
+                ROCKER_BUILD_VARIABLES=
+                '--var DOCKER_IMAGE=$(DOCKER_IMAGE) --var DOCKER_TAG=$(DOCKER_TAG) --var PYTHON_REQUIREMENTS_FILE=requirements-prod.txt',
             ),
         ]
 
@@ -138,7 +139,8 @@ class DockerFeature(Feature):
         )
 
         if docker_config.compose_file:
-            self.render_file_inline(docker_config.compose_file, '''
+            self.render_file_inline(
+                docker_config.compose_file, '''
                 version: '3'
 
                 volumes:
@@ -153,7 +155,8 @@ class DockerFeature(Feature):
                 #       - 5432:5432
                 #     volumes:
                 #       - postgres_data:/var/lib/postgresql/data
-            ''')
+            '''
+            )
 
         if docker_config.builder == DOCKER:
             self.render_file_inline('Dockerfile', '''

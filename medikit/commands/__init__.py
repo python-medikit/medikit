@@ -2,7 +2,8 @@ import os
 from collections import OrderedDict
 from contextlib import contextmanager
 
-from medikit.config import read_configuration, load_features
+from medikit.config import read_configuration
+from medikit.config.loader import load_feature_extensions
 from medikit.events import LoggingDispatcher, ProjectEvent
 from medikit.feature import ProjectInitializer
 from medikit.pipeline import ConfiguredPipeline
@@ -83,7 +84,7 @@ def handle_update(config_filename, **kwargs):
         )
     )
 
-    all_features = load_features()
+    all_features = load_feature_extensions()
 
     sorted_features = sorted(features)  # sort to have a predictable display order
     for feature_name in sorted_features:

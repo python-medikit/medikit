@@ -16,7 +16,7 @@ class GitFeature(Feature):
             self.dispatcher.info('git', 'Creating git repository...')
             os.system('git init')
             os.system('git add Projectfile')
-            os.system('git commit -m "initial commit"')
+            os.system('git commit -m "Project initialized using Medikit."')
 
     @subscribe('medikit.on_end')
     def on_end(self, event):

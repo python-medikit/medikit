@@ -1,7 +1,7 @@
 import os
 
 from jinja2 import Template, Environment
-from medikit.config import load_features
+from medikit.config.loader import load_feature_extensions
 
 env = Environment()
 env.filters['underline'] = lambda s, c: s + '\n' + c * len(s)
@@ -51,7 +51,7 @@ def main():
     root_path = os.path.realpath(os.path.join(os.path.dirname(os.path.join(os.getcwd(), __file__)), '..'))
     doc_path = os.path.join(root_path, 'docs')
 
-    features = load_features()
+    features = load_feature_extensions()
 
     for name in sorted(features):
         feature = features[name]
