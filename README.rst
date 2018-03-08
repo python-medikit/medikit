@@ -1,4 +1,3 @@
-
 ✚ medikit ✚
 ===========
 
@@ -20,14 +19,17 @@ Strongly opinionated python 3.5+ project management.
     :target: https://app.fossa.io/projects/git%2Bgithub.com%2Fpython-medikit%2Fmedikit?ref=badge_shield
     :alt: License Status
 
+Medikit is the first-aid toolkit to manage your project's boilerplate, like
+package files, versions, config, test suite, runners, ...
 
-This package helps you create python source trees using best practices (or at
-least the practices we consider as best for us) in a breeze.
+This package helps you create python (or not) source trees using best practices
+(or at least the practices we consider as best for us) in a breeze.
 
 Don't worry about setting up git, a makefile, usual project targets, unit tests
 framework, pip, wheels, virtualenv, code coverage, namespace packages, setup.py
-files ... Project's got you covered on all this, using one simple and fast
-command.
+files ...
+
+Medikit's got you covered on all this, using one simple and fast command.
 
 
 Install
@@ -86,13 +88,43 @@ As the headline says, we have made strong opinionated choices about how a projec
 tree should be organized.
 
 For example, we choose to use make to provide the main project entrypoints
-(install, test). We also choose to use git. And nosetests. And to put root package
-in the project root. Etc.
+(install, test). We also choose to use git. And pytest. And to put root package
+in the project root (as opposed to a src dir or something like this). Etc.
 
 For beginners, that's a good thing, because they won't have to ask themselves
 questions like "What should I put in setup.py ?" or "Should I create a «src»
 dir or not ?". For more advanced users, it can be either a good thing if you
 agree with our choices, or a bad one ...
+
+
+Architecture
+============
+
+Medikit uses a single configuration file in your project, called Projectfile.
+
+This file contains all the specific of your project:
+
+* What features you wanna use.
+* The customizations of those features
+* The additional event listeners (more on this later) you need.
+* The eventual pipelines that you need.
+
+At its heart, medikit uses an "event dispatcher" model.
+
+An update will dispatch a "medikit.on_start" event, and features that you required
+can listen (react) to this event by adding jobs to run in response. They also can
+dispatch their own events.
+
+As a result, you'll get your projects files updated, that will be a combination of
+all the events listeners executed.
+
+It means two things:
+
+* Unlike usual project templates and generators, it can both bootstrap and update
+  your project, as best practice evolves.
+* It's not a dependency of your project. Once it has run, you can forget it. Either
+  you choose to maintain your project assets with it and you'll need it installed
+  while updating, or you can remove it and just keep the generated files.
 
 
 F.A.Q
@@ -137,10 +169,9 @@ F.A.Q
 
 * Do you support python 3?
 
-  * Yes, medikit run both with python 2.7+ and python 3.4+, but we don't
-    generate version specific code. For example, we don't support generating
-    namespace packages that does not have __init__.py files with the python
-    namespace package boilerplate.
+  * Of course, and for quite some times we decided to only support python 3, as we
+    think the "10 years incubation period" we just had is a sufficient maturation
+    period to just forget about python 2.
 
 
 License
