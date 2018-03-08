@@ -16,7 +16,12 @@ To use the Docker Feature feature, make sure your **Projectfile** contains:
     
     docker = require('docker')
 
+Configuration
+:::::::::::::
 
+.. autoclass:: DockerConfig
+    :members:
+    :undoc-members:
 
 Implementation
 ::::::::::::::

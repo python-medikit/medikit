@@ -16,7 +16,12 @@ To use the NodeJS Feature feature, make sure your **Projectfile** contains:
     
     nodejs = require('nodejs')
 
+Configuration
+:::::::::::::
 
+.. autoclass:: NodeJSConfig
+    :members:
+    :undoc-members:
 
 Implementation
 ::::::::::::::
