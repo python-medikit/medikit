@@ -29,8 +29,9 @@ class TestGitFeature(FeatureTestCase):
             commands = list()
             with patch('os.system', side_effect=commands.append) as os_system:
                 feature.on_start(Event())
-                assert commands == ['git init', 'git add Projectfile',
-                                    'git commit -m "Project initialized using Medikit."']
+                assert commands == [
+                    'git init', 'git add Projectfile', 'git commit -m "Project initialized using Medikit."'
+                ]
 
         with patch('os.path.exists', return_value=True):
             commands = list()
