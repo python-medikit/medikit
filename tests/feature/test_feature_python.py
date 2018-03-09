@@ -68,4 +68,10 @@ class TestPythonFeature(FeatureTestCase):
         config = self.create_config()
 
         feature, dispatcher = self.create_feature()
-        feature.on_start(ProjectEvent(config=config, setup={'name': PACKAGE_NAME}))
+        event = ProjectEvent(config=config, setup={'name': PACKAGE_NAME, 'python_requires': '>=3.5'})
+        feature.on_start(event)
+
+        assert event.setup['name'] == PACKAGE_NAME
+        assert event.setup['python_requires'] == '>=3.5'
+
+

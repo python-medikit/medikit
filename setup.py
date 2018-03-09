@@ -47,6 +47,7 @@ setup(
     description='Opinionated python 3.5+ project management.',
     license='Apache License, Version 2.0',
     name='medikit',
+    python_requires='>=3.5',
     version=version,
     long_description=long_description,
     classifiers=classifiers,
