@@ -48,3 +48,8 @@ Update a project's assets:
 
     $ make update
 
+To regenerate "requirements", use:
+
+.. code-block:: shell-session
+
+    $ make update-requirements

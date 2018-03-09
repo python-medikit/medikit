@@ -1,3 +1,10 @@
+"""
+Webpack support.
+
+This feature is experimental and as though it may work for you, that's not a guarantee. Please use with care.
+
+"""
+
 from medikit.events import subscribe
 from . import Feature
 

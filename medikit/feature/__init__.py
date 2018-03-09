@@ -28,6 +28,8 @@ class Feature(object):
 
     file_type = staticmethod(File)
 
+    __usage__ = None
+
     class Config(ContextDecorator):
         def __enter__(self):
             return self

@@ -21,8 +21,22 @@ def generate_secret_key():
 class DjangoConfig(Feature.Config):
     """ Configuration class for the “django” feature. """
 
-    version = '>=2.0,<2.1'
+    version = '~=2.0,<2.1'
     """Which django version requirement do you want?"""
+
+    __usage__ = """
+    
+    This will add a few items to your Makefile, and ensure a minimalistic django project structure is available.
+    
+    By default, it will use Django {version}, but you can tune that:
+    
+    .. code-block:: python
+    
+        django.version = '~=2.0.3'
+        
+    This feature will also add or extend a "prod" python extra, that will install gunicorn.
+    
+    """.format(version=version)
 
     def __init__(self):
         self._static_dir = None
@@ -30,6 +44,9 @@ class DjangoConfig(Feature.Config):
 
     @property
     def static_dir(self):
+        """
+        The django global static directory (property).
+        """
         return self._static_dir
 
     @static_dir.setter
@@ -84,19 +101,6 @@ class DjangoFeature(Feature):
         if not os.path.exists(static_dir):
             os.makedirs(static_dir)
         self.render_empty_files(os.path.join(static_dir, 'favicon.ico'))
-
-    '''
-    XXX todo use yapf to adjust settings (for example, add some apps).
-    @subscribe('medikit.feature.django.on_configure')
-    def on_django_configure(self, event):
-        original_source, newline, encoding = yapf_api.ReadFile('config/settings.py')
-        print(original_source, newline, encoding)
-        reformatted_code, encoding, has_change = yapf_api.FormatFile(
-            'config/settings.py',
-            in_place=True,
-        )
-        print(reformatted_code, encoding, has_change)
-    '''
 
 
 __feature__ = DjangoFeature

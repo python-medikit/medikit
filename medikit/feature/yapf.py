@@ -1,3 +1,12 @@
+"""
+YAPF support, to automatically reformat all your (python) source code.
+
+.. code-block:: shell-session
+
+    $ make format
+
+"""
+
 import os
 
 from medikit import settings

@@ -1,3 +1,9 @@
+"""
+Lint your python code with pylint.
+
+This feature may be outdated.
+
+"""
 from medikit.events import subscribe
 
 from . import Feature, SUPPORT_PRIORITY
@@ -8,7 +14,7 @@ class PylintFeature(Feature):
 
     @subscribe('medikit.feature.python.on_generate')
     def on_python_generate(self, event):
-        event.config['python'].add_requirements(dev=['pylint >=1.6,<1.7'])
+        event.config['python'].add_requirements(dev=['pylint ~=1.8'])
 
     @subscribe('medikit.feature.make.on_generate', priority=SUPPORT_PRIORITY)
     def on_make_generate(self, event):
@@ -21,13 +27,6 @@ class PylintFeature(Feature):
             deps=('install-dev', ),
             phony=True
         )
-
-    @subscribe('medikit.feature.python.on_generate', priority=SUPPORT_PRIORITY)
-    def on_python_generate(self, event):
-        event.files['requirements'] = '\n'.join((
-            event.files['requirements'],
-            'pylint >=1.4,<1.5',
-        ))
 
 
 __feature__ = PylintFeature

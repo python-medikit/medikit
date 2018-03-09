@@ -1,3 +1,8 @@
+"""
+Adds the pytest testing framework to your project.
+
+"""
+
 import os
 
 from medikit.events import subscribe
@@ -8,7 +13,6 @@ class PytestFeature(Feature):
     # TODO: http://docs.pytest.org/en/latest/goodpractices.html#integrating-with-setuptools-python-setup-py-test-pytest-runner
 
     requires = {'python'}
-    conflicts = {'nosetests'}
 
     @subscribe('medikit.feature.python.on_generate')
     def on_python_generate(self, event):

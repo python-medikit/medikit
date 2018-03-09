@@ -1,4 +1,4 @@
-.. comment:: This file is auto-generated (see bin/generate_apidoc.py), please do not change it.
+.. This file is auto-generated (see bin/generate_apidoc.py), do not change it manually, your changes would be overriden.
 
 Git Feature
 ===========
@@ -8,7 +8,11 @@ Git Feature
 Usage
 :::::
 
-To use the Git Feature feature, make sure your **Projectfile** contains:
+
+
+The Git Feature feature is required, and enabled by default.
+
+To get a handle to the :class:`GitConfig` instance, you can:
 
 .. code-block:: python
 
@@ -17,6 +21,24 @@ To use the Git Feature feature, make sure your **Projectfile** contains:
     git = require('git')
 
 
+
+
+
+
+Currently, **this feature is required for medikit to work**.
+
+There are plans to add the ability to disable it, but it's not a priority.
+
+
+    
+
+
+Configuration
+:::::::::::::
+
+.. autoclass:: GitConfig
+    :members:
+    :undoc-members:
 
 Implementation
 ::::::::::::::

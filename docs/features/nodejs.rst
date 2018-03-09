@@ -1,4 +1,4 @@
-.. comment:: This file is auto-generated (see bin/generate_apidoc.py), please do not change it.
+.. This file is auto-generated (see bin/generate_apidoc.py), do not change it manually, your changes would be overriden.
 
 NodeJS Feature
 ==============
@@ -8,13 +8,21 @@ NodeJS Feature
 Usage
 :::::
 
-To use the NodeJS Feature feature, make sure your **Projectfile** contains:
+
+
+To use the NodeJS Feature, make sure your **Projectfile** contains the following:
 
 .. code-block:: python
 
     from medikit import require
     
     nodejs = require('nodejs')
+    
+The `nodejs` handle is a :class:`NodeJSConfig` instance, and can be used to customize the feature.
+
+
+
+
 
 Configuration
 :::::::::::::

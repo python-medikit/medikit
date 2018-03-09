@@ -1,4 +1,4 @@
-.. comment:: This file is auto-generated (see bin/generate_apidoc.py), please do not change it.
+.. This file is auto-generated (see bin/generate_apidoc.py), do not change it manually, your changes would be overriden.
 
 Pytest Feature
 ==============
@@ -8,13 +8,21 @@ Pytest Feature
 Usage
 :::::
 
-To use the Pytest Feature feature, make sure your **Projectfile** contains:
+
+
+To use the Pytest Feature, make sure your **Projectfile** contains the following:
 
 .. code-block:: python
 
     from medikit import require
     
     pytest = require('pytest')
+    
+The `pytest` handle is a :class:`Config` instance, and can be used to customize the feature.
+
+
+
+
 
 
 

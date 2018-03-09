@@ -1,6 +1,8 @@
 """
 NodeJS / Yarn support.
 
+This feature is experimental and as though it may work for you, that's not a guarantee. Please use with care.
+
 """
 
 import json

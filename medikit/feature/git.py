@@ -9,7 +9,19 @@ from medikit.events import subscribe
 from medikit.feature import ABSOLUTE_PRIORITY, Feature
 
 
+class GitConfig(Feature.Config):
+    __usage__ = """
+    
+    Currently, **this feature is required for medikit to work**.
+    
+    There are plans to add the ability to disable it, but it's not a priority.
+    
+    """
+
+
 class GitFeature(Feature):
+    Config = GitConfig
+
     @subscribe('medikit.on_start', priority=ABSOLUTE_PRIORITY)
     def on_start(self, event):
         if not os.path.exists('.git'):
