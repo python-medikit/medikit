@@ -43,4 +43,7 @@ class Step:
 
     def exec(self, command):
         result = subprocess.run(shlex.split(command), stdout=subprocess.PIPE)
+        if result.returncode:
+            raise RuntimeError(
+                '"{command}" exited with status {returncode}.'.format(command=command, returncode=result.returncode))
         return result.stdout.decode('utf-8').strip()
