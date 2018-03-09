@@ -8,6 +8,7 @@ class FailingStep(Step):
         self.exec('false')
         self.set_complete()
 
+
 # Issue #64: A failing shell command execution should not be considered as a success.
 def test_failing_step():
     step = FailingStep()

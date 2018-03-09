@@ -88,12 +88,6 @@ class DockerConfig(Feature.Config):
         # override the image name only
         docker.set_remote(name='acme')
         
-        # once this is done, you must re-run the builder setup. This is a bug, tracked as #71
-        docker.use_default_builder()
-        
-        # or, if you're using rocker
-        docker.use_rocker_builder()
-        
     Docker Compose
     --------------
     
@@ -156,7 +150,7 @@ class DockerConfig(Feature.Config):
 
     def _get_default_image_variables(self):
         return dict(
-            DOCKER_IMAGE=self.image,
+            DOCKER_IMAGE='',  # will be set at runtime, see #71.
             DOCKER_TAG='$(VERSION)',
         )
 
@@ -214,6 +208,9 @@ class DockerFeature(Feature):
 
         for var, val in docker_config.variables:
             event.makefile[var] = val
+
+        # Set DOCKER_IMAGE at runtime, see #71.
+        event.makefile['DOCKER_IMAGE'] = docker_config.image
 
         # Targets
         event.makefile.add_target('docker-build', docker_config.scripts.build, phony=True)
