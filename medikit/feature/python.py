@@ -41,6 +41,7 @@ from piptools.utils import format_requirement
 
 from medikit.events import subscribe
 from medikit.feature import Feature, ABSOLUTE_PRIORITY
+from medikit.utils import get_override_warning_banner
 
 
 def _normalize_requirement(req):
@@ -443,6 +444,7 @@ class PythonFeature(Feature):
                 'install_requires': python_config.get('install_requires'),
                 'python': python_config,
                 'setup': setup,
+                'banner': get_override_warning_banner(),
             }
         )
 
