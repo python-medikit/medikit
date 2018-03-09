@@ -73,5 +73,3 @@ class TestPythonFeature(FeatureTestCase):
 
         assert event.setup['name'] == PACKAGE_NAME
         assert event.setup['python_requires'] == '>=3.5'
-
-

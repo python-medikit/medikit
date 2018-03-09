@@ -22,43 +22,44 @@ YAPF ?= $(PYTHON) -m yapf
 YAPF_OPTIONS ?= -rip
 SPHINX_AUTOBUILD ?= $(PYTHON_DIRNAME)/sphinx-autobuild
 
-.PHONY: $(SPHINX_SOURCEDIR) clean format install install-dev test update update-requirements watch-$(SPHINX_SOURCEDIR)
+.PHONY: $(SPHINX_SOURCEDIR) clean format help install install-dev test update update-requirements watch-$(SPHINX_SOURCEDIR)
 
-# Installs the local project dependencies.
-install:
+install:   ## Installs the local project dependencies.
 	if [ -z "$(QUICK)" ]; then \
 	    $(PIP) install -U pip wheel $(PIP_INSTALL_OPTIONS) -r $(PYTHON_REQUIREMENTS_FILE) ; \
 	fi
 
-# Installs the local project dependencies, including development-only libraries.
-install-dev:
+install-dev:   ## Installs the local project dependencies, including development-only libraries.
 	if [ -z "$(QUICK)" ]; then \
 	    $(PIP) install -U pip wheel $(PIP_INSTALL_OPTIONS) -r $(PYTHON_REQUIREMENTS_DEV_FILE) ; \
 	fi
 
-# Cleans up the local mess.
-clean:
+clean:   ## Cleans up the local mess.
 	rm -rf build dist *.egg-info
 
-# Update project artifacts using medikit, after installing it eventually.
-update:
+update:   ## Update project artifacts using medikit, after installing it eventually.
 	python -c 'import medikit; print(medikit.__version__)' || pip install medikit;
 	$(PYTHON) -m medikit update
 
-# Remove requirements files and update project artifacts using medikit, after installing it eventually.
-update-requirements:
+update-requirements:   ## Remove requirements files and update project artifacts using medikit, after installing it eventually.
 	rm -rf requirements*.txt
 	$(MAKE) update
 
-test: install-dev
+test: install-dev  ##
 	$(PYTEST) $(PYTEST_OPTIONS) tests
 
-$(SPHINX_SOURCEDIR): install-dev
+$(SPHINX_SOURCEDIR): install-dev  ##
 	$(SPHINX_BUILD) -b html -D latex_paper_size=a4 $(SPHINX_OPTIONS) $(SPHINX_SOURCEDIR) $(SPHINX_BUILDDIR)/html
 
-format: install-dev
+format: install-dev  ##
 	$(YAPF) $(YAPF_OPTIONS) .
 	$(YAPF) $(YAPF_OPTIONS) Projectfile
 
-watch-$(SPHINX_SOURCEDIR):
+watch-$(SPHINX_SOURCEDIR):   ##
 	$(SPHINX_AUTOBUILD) $(SPHINX_SOURCEDIR) $(shell mktemp -d)
+
+help:   ##
+	@echo "Available commands:"
+	@echo
+	@grep -E '^[a-zA-Z_-]+:.*?##[\s]?.*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?##"}; {printf "    make \033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@echo

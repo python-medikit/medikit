@@ -3,17 +3,15 @@ GNU Make support.
 
 """
 
-import datetime
 import itertools
 import textwrap
 from collections import deque
 
-import medikit
+from whistle import Event
+
 from medikit.events import subscribe
 from medikit.feature import Feature, HIGH_PRIORITY
 from medikit.structs import Script
-from whistle import Event
-
 from medikit.utils import get_override_warning_banner
 
 
@@ -70,10 +68,10 @@ class Makefile(object):
 
         for target, details in self.targets:
             deps, rule, doc = details
-            if doc:
-                for line in doc.split('\n'):
-                    content.append('# ' + line)
-            content.append('{}: {}'.format(target, ' '.join(deps)).strip())
+            content.append(
+                '{}: {}  ## {}'.format(target, ' '.join(deps),
+                                       doc.replace('\n', ' ') if doc else '').strip()
+            )
 
             script = textwrap.dedent(str(rule)).strip()
 
@@ -381,7 +379,17 @@ class MakeFeature(Feature):
         self.dispatcher.dispatch(
             MakeConfig.on_generate, MakefileEvent(event.config['python'].get('name'), self.makefile, event.config)
         )
-
+        # Recipe courtesy of https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
+        self.makefile.add_target(
+            'help',
+            r"""
+            @echo "Available commands:"
+            @echo
+            @grep -E '^[a-zA-Z_-]+:.*?##[\s]?.*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?##"}; {printf "    make \033[36m%-30s\033[0m %s\n", $$1, $$2}'
+            @echo
+            """,
+            phony=True,
+        )
         self.render_file_inline('Makefile', self.makefile.__str__(), override=True)
 
 

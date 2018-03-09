@@ -60,4 +60,5 @@ def on_make_generate(event):
         phony=True
     )
 
+
 # vim: ft=python:
