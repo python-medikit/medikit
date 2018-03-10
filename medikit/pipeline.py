@@ -4,6 +4,9 @@ Pipelines are a way to describe a simple step-by-step process, for example the r
 """
 import datetime
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Pipeline:
@@ -50,6 +53,16 @@ class ConfiguredPipeline:
                 return step
         raise StopIteration('No step left.')
 
+    @property
+    def current(self):
+        for i, step in enumerate(self.steps):
+            if not step.complete:
+                return i + 1
+        return len(self)
+
+    def __len__(self):
+        return len(self.steps)
+
     def abort(self):
         for step in self.steps:
             step.abort()
@@ -62,7 +75,8 @@ class ConfiguredPipeline:
                     'updated': str(datetime.datetime.now()),
                 },
                 'steps': [[get_identity(step), step.get_state()] for step in self.steps]
-            }
+            },
+            indent=4
         )
 
     def unserialize(self, serialized):
