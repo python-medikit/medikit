@@ -42,6 +42,7 @@ class Step:
         pass
 
     def exec(self, command):
+        self.logger.info('Running command %s', command)
         result = subprocess.run(shlex.split(command), stdout=subprocess.PIPE)
         if result.returncode:
             raise RuntimeError(

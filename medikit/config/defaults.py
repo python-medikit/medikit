@@ -8,5 +8,5 @@ def setup_default_pipelines(config):
         release.add(steps.BumpVersion())
         release.add(steps.Make('update-requirements'))
         release.add(steps.Make('clean install'))  # test docs
-        release.add(steps.System('git add -p .'))
+        release.add(steps.System('git add -p .', interractive=True))
         release.add(steps.Commit('Release: {version}', tag=True))
