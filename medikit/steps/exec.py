@@ -4,10 +4,10 @@ import os
 from queue import Empty
 
 from git import Repo
-from honcho.process import Process
 from mondrian import term
 
 from medikit.steps import Step
+from medikit.steps.utils.process import Process
 
 
 class System(Step):
