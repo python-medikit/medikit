@@ -58,6 +58,7 @@ class TestPythonFeature(FeatureTestCase):
 
         assert sorted(dict(make_feature.makefile.targets).keys()) == [
             'clean',
+            'help',
             'install',
             'install-dev',
             'update',
