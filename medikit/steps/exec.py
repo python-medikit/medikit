@@ -10,22 +10,11 @@ from mondrian import term
 from medikit.steps import Step
 
 
-class Make(Step):
-    def __init__(self, target):
-        super().__init__()
-        self.target = target
-        self.__args__ = (target, )
-
-    def run(self, meta):
-        self.exec('make ' + self.target)
-        self.set_complete()
-
-
 class System(Step):
     def __init__(self, cmd):
         super().__init__()
         self.cmd = cmd
-        self.__args__ = (cmd, )
+        self.__args__ = (cmd,)
 
     def run(self, meta):
         child = Process(self.cmd)
@@ -58,6 +47,12 @@ class System(Step):
             )
 
         self.set_complete()
+
+
+class Make(System):
+    def __init__(self, target):
+        super().__init__('make ' + target)
+        self.__args__ = (target,)
 
 
 class Commit(Step):
