@@ -49,7 +49,7 @@ def format_file_content(s):
     return textwrap.dedent(s).strip() + '\n'
 
 
-def get_override_warning_banner(*, prefix=' # ', above=None, bellow=None):
+def get_override_warning_banner(*, prefix='# ', above=None, bellow=None):
     return '\n'.join(
         filter(
             None, (
