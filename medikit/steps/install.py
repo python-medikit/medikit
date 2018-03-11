@@ -9,4 +9,4 @@ class Install(System):
             packages = ('pip', 'wheel', 'twine')
         packages = list(sorted(packages))
         super().__init__(sys.executable + ' -m pip install --upgrade ' + ' '.join(packages))
-        self.__args__ = (*packages,)
+        self.__args__ = (*packages, )

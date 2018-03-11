@@ -44,18 +44,15 @@ class Process(object):
 
     def _send_message(self, data, type='line'):
         if self._events is not None:
-            self._events.put(Message(type=type,
-                                     data=data,
-                                     time=datetime.datetime.now(),
-                                     name=self.name,
-                                     colour=self.colour))
+            self._events.put(
+                Message(type=type, data=data, time=datetime.datetime.now(), name=self.name, colour=self.colour)
+            )
 
 
 ON_WINDOWS = 'win32' in str(sys.platform).lower()
 
 
 class Popen(subprocess.Popen):
-
     def __init__(self, cmd, **kwargs):
         start_new_session = kwargs.pop('start_new_session', True)
         options = {

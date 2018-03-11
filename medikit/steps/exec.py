@@ -15,7 +15,10 @@ class System(Step):
         super().__init__()
         self.cmd = cmd
         self.interractive = interractive
-        self.__args__ = (cmd, interractive,)
+        self.__args__ = (
+            cmd,
+            interractive,
+        )
 
     def run(self, meta):
         if self.interractive:
@@ -55,7 +58,7 @@ class System(Step):
 class Make(System):
     def __init__(self, target):
         super().__init__('make ' + target)
-        self.__args__ = (target,)
+        self.__args__ = (target, )
 
 
 class Commit(Step):

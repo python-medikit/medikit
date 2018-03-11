@@ -1,5 +1,7 @@
 """
-The «python» feature contains all the base logic associated to managing python package.
+The “python” feature is the base feature required for all python projects.
+
+Medikit only supports python 3.5+ projects, which we believe is a future proof choice.
 
 Overview
 ::::::::
@@ -357,11 +359,13 @@ class PythonFeature(Feature):
         event.makefile['PIP_INSTALL_OPTIONS'] = ''
 
         event.makefile.get_target('install').install = [
-            '$(PIP) install -U pip wheel $(PIP_INSTALL_OPTIONS) -r $(PYTHON_REQUIREMENTS_FILE)'
+            '$(PIP) install $(PIP_INSTALL_OPTIONS) -U pip wheel',
+            '$(PIP) install $(PIP_INSTALL_OPTIONS) -U -r $(PYTHON_REQUIREMENTS_FILE)',
         ]
 
         event.makefile.get_target('install-dev').install = [
-            '$(PIP) install -U pip wheel $(PIP_INSTALL_OPTIONS) -r $(PYTHON_REQUIREMENTS_DEV_FILE)'
+            '$(PIP) install $(PIP_INSTALL_OPTIONS) -U pip wheel',
+            '$(PIP) install $(PIP_INSTALL_OPTIONS) -U -r $(PYTHON_REQUIREMENTS_DEV_FILE)',
         ]
 
     @subscribe('medikit.on_start', priority=ABSOLUTE_PRIORITY)

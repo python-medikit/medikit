@@ -10,7 +10,7 @@ from . import Feature, SUPPORT_PRIORITY
 
 
 class PylintFeature(Feature):
-    requires = ['python']
+    requires = {'python'}
 
     @subscribe('medikit.feature.python.on_generate')
     def on_python_generate(self, event):
