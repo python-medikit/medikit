@@ -389,6 +389,7 @@ class MakeFeature(Feature):
             @echo
             """,
             phony=True,
+            doc='Shows available commands.'
         )
         self.render_file_inline('Makefile', self.makefile.__str__(), override=True)
 

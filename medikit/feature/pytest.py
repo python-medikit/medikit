@@ -28,9 +28,13 @@ class PytestFeature(Feature):
             path=event.package_name.replace('.', os.sep)
         )
         makefile.add_target(
-            'test', '''
+            'test',
+            '''
             $(PYTEST) $(PYTEST_OPTIONS) tests
-        ''', deps=('install-dev', ), phony=True
+        ''',
+            deps=('install-dev', ),
+            phony=True,
+            doc='Runs the test suite.'
         )
 
     @subscribe('medikit.on_start', priority=SUPPORT_PRIORITY)

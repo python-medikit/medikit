@@ -213,10 +213,22 @@ class DockerFeature(Feature):
         event.makefile['DOCKER_IMAGE'] = docker_config.image
 
         # Targets
-        event.makefile.add_target('docker-build', docker_config.scripts.build, phony=True)
-        event.makefile.add_target('docker-push', docker_config.scripts.push, phony=True)
-        event.makefile.add_target('docker-run', docker_config.scripts.run, phony=True)
-        event.makefile.add_target('docker-shell', docker_config.scripts.shell, phony=True)
+        event.makefile.add_target('docker-build', docker_config.scripts.build, phony=True, doc='Build a docker image.')
+        event.makefile.add_target(
+            'docker-push', docker_config.scripts.push, phony=True, doc='Push docker image to remote registry.'
+        )
+        event.makefile.add_target(
+            'docker-run',
+            docker_config.scripts.run,
+            phony=True,
+            doc='Run the default entry point in a container based on our docker image.'
+        )
+        event.makefile.add_target(
+            'docker-shell',
+            docker_config.scripts.shell,
+            phony=True,
+            doc='Run bash in a container based on our docker image.'
+        )
 
     @subscribe('medikit.on_end')
     def on_end(self, event):
