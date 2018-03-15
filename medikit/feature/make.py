@@ -15,6 +15,9 @@ from medikit.structs import Script
 from medikit.utils import get_override_warning_banner
 
 
+def which(cmd):
+    return '$(shell which {cmd} || echo {cmd})'.format(cmd=cmd)
+
 class Makefile(object):
     @property
     def targets(self):
@@ -142,7 +145,8 @@ class InstallScript(Script):
     def __iter__(self):
         yield 'if [ -z "$(QUICK)" ]; then \\'
         for line in map(
-            lambda x: '    {} ; \\'.format(x), itertools.chain(self.before_install, self.install, self.after_install)
+                lambda x: '    {} ; \\'.format(x),
+                itertools.chain(self.before_install, self.install, self.after_install)
         ):
             yield line
         yield 'fi'

@@ -43,6 +43,7 @@ from piptools.utils import format_requirement
 
 from medikit.events import subscribe
 from medikit.feature import Feature, ABSOLUTE_PRIORITY
+from medikit.feature.make import which
 from medikit.utils import get_override_warning_banner
 
 
@@ -335,7 +336,7 @@ class PythonFeature(Feature):
             ),
             (
                 'PYTHON',
-                '$(shell which python)',
+                which('python'),
             ),
             (
                 'PYTHON_BASENAME',

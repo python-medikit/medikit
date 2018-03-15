@@ -7,6 +7,7 @@ from argparse import Namespace
 
 from medikit.events import subscribe
 from medikit.feature import Feature
+from medikit.feature.make import which
 from medikit.structs import Script
 
 DEFAULT_NAME = '$(shell echo $(PACKAGE) | tr A-Z a-z)'
@@ -138,7 +139,7 @@ class DockerConfig(Feature.Config):
 
     def _get_default_variables(self):
         return dict(
-            DOCKER='$(shell which docker)',
+            DOCKER=which('docker'),
             DOCKER_BUILD='$(DOCKER) build',
             DOCKER_BUILD_OPTIONS='',
             DOCKER_PUSH='$(DOCKER) push',
@@ -178,7 +179,7 @@ class DockerConfig(Feature.Config):
             self._get_default_variables(),
             self._get_default_image_variables(),
             dict(
-                ROCKER='$(shell which rocker)',
+                ROCKER=which('rocker'),
                 ROCKER_BUILD='$(ROCKER) build',
                 ROCKER_BUILD_OPTIONS='',
                 ROCKER_BUILD_VARIABLES=

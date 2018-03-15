@@ -11,6 +11,7 @@ import runpy
 
 from medikit.events import subscribe
 from medikit.feature import Feature, LAST_PRIORITY
+from medikit.feature.make import which
 from medikit.steps.version import PythonVersion
 
 
@@ -60,8 +61,8 @@ class NodeJSFeature(Feature):
 
     @subscribe('medikit.feature.make.on_generate')
     def on_make_generate(self, event):
-        event.makefile['YARN'] = '$(shell which yarn)'
-        event.makefile['NODE'] = '$(shell which node)'
+        event.makefile['YARN'] = which('yarn')
+        event.makefile['NODE'] = which('node')
 
         event.makefile.get_target('install').install += [
             '$(YARN) install --production',
