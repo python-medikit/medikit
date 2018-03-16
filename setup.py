@@ -67,11 +67,11 @@ setup(
         'console_scripts': ['medikit=medikit.__main__:main'],
         'medikit.feature': [
             'django = medikit.feature.django:DjangoFeature', 'docker = medikit.feature.docker:DockerFeature',
-            'git = medikit.feature.git:GitFeature', 'make = medikit.feature.make:MakeFeature',
-            'nodejs = medikit.feature.nodejs:NodeJSFeature', 'pylint = medikit.feature.pylint:PylintFeature',
-            'pytest = medikit.feature.pytest:PytestFeature', 'python = medikit.feature.python:PythonFeature',
-            'sphinx = medikit.feature.sphinx:SphinxFeature', 'webpack = medikit.feature.webpack:WebpackFeature',
-            'yapf = medikit.feature.yapf:YapfFeature'
+            'git = medikit.feature.git:GitFeature', 'kube = medikit.feature.kube:KubeFeature',
+            'make = medikit.feature.make:MakeFeature', 'nodejs = medikit.feature.nodejs:NodeJSFeature',
+            'pylint = medikit.feature.pylint:PylintFeature', 'pytest = medikit.feature.pytest:PytestFeature',
+            'python = medikit.feature.python:PythonFeature', 'sphinx = medikit.feature.sphinx:SphinxFeature',
+            'webpack = medikit.feature.webpack:WebpackFeature', 'yapf = medikit.feature.yapf:YapfFeature'
         ]
     },
     url='https://python-medikit.github.io/',

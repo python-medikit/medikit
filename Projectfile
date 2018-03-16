@@ -24,6 +24,7 @@ python.setup(
             'django = medikit.feature.django:DjangoFeature',
             'docker = medikit.feature.docker:DockerFeature',
             'git = medikit.feature.git:GitFeature',
+            'kube = medikit.feature.kube:KubeFeature',
             'make = medikit.feature.make:MakeFeature',
             'nodejs = medikit.feature.nodejs:NodeJSFeature',
             'pylint = medikit.feature.pylint:PylintFeature',
