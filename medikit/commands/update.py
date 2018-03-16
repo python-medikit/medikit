@@ -19,7 +19,7 @@ class UpdateCommand(Command):
         feature_instances = {}
         logger.info(
             'Updating {} with {} features'.format(
-                term.bold(config['python'].get('name')),
+                term.bold(config.package_name),
                 ', '.join(term.bold(term.green(feature_name)) for feature_name in sorted(features))
             )
         )

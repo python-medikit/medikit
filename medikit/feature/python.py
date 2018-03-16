@@ -334,7 +334,7 @@ class PythonFeature(Feature):
         event.makefile.updateleft(
             (
                 'PACKAGE',
-                event.package_name,
+                event.config.package_name,
             ),
             (
                 'PYTHON',

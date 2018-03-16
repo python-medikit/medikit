@@ -339,6 +339,7 @@ class MakeFeature(Feature):
         """
         :param ProjectEvent event:
         """
+
         for k in event.variables:
             self.makefile[k.upper()] = event.variables[k]
 
@@ -363,7 +364,7 @@ class MakeFeature(Feature):
                 'update',
                 '''
                 python -c 'import medikit; print(medikit.__version__)' || pip install medikit;
-                $(PYTHON) -m medikit update
+                python -m medikit update
             ''',
                 phony=True,
                 doc='''Update project artifacts using medikit, after installing it eventually.'''
@@ -381,7 +382,7 @@ class MakeFeature(Feature):
             )
 
         self.dispatcher.dispatch(
-            MakeConfig.on_generate, MakefileEvent(event.config['python'].get('name'), self.makefile, event.config)
+            MakeConfig.on_generate, MakefileEvent(event.config.package_name, self.makefile, event.config)
         )
         # Recipe courtesy of https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
         self.makefile.add_target(

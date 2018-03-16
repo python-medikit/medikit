@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from contextlib import contextmanager
 
 from stevedore import ExtensionManager
@@ -10,6 +11,7 @@ class ConfigurationRegistry():
         self._configs = {}
         self._features = {}
         self._pipelines = {}
+        self._variables = OrderedDict()
 
         def register_feature(ext):
             self._features[ext.name] = ext.plugin
@@ -19,6 +21,29 @@ class ConfigurationRegistry():
 
     def __getitem__(self, item):
         return self._configs[item]
+
+    def __contains__(self, item):
+        return item in self._configs
+
+    def set_vars(self, **variables):
+        self._variables.update(variables)
+
+    def get_var(self, name, default=None):
+        return self._variables.get(name, default)
+
+    @property
+    def variables(self):
+        return self._variables
+
+    @property
+    def package_name(self):
+        if 'python' in self:
+            return self['python'].get('name')
+        else:
+            name = self.get_var('PACKAGE')
+            if not name:
+                raise RuntimeError('You must define a package name, using either python.setup() or PACKAGE = ...')
+            return name
 
     def keys(self):
         return self._configs.keys()

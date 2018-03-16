@@ -22,9 +22,9 @@ def read_configuration(dispatcher, filename, variables, features, files):
         # restore old values
         medikit.listen, medikit.pipeline, medikit.require = _listen, _pipeline, _require
 
-    for k in variables.keys():
-        if k in context:
-            variables[k] = context[k]
+    # Deprecated, but can be used for non-python projects (PACKAGE=...)
+    variables = {k: context.get(k, v) for k, v in variables.items()}
+    config.set_vars(**variables)
 
     for feature in DEFAULT_FEATURES:
         config.require(feature)
