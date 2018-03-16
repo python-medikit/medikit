@@ -50,8 +50,9 @@ python.add_requirements(
 )
 
 
+# Sphinx
 @listen(make.on_generate)
-def on_make_generate(event):
+def on_make_generate_sphinx(event):
     event.makefile['SPHINX_AUTOBUILD'] = '$(PYTHON_DIRNAME)/sphinx-autobuild'
     event.makefile.add_target(
         'watch-$(SPHINX_SOURCEDIR)',
@@ -61,5 +62,18 @@ def on_make_generate(event):
         phony=True
     )
 
+# Pipelines
+@listen(make.on_generate)
+def on_make_generate_pipelines(event):
+    # Releases
+    event.makefile.add_target(
+        'release',
+        '''
+            python -c 'import medikit; print(medikit.__version__)' || pip install medikit;
+            $(PYTHON) -m medikit pipeline release start
+        ''',
+        phony=True,
+        doc='Releases medikit.'
+    )
 
 # vim: ft=python:
