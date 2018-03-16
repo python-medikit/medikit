@@ -116,6 +116,7 @@ class DockerConfig(Feature.Config):
         self._user = None
         self._name = DEFAULT_NAME
 
+        self._build_file = None
         self._compose_file = None
 
         self.use_default_builder()
@@ -137,12 +138,22 @@ class DockerConfig(Feature.Config):
     def compose_file(self, value):
         self._compose_file = value
 
+    @property
+    def build_file(self):
+        if self._build_file is None:
+            return self.builder.title() + 'file'
+        return self._build_file
+
+    @build_file.setter
+    def build_file(self, value):
+        self._build_file = value
+
     def _get_default_variables(self):
         return dict(
             DOCKER=which('docker'),
-            DOCKER_BUILD='$(DOCKER) build',
-            DOCKER_BUILD_OPTIONS='',
-            DOCKER_PUSH='$(DOCKER) push',
+            DOCKER_BUILD='$(DOCKER) image build',
+            DOCKER_BUILD_OPTIONS='--build-arg IMAGE=$(DOCKER_IMAGE) --build-arg TAG=$(DOCKER_TAG)',
+            DOCKER_PUSH='$(DOCKER) image push',
             DOCKER_PUSH_OPTIONS='',
             DOCKER_RUN='$(DOCKER) run',
             DOCKER_RUN_COMMAND='',
@@ -151,6 +162,7 @@ class DockerConfig(Feature.Config):
 
     def _get_default_image_variables(self):
         return dict(
+            DOCKER_BUILD_FILE='',  # will be set at runtime.
             DOCKER_IMAGE='',  # will be set at runtime, see #71.
             DOCKER_TAG='$(VERSION)',
         )
@@ -164,7 +176,8 @@ class DockerConfig(Feature.Config):
         ]
 
         self.scripts = Namespace(
-            build=Script('$(DOCKER_BUILD) $(DOCKER_BUILD_OPTIONS) -t $(DOCKER_IMAGE):$(DOCKER_TAG) .'),
+            build=Script(
+                '$(DOCKER_BUILD) -f $(DOCKER_BUILD_FILE) $(DOCKER_BUILD_OPTIONS) -t $(DOCKER_IMAGE):$(DOCKER_TAG) .'),
             push=Script('$(DOCKER_PUSH) $(DOCKER_PUSH_OPTIONS) $(DOCKER_IMAGE):$(DOCKER_TAG)'),
             run=Script(
                 '$(DOCKER_RUN) $(DOCKER_RUN_OPTIONS) --interactive --tty --rm --name=$(PACKAGE)_run -p 8000:8000 $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_RUN_COMMAND)'
@@ -211,7 +224,10 @@ class DockerFeature(Feature):
             event.makefile[var] = val
 
         # Set DOCKER_IMAGE at runtime, see #71.
-        event.makefile['DOCKER_IMAGE'] = docker_config.image
+        if not event.makefile['DOCKER_BUILD_FILE']:
+            event.makefile['DOCKER_BUILD_FILE'] = docker_config.build_file
+        if not event.makefile['DOCKER_IMAGE']:
+            event.makefile['DOCKER_IMAGE'] = docker_config.image
 
         # Targets
         event.makefile.add_target('docker-build', docker_config.scripts.build, phony=True, doc='Build a docker image.')
@@ -271,12 +287,12 @@ class DockerFeature(Feature):
             )
 
         if docker_config.builder == DOCKER:
-            self.render_file_inline('Dockerfile', '''
+            self.render_file_inline(docker_config.build_file, '''
                 FROM python:3
             ''')
         elif docker_config.builder == ROCKER:
             self.render_file_inline(
-                'Rockerfile', '''
+                docker_config.build_file, '''
                 FROM python:3
                  
                 # Mount cache volume to keep cache persistent from one build to another

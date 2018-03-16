@@ -243,12 +243,14 @@ class PythonConfig(Feature.Config):
     def add_constraints(self, *reqs, **kwargs):
         self.__add_constraints(reqs)
         for extra, reqs in kwargs.items():
+            extra = extra.replace('_', '-')
             self.__add_constraints(reqs, extra=extra)
         return self
 
     def add_requirements(self, *reqs, **kwargs):
         self.__add_requirements(reqs)
         for extra, reqs in kwargs.items():
+            extra = extra.replace('_', '-')
             self.__add_requirements(reqs, extra=extra)
         return self
 
