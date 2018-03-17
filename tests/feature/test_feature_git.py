@@ -1,7 +1,6 @@
 from unittest.mock import patch
 
 import pytest
-from whistle import Event
 
 from medikit.events import ProjectEvent
 from medikit.feature.git import GitFeature
@@ -20,15 +19,16 @@ class TestGitFeature(FeatureTestCase):
 
         assert feature.on_start in listeners['medikit.on_start']
         assert feature.on_end in listeners['medikit.on_end']
-        assert feature.on_file_change in listeners['medikit.on_file_closed']
 
     def test_on_start(self):
         feature, dispatcher = self.create_feature()
 
+        config = self.create_config()
+
         with patch('os.path.exists', return_value=False):
             commands = list()
             with patch('os.system', side_effect=commands.append) as os_system:
-                feature.on_start(Event())
+                feature.on_start(ProjectEvent(config=config))
                 assert commands == [
                     'git init', 'git add Projectfile', 'git commit -m "Project initialized using Medikit."'
                 ]
@@ -36,7 +36,7 @@ class TestGitFeature(FeatureTestCase):
         with patch('os.path.exists', return_value=True):
             commands = list()
             with patch('os.system', side_effect=commands.append) as os_system:
-                feature.on_start(Event())
+                feature.on_start(ProjectEvent(config=config))
                 assert commands == []
 
     def test_on_end(self):

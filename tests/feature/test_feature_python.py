@@ -61,6 +61,7 @@ class TestPythonFeature(FeatureTestCase):
             'help',
             'install',
             'install-dev',
+            'medikit',
             'update',
             'update-requirements',
         ]

@@ -160,8 +160,7 @@ class InstallScript(Script):
     def __iter__(self):
         yield 'if [ -z "$(QUICK)" ]; then \\'
         for line in map(
-                lambda x: '    {} ; \\'.format(x),
-                itertools.chain(self.before_install, self.install, self.after_install)
+            lambda x: '    {} ; \\'.format(x), itertools.chain(self.before_install, self.install, self.after_install)
         ):
             yield line
         yield 'fi'
@@ -421,7 +420,7 @@ class MakeFeature(Feature):
         self.makefile.add_target(
             'update',
             '$(MEDIKIT) update $(MEDIKIT_UPDATE_OPTIONS)',
-            deps=('medikit',),
+            deps=('medikit', ),
             phony=True,
             doc='''Update project artifacts using medikit.'''
         )

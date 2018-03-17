@@ -470,7 +470,7 @@ class PythonFeature(Feature):
         session = pip_command._build_session(pip_options)
         repository = PyPIRepository(pip_options, session)
 
-        for extra in itertools.chain((None,), python_config.get_extras()):
+        for extra in itertools.chain((None, ), python_config.get_extras()):
             requirements_file = 'requirements{}.txt'.format('-' + extra if extra else '')
 
             if python_config.override_requirements or not os.path.exists(requirements_file):
@@ -492,7 +492,7 @@ class PythonFeature(Feature):
                     '\n'.join(
                         (
                             '-e .{}'.format('[' + extra + ']' if extra else ''),
-                            *(('-r requirements.txt',) if extra else ()),
+                            *(('-r requirements.txt', ) if extra else ()),
                             *sorted(
                                 format_requirement(req) for req in resolver.resolve(max_rounds=10)
                                 if req.name != python_config.get('name')
