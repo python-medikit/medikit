@@ -372,7 +372,9 @@ class PythonFeature(Feature):
             '$(PIP) install $(PIP_INSTALL_OPTIONS) -U pip wheel',
             '$(PIP) install $(PIP_INSTALL_OPTIONS) -U -r $(PYTHON_REQUIREMENTS_DEV_FILE)',
         ]
-        event.makefile.get_target('install-dev').deps += ['$(PYTHON_REQUIREMENTS_FILE)', '$(PYTHON_REQUIREMENTS_DEV_FILE)', 'setup.py']
+        event.makefile.get_target('install-dev').deps += [
+            '$(PYTHON_REQUIREMENTS_FILE)', '$(PYTHON_REQUIREMENTS_DEV_FILE)', 'setup.py'
+        ]
 
     @subscribe('medikit.on_start', priority=ABSOLUTE_PRIORITY)
     def on_start(self, event):
