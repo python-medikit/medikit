@@ -7,7 +7,6 @@ import os
 import random
 
 from medikit.events import subscribe
-
 from . import Feature, SUPPORT_PRIORITY
 
 random = random.SystemRandom()
@@ -101,6 +100,3 @@ class DjangoFeature(Feature):
         if not os.path.exists(static_dir):
             os.makedirs(static_dir)
         self.render_empty_files(os.path.join(static_dir, 'favicon.ico'))
-
-
-__feature__ = DjangoFeature

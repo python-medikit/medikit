@@ -496,6 +496,3 @@ class PythonFeature(Feature):
                     )
                 )
             )
-
-
-__feature__ = PythonFeature

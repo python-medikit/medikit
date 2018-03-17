@@ -50,6 +50,3 @@ class PytestFeature(Feature):
 
         self.render_file('.coveragerc', 'pytest/coveragerc.j2')
         self.render_file('.travis.yml', 'pytest/travis.yml.j2')
-
-
-__feature__ = PytestFeature

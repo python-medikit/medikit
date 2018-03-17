@@ -177,7 +177,8 @@ class DockerConfig(Feature.Config):
 
         self.scripts = Namespace(
             build=Script(
-                '$(DOCKER_BUILD) -f $(DOCKER_BUILD_FILE) $(DOCKER_BUILD_OPTIONS) -t $(DOCKER_IMAGE):$(DOCKER_TAG) .'),
+                '$(DOCKER_BUILD) -f $(DOCKER_BUILD_FILE) $(DOCKER_BUILD_OPTIONS) -t $(DOCKER_IMAGE):$(DOCKER_TAG) .'
+            ),
             push=Script('$(DOCKER_PUSH) $(DOCKER_PUSH_OPTIONS) $(DOCKER_IMAGE):$(DOCKER_TAG)'),
             run=Script(
                 '$(DOCKER_RUN) $(DOCKER_RUN_OPTIONS) --interactive --tty --rm --name=$(PACKAGE)_run -p 8000:8000 $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_RUN_COMMAND)'
@@ -327,6 +328,3 @@ class DockerFeature(Feature):
             )
         else:
             raise NotImplementedError('Unknown builder {}'.format(docker_config.builder))
-
-
-__feature__ = DockerFeature

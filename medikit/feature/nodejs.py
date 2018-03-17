@@ -103,6 +103,3 @@ class NodeJSFeature(Feature):
         base_dir = event.config['nodejs'].base_dir or '.'
         os.system('cd {base_dir}; yarn install'.format(base_dir=base_dir))
         os.system('cd {base_dir}; git add yarn.lock'.format(base_dir=base_dir))
-
-
-__feature__ = NodeJSFeature

@@ -87,6 +87,3 @@ class SphinxFeature(Feature):
             deps=('install-dev', ),
             phony=True
         )
-
-
-__feature__ = SphinxFeature

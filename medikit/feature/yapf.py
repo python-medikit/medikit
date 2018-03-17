@@ -46,6 +46,3 @@ class YapfFeature(Feature):
         if os.path.exists(style_config):
             self.dispatcher.info('YAPF_STYLE_CONFIG = ' + style_config)
             settings.YAPF_STYLE_CONFIG = style_config
-
-
-__feature__ = YapfFeature

@@ -15,9 +15,7 @@ def _read_configuration(dispatcher, config_filename):
     if not os.path.exists(config_filename):
         raise IOError('Could not find project description file (looked in {})'.format(config_filename))
 
-    variables = dict(
-        PACKAGE=None
-    )
+    variables = dict(PACKAGE=None)
 
     files = {filename: '' for filename in DEFAULT_FILES}
     features = set(DEFAULT_FEATURES)

@@ -56,6 +56,3 @@ class GitFeature(Feature):
     @subscribe('medikit.feature.make.on_generate', priority=ABSOLUTE_PRIORITY + 1)
     def on_make_generate(self, event):
         event.makefile['VERSION'] = "$(shell git describe 2>/dev/null || git rev-parse --short HEAD)"
-
-
-__feature__ = GitFeature
