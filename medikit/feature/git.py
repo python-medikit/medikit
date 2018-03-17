@@ -14,9 +14,32 @@ class GitConfig(Feature.Config):
     
     Currently, **this feature is required for medikit to work**.
     
-    There are plans to add the ability to disable it, but it's not a priority.
+    To disable it, use:
+    
+    .. code-block:: python
+    
+        git.disable()
+    
+    It will avoid creating a `.git` repository, and won't `git add` the modified files to git neither.
+    
+    Even disabled, the feature will still manage the `.gitignore` file (can't harm) and the `VERSION` variable, still
+    based on `git describe` value. It means that you can ask medikit to not create a repo, but it should still be in a
+    sub-directory or a git repository somewhere.
     
     """
+
+    def __init__(self):
+        self._enabled = True
+
+    @property
+    def enabled(self):
+        return self._enabled
+
+    def disable(self):
+        self._enabled = False
+
+    def enable(self):
+        self._enabled = True
 
 
 class GitFeature(Feature):
@@ -24,11 +47,19 @@ class GitFeature(Feature):
 
     @subscribe('medikit.on_start', priority=ABSOLUTE_PRIORITY)
     def on_start(self, event):
+        if not event.config['git'].enabled:
+            return
+
         if not os.path.exists('.git'):
             self.dispatcher.info('git', 'Creating git repository...')
             os.system('git init')
             os.system('git add Projectfile')
             os.system('git commit -m "Project initialized using Medikit."')
+
+        def on_file_change(event):
+            os.system('git add {}'.format(event.filename))
+
+        self.dispatcher.add_listener('medikit.on_file_closed', on_file_change, priority=-1)
 
     @subscribe('medikit.on_end')
     def on_end(self, event):
@@ -48,10 +79,6 @@ class GitFeature(Feature):
             /pylint.html
         ''', event.variables
         )
-
-    @subscribe('medikit.on_file_closed')
-    def on_file_change(self, event):
-        os.system('git add {}'.format(event.filename))
 
     @subscribe('medikit.feature.make.on_generate', priority=ABSOLUTE_PRIORITY + 1)
     def on_make_generate(self, event):

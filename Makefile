@@ -21,8 +21,10 @@ SPHINX_BUILDDIR ?= $(SPHINX_SOURCEDIR)/_build
 YAPF ?= $(PYTHON) -m yapf
 YAPF_OPTIONS ?= -rip
 SPHINX_AUTOBUILD ?= $(PYTHON_DIRNAME)/sphinx-autobuild
+MEDIKIT ?= $(PYTHON) -m medikit
+MEDIKIT_VERSION ?= 0.5.12
 
-.PHONY: $(SPHINX_SOURCEDIR) clean format help install install-dev release test update update-requirements watch-$(SPHINX_SOURCEDIR)
+.PHONY: $(SPHINX_SOURCEDIR) clean format help install install-dev medikit release test update update-requirements watch-$(SPHINX_SOURCEDIR)
 
 install:   ## Installs the local project dependencies.
 	if [ -z "$(QUICK)" ]; then \
@@ -38,14 +40,6 @@ install-dev:   ## Installs the local project dependencies, including development
 
 clean:   ## Cleans up the local mess.
 	rm -rf build dist *.egg-info
-
-update:   ## Update project artifacts using medikit, after installing it eventually.
-	python -c 'import medikit; print(medikit.__version__)' || pip install medikit;
-	python -m medikit update
-
-update-requirements:   ## Remove requirements files and update project artifacts using medikit, after installing it eventually.
-	rm -rf requirements*.txt
-	$(MAKE) update
 
 test: install-dev  ## Runs the test suite.
 	$(PYTEST) $(PYTEST_OPTIONS) tests
@@ -63,6 +57,16 @@ watch-$(SPHINX_SOURCEDIR):   ##
 release:   ## Releases medikit.
 	python -c 'import medikit; print(medikit.__version__)' || pip install medikit;
 	$(PYTHON) -m medikit pipeline release start
+
+medikit:   # Checks installed medikit version and updates it if it is outdated.
+	@python -c 'import medikit, sys; from packaging.version import Version; sys.exit(0 if Version(medikit.__version__) >= Version("$(MEDIKIT_VERSION)") else 1)' || python -m pip install -U "medikit>=$(MEDIKIT_VERSION)"
+
+update: medikit  ## Update project artifacts using medikit.
+	python -m medikit update
+
+update-requirements:   ## Update project artifacts using medikit, including requirements files.
+	rm -rf requirements*.txt
+	$(MAKE) update
 
 help:   ## Shows available commands.
 	@echo "Available commands:"

@@ -5,10 +5,11 @@ GNU Make support.
 
 import itertools
 import textwrap
-from collections import deque
+from collections import deque, namedtuple
 
 from whistle import Event
 
+import medikit
 from medikit.events import subscribe
 from medikit.feature import Feature, HIGH_PRIORITY
 from medikit.structs import Script
@@ -17,6 +18,9 @@ from medikit.utils import get_override_warning_banner
 
 def which(cmd):
     return '$(shell which {cmd} || echo {cmd})'.format(cmd=cmd)
+
+
+MakefileTarget = namedtuple('MakefileTarget', ['deps', 'rule', 'doc'])
 
 
 class Makefile(object):
@@ -32,6 +36,7 @@ class Makefile(object):
     def __init__(self):
         self._env_order, self._env_values, self._env_assignment_operators = deque(), {}, {}
         self._target_order, self._target_values = deque(), {}
+        self.hidden = set()
         self.phony = set()
 
     def __delitem__(self, key):
@@ -73,8 +78,10 @@ class Makefile(object):
         for target, details in self.targets:
             deps, rule, doc = details
             content.append(
-                '{}: {}  ## {}'.format(target, ' '.join(deps),
-                                       doc.replace('\n', ' ') if doc else '').strip()
+                '{}: {}  {} {}'.format(
+                    target, ' '.join(deps), '#' if target in self.hidden else '##',
+                    doc.replace('\n', ' ') if doc else ''
+                ).strip()
             )
 
             script = textwrap.dedent(str(rule)).strip()
@@ -86,22 +93,29 @@ class Makefile(object):
 
         return '\n'.join(content)
 
-    def add_target(self, target, rule, deps=None, phony=False, first=False, doc=None):
+    def keys(self):
+        return list(self._env_order)
+
+    def add_target(self, target, rule, *, deps=None, phony=False, first=False, doc=None, hidden=False):
         if target in self._target_order:
             raise RuntimeError('Duplicate definition for make target «{}».'.format(target))
 
         if isinstance(rule, str):
             rule = Script(rule)
 
-        self._target_values[target] = (
-            deps or list(),
-            rule,
-            textwrap.dedent(doc or '').strip(),
+        self._target_values[target] = MakefileTarget(
+            deps=tuple(deps) if deps else tuple(),
+            rule=rule,
+            doc=textwrap.dedent(doc or '').strip(),
         )
+
         self._target_order.appendleft(target) if first else self._target_order.append(target)
 
         if phony:
             self.phony.add(target)
+
+        if hidden:
+            self.hidden.add(target)
 
     def get_target(self, target):
         return self._target_values[target][1]
@@ -359,31 +373,13 @@ class MakeFeature(Feature):
         )
         self.makefile.add_target('clean', CleanScript(), phony=True, doc='''Cleans up the local mess.''')
 
-        if event.config['make'].include_medikit_targets:
-            self.makefile.add_target(
-                'update',
-                '''
-                python -c 'import medikit; print(medikit.__version__)' || pip install medikit;
-                python -m medikit update
-            ''',
-                phony=True,
-                doc='''Update project artifacts using medikit, after installing it eventually.'''
-            )
-
-            self.makefile.add_target(
-                'update-requirements',
-                '''
-                rm -rf requirements*.txt
-                $(MAKE) update
-            ''',
-                phony=True,
-                doc=
-                '''Remove requirements files and update project artifacts using medikit, after installing it eventually.'''
-            )
-
         self.dispatcher.dispatch(
             MakeConfig.on_generate, MakefileEvent(event.config.package_name, self.makefile, event.config)
         )
+
+        if event.config['make'].include_medikit_targets:
+            self.add_medikit_targets(event.config['make'])
+
         # Recipe courtesy of https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
         self.makefile.add_target(
             'help',
@@ -396,4 +392,46 @@ class MakeFeature(Feature):
             phony=True,
             doc='Shows available commands.'
         )
+
+        # Actual rendering of Makefile
         self.render_file_inline('Makefile', self.makefile.__str__(), override=True)
+
+    def add_medikit_targets(self, config):
+        self.makefile['MEDIKIT'] = which('python') + ' -m medikit'
+        self.makefile['MEDIKIT_VERSION'] = medikit.__version__
+
+        source = [
+            'import medikit, sys',
+            'from packaging.version import Version',
+            'sys.exit(0 if Version(medikit.__version__) >= Version("$(MEDIKIT_VERSION)") else 1)',
+        ]
+
+        self.makefile.add_target(
+            'medikit',
+            '@python -c {!r} || python -m pip install -U "medikit>=$(MEDIKIT_VERSION)"'.format('; '.join(source)),
+            phony=True,
+            hidden=True,
+            doc='Checks installed medikit version and updates it if it is outdated.'
+        )
+
+        self.makefile.add_target(
+            'update',
+            '''
+                python -m medikit update
+            ''',
+            deps=('medikit', ),
+            phony=True,
+            doc='''Update project artifacts using medikit.'''
+        )
+
+        # TODO this should adapt to langauges included, and be removed if no language
+        # For example, requirements*.txt are specific to python, using classic setuptools.
+        self.makefile.add_target(
+            'update-requirements',
+            '''
+                rm -rf requirements*.txt
+                $(MAKE) update
+            ''',
+            phony=True,
+            doc='''Update project artifacts using medikit, including requirements files.'''
+        )
