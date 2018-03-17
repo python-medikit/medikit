@@ -7,6 +7,9 @@ from medikit.events import LoggingDispatcher, ProjectEvent
 
 
 class UpdateCommand(Command):
+    def add_arguments(self, parser):
+        parser.add_argument('--override-requirements', action='store_true')
+
     @staticmethod
     def handle(config_filename, **kwargs):
         import logging
@@ -15,6 +18,9 @@ class UpdateCommand(Command):
         dispatcher = LoggingDispatcher()
 
         variables, features, files, config = _read_configuration(dispatcher, config_filename)
+
+        if kwargs.pop('override_requirements', False):
+            config['python'].override_requirements = True
 
         feature_instances = {}
         logger.info(

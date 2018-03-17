@@ -22,6 +22,7 @@ YAPF ?= $(PYTHON) -m yapf
 YAPF_OPTIONS ?= -rip
 SPHINX_AUTOBUILD ?= $(PYTHON_DIRNAME)/sphinx-autobuild
 MEDIKIT ?= $(PYTHON) -m medikit
+MEDIKIT_UPDATE_OPTIONS ?= 
 MEDIKIT_VERSION ?= 0.5.12
 
 .PHONY: $(SPHINX_SOURCEDIR) clean format help install install-dev medikit release test update update-requirements watch-$(SPHINX_SOURCEDIR)
@@ -59,14 +60,13 @@ release:   ## Releases medikit.
 	$(PYTHON) -m medikit pipeline release start
 
 medikit:   # Checks installed medikit version and updates it if it is outdated.
-	@python -c 'import medikit, sys; from packaging.version import Version; sys.exit(0 if Version(medikit.__version__) >= Version("$(MEDIKIT_VERSION)") else 1)' || python -m pip install -U "medikit>=$(MEDIKIT_VERSION)"
+	@$(PYTHON) -c 'import medikit, sys; from packaging.version import Version; sys.exit(0 if Version(medikit.__version__) >= Version("$(MEDIKIT_VERSION)") else 1)' || $(PYTHON) -m pip install -U "medikit>=$(MEDIKIT_VERSION)"
 
 update: medikit  ## Update project artifacts using medikit.
-	python -m medikit update
+	$(MEDIKIT) update $(MEDIKIT_UPDATE_OPTIONS)
 
 update-requirements:   ## Update project artifacts using medikit, including requirements files.
-	rm -rf requirements*.txt
-	$(MAKE) update
+	MEDIKIT_UPDATE_OPTIONS="--override-requirements" $(MAKE) update
 
 help:   ## Shows available commands.
 	@echo "Available commands:"

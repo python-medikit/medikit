@@ -183,6 +183,7 @@ class PythonConfig(Feature.Config):
         self._constraints = {}
         self._version_file = None
         self._create_packages = True
+        self.override_requirements = False
 
     @property
     def package_dir(self):
@@ -469,30 +470,34 @@ class PythonFeature(Feature):
         session = pip_command._build_session(pip_options)
         repository = PyPIRepository(pip_options, session)
 
-        for extra in itertools.chain((None, ), python_config.get_extras()):
-            tmpfile = tempfile.NamedTemporaryFile(mode='wt', delete=False)
-            if extra:
-                tmpfile.write('\n'.join(python_config.get_requirements(extra=extra)))
-            else:
-                tmpfile.write('\n'.join(python_config.get_requirements()))
-            tmpfile.flush()
-            constraints = list(
-                parse_requirements(
-                    tmpfile.name, finder=repository.finder, session=repository.session, options=pip_options
-                )
-            )
-            resolver = Resolver(constraints, repository, prereleases=False, clear_caches=False, allow_unsafe=False)
+        for extra in itertools.chain((None,), python_config.get_extras()):
+            requirements_file = 'requirements{}.txt'.format('-' + extra if extra else '')
 
-            self.render_file_inline(
-                'requirements{}.txt'.format('-' + extra if extra else ''),
-                '\n'.join(
-                    (
-                        '-e .{}'.format('[' + extra + ']' if extra else ''),
-                        *(('-r requirements.txt', ) if extra else ()),
-                        *sorted(
-                            format_requirement(req) for req in resolver.resolve(max_rounds=10)
-                            if req.name != python_config.get('name')
-                        ),
+            if python_config.override_requirements or not os.path.exists(requirements_file):
+                tmpfile = tempfile.NamedTemporaryFile(mode='wt', delete=False)
+                if extra:
+                    tmpfile.write('\n'.join(python_config.get_requirements(extra=extra)))
+                else:
+                    tmpfile.write('\n'.join(python_config.get_requirements()))
+                tmpfile.flush()
+                constraints = list(
+                    parse_requirements(
+                        tmpfile.name, finder=repository.finder, session=repository.session, options=pip_options
                     )
                 )
-            )
+                resolver = Resolver(constraints, repository, prereleases=False, clear_caches=False, allow_unsafe=False)
+
+                self.render_file_inline(
+                    requirements_file,
+                    '\n'.join(
+                        (
+                            '-e .{}'.format('[' + extra + ']' if extra else ''),
+                            *(('-r requirements.txt',) if extra else ()),
+                            *sorted(
+                                format_requirement(req) for req in resolver.resolve(max_rounds=10)
+                                if req.name != python_config.get('name')
+                            ),
+                        )
+                    ),
+                    override=python_config.override_requirements
+                )

@@ -160,7 +160,8 @@ class InstallScript(Script):
     def __iter__(self):
         yield 'if [ -z "$(QUICK)" ]; then \\'
         for line in map(
-            lambda x: '    {} ; \\'.format(x), itertools.chain(self.before_install, self.install, self.after_install)
+                lambda x: '    {} ; \\'.format(x),
+                itertools.chain(self.before_install, self.install, self.after_install)
         ):
             yield line
         yield 'fi'
@@ -397,7 +398,10 @@ class MakeFeature(Feature):
         self.render_file_inline('Makefile', self.makefile.__str__(), override=True)
 
     def add_medikit_targets(self, config):
-        self.makefile['MEDIKIT'] = which('python') + ' -m medikit'
+        if not 'PYTHON' in self.makefile:
+            self.makefile['PYTHON'] = which('python')
+        self.makefile['MEDIKIT'] = '$(PYTHON) -m medikit'
+        self.makefile['MEDIKIT_UPDATE_OPTIONS'] = ''
         self.makefile['MEDIKIT_VERSION'] = medikit.__version__
 
         source = [
@@ -408,7 +412,7 @@ class MakeFeature(Feature):
 
         self.makefile.add_target(
             'medikit',
-            '@python -c {!r} || python -m pip install -U "medikit>=$(MEDIKIT_VERSION)"'.format('; '.join(source)),
+            '@$(PYTHON) -c {!r} || $(PYTHON) -m pip install -U "medikit>=$(MEDIKIT_VERSION)"'.format('; '.join(source)),
             phony=True,
             hidden=True,
             doc='Checks installed medikit version and updates it if it is outdated.'
@@ -416,10 +420,8 @@ class MakeFeature(Feature):
 
         self.makefile.add_target(
             'update',
-            '''
-                python -m medikit update
-            ''',
-            deps=('medikit', ),
+            '$(MEDIKIT) update $(MEDIKIT_UPDATE_OPTIONS)',
+            deps=('medikit',),
             phony=True,
             doc='''Update project artifacts using medikit.'''
         )
@@ -428,10 +430,7 @@ class MakeFeature(Feature):
         # For example, requirements*.txt are specific to python, using classic setuptools.
         self.makefile.add_target(
             'update-requirements',
-            '''
-                rm -rf requirements*.txt
-                $(MAKE) update
-            ''',
+            'MEDIKIT_UPDATE_OPTIONS="--override-requirements" $(MAKE) update',
             phony=True,
             doc='''Update project artifacts using medikit, including requirements files.'''
         )
