@@ -105,7 +105,7 @@ def main():
             config_class=config.__name__,
             feature_class=feature.__name__,
             usage=usage,
-            usage_file=os.path.exists(os.path.join(doc_path, 'features/_usage', name+'.rst')),
+            usage_file=os.path.exists(os.path.join(doc_path, 'features/_usage', name + '.rst')),
             is_default=is_default,
         )
 
