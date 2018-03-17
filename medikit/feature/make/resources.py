@@ -122,8 +122,9 @@ class Makefile(object):
 
     def setleft(self, key, value):
         self._env_values[key] = value
-        if not key in self._env_order:
-            self._env_order.appendleft(key)
+        if key in self._env_order:
+            self._env_order.remove(key)
+        self._env_order.appendleft(key)
 
     def updateleft(self, *lst):
         for key, value in reversed(lst):
