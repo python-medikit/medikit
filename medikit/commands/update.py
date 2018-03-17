@@ -19,8 +19,10 @@ class UpdateCommand(Command):
 
         variables, features, files, config = _read_configuration(dispatcher, config_filename)
 
+        # This is a hack, but we'd need a flexible option parser which requires too much work as of today.
         if kwargs.pop('override_requirements', False):
-            config['python'].override_requirements = True
+            if 'python' in config:
+                config['python'].override_requirements = True
 
         feature_instances = {}
         logger.info(
