@@ -77,17 +77,21 @@ class Makefile(object):
 
         for target, details in self.targets:
             deps, rule, doc = details
-            content.append(
-                '{}: {}  {} {}'.format(
-                    target, ' '.join(deps), '#' if target in self.hidden else '##',
-                    doc.replace('\n', ' ') if doc else ''
-                ).strip()
-            )
 
-            script = textwrap.dedent(str(rule)).strip()
+            if hasattr(rule, 'render'):
+                content += list(rule.render(target, deps, doc))
+            else:
+                content.append(
+                    '{}: {}  {} {}'.format(
+                        target, ' '.join(deps), '#' if target in self.hidden else '##',
+                        doc.replace('\n', ' ') if doc else ''
+                    ).strip()
+                )
 
-            for line in script.split('\n'):
-                content.append('\t' + line)
+                script = textwrap.dedent(str(rule)).strip()
+
+                for line in script.split('\n'):
+                    content.append('\t' + line)
 
             content.append('')
 
@@ -157,24 +161,46 @@ class InstallScript(Script):
         self.install = self.script
         self.after_install = []
 
+        self.deps = []
+
     def __iter__(self):
-        yield 'if [ -z "$(QUICK)" ]; then \\'
+        yield '@if [ -z "$(QUICK)" ]; then \\'
         for line in map(
-            lambda x: '    {} ; \\'.format(x), itertools.chain(self.before_install, self.install, self.after_install)
+                lambda x: '    {} ; \\'.format(x),
+                itertools.chain(self.before_install, self.install, self.after_install)
         ):
             yield line
         yield 'fi'
 
+    def render(self, name, deps, doc):
+        tab = '\t'
+        yield '{name}: .medikit/{name} {deps}  ## {doc}'.format(name=name, deps=' '.join(deps), doc=doc)
+        yield '.medikit/{name}: {deps}'.format(name=name, deps=' '.join(sorted(set(self.deps))))
+        yield tab + '$(eval target := $(shell echo $@ | rev | cut -d/ -f1 | rev))'
+        yield 'ifeq ($(filter quick,$(MAKECMDGOALS)),quick)'
+        yield tab + r'@printf "Skipping \033[36m%s\033[0m because of \033[36mquick\033[0m target.\n" $(target)'
+        yield 'else ifneq ($(QUICK),)'
+        yield tab + r'@printf "Skipping \033[36m%s\033[0m because \033[36m$$QUICK\033[0m is not empty.\n" $(target)'
+        yield 'else'
+        yield tab + r'@printf "Applying \033[36m%s\033[0m target...\n" $(target)'
+        for line in itertools.chain(self.before_install, self.install, self.after_install):
+            yield tab + line
+        yield tab + '@mkdir -p .medikit; touch $@'
+        yield 'endif'
+
 
 class CleanScript(Script):
     remove = [
-        'build',
-        'dist',
-        '*.egg-info',
+        '.medikit',
+        '.release',
+        'build',  # XXX move to python
+        'dist',  # XXX move to python
+        '*.egg-info',  # XXX move to python
     ]
 
     def __iter__(self):
         yield 'rm -rf {}'.format(' '.join(self.remove))
+        yield 'find . -name __pycache__ -type d | xargs rm -rf'  # XXX move to python
 
 
 class MakeConfig(Feature.Config):
@@ -372,6 +398,7 @@ class MakeFeature(Feature):
             doc='''Installs the local project dependencies, including development-only libraries.'''
         )
         self.makefile.add_target('clean', CleanScript(), phony=True, doc='''Cleans up the local mess.''')
+        self.makefile.add_target('quick', Script('@printf ""'), phony=True, hidden=True)
 
         self.dispatcher.dispatch(
             MakeConfig.on_generate, MakefileEvent(event.config.package_name, self.makefile, event.config)
@@ -420,7 +447,7 @@ class MakeFeature(Feature):
         self.makefile.add_target(
             'update',
             '$(MEDIKIT) update $(MEDIKIT_UPDATE_OPTIONS)',
-            deps=('medikit', ),
+            deps=('medikit',),
             phony=True,
             doc='''Update project artifacts using medikit.'''
         )

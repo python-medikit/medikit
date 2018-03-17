@@ -25,22 +25,42 @@ MEDIKIT ?= $(PYTHON) -m medikit
 MEDIKIT_UPDATE_OPTIONS ?= 
 MEDIKIT_VERSION ?= 0.5.13
 
-.PHONY: $(SPHINX_SOURCEDIR) clean format help install install-dev medikit release test update update-requirements watch-$(SPHINX_SOURCEDIR)
+.PHONY: $(SPHINX_SOURCEDIR) clean format help install install-dev medikit quick release test update update-requirements watch-$(SPHINX_SOURCEDIR)
 
-install:   ## Installs the local project dependencies.
-	if [ -z "$(QUICK)" ]; then \
-	    $(PIP) install $(PIP_INSTALL_OPTIONS) -U pip wheel ; \
-	    $(PIP) install $(PIP_INSTALL_OPTIONS) -U -r $(PYTHON_REQUIREMENTS_FILE) ; \
-	fi
+install: .medikit/install   ## Installs the local project dependencies.
+.medikit/install: $(PYTHON_REQUIREMENTS_FILE) setup.py
+	$(eval target := $(shell echo $@ | rev | cut -d/ -f1 | rev))
+ifeq ($(filter quick,$(MAKECMDGOALS)),quick)
+	@printf "Skipping \033[36m%s\033[0m because of \033[36mquick\033[0m target.\n" $(target)
+else ifneq ($(QUICK),)
+	@printf "Skipping \033[36m%s\033[0m because \033[36m$$QUICK\033[0m is not empty.\n" $(target)
+else
+	@printf "Applying \033[36m%s\033[0m target...\n" $(target)
+	$(PIP) install $(PIP_INSTALL_OPTIONS) -U pip wheel
+	$(PIP) install $(PIP_INSTALL_OPTIONS) -U -r $(PYTHON_REQUIREMENTS_FILE)
+	@mkdir -p .medikit; touch $@
+endif
 
-install-dev:   ## Installs the local project dependencies, including development-only libraries.
-	if [ -z "$(QUICK)" ]; then \
-	    $(PIP) install $(PIP_INSTALL_OPTIONS) -U pip wheel ; \
-	    $(PIP) install $(PIP_INSTALL_OPTIONS) -U -r $(PYTHON_REQUIREMENTS_DEV_FILE) ; \
-	fi
+install-dev: .medikit/install-dev   ## Installs the local project dependencies, including development-only libraries.
+.medikit/install-dev: $(PYTHON_REQUIREMENTS_DEV_FILE) $(PYTHON_REQUIREMENTS_FILE) setup.py
+	$(eval target := $(shell echo $@ | rev | cut -d/ -f1 | rev))
+ifeq ($(filter quick,$(MAKECMDGOALS)),quick)
+	@printf "Skipping \033[36m%s\033[0m because of \033[36mquick\033[0m target.\n" $(target)
+else ifneq ($(QUICK),)
+	@printf "Skipping \033[36m%s\033[0m because \033[36m$$QUICK\033[0m is not empty.\n" $(target)
+else
+	@printf "Applying \033[36m%s\033[0m target...\n" $(target)
+	$(PIP) install $(PIP_INSTALL_OPTIONS) -U pip wheel
+	$(PIP) install $(PIP_INSTALL_OPTIONS) -U -r $(PYTHON_REQUIREMENTS_DEV_FILE)
+	@mkdir -p .medikit; touch $@
+endif
 
 clean:   ## Cleans up the local mess.
-	rm -rf build dist *.egg-info
+	rm -rf .medikit .release build dist *.egg-info
+	find . -name __pycache__ -type d | xargs rm -rf
+
+quick:   #
+	@printf ""
 
 test: install-dev  ## Runs the test suite.
 	$(PYTEST) $(PYTEST_OPTIONS) tests
@@ -48,7 +68,7 @@ test: install-dev  ## Runs the test suite.
 $(SPHINX_SOURCEDIR): install-dev  ##
 	$(SPHINX_BUILD) -b html -D latex_paper_size=a4 $(SPHINX_OPTIONS) $(SPHINX_SOURCEDIR) $(SPHINX_BUILDDIR)/html
 
-format: install-dev  ##
+format: install-dev  ## Reformats the whole python codebase using yapf.
 	$(YAPF) $(YAPF_OPTIONS) .
 	$(YAPF) $(YAPF_OPTIONS) Projectfile
 

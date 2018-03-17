@@ -62,6 +62,7 @@ class TestPythonFeature(FeatureTestCase):
             'install',
             'install-dev',
             'medikit',
+            'quick',
             'update',
             'update-requirements',
         ]

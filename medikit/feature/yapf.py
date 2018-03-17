@@ -33,7 +33,8 @@ class YapfFeature(Feature):
             $(YAPF) $(YAPF_OPTIONS) Projectfile
         ''',
             deps=('install-dev', ),
-            phony=True
+            phony=True,
+            doc='Reformats the whole python codebase using yapf.'
         )
 
     @subscribe('medikit.on_start', priority=SUPPORT_PRIORITY)
