@@ -10,12 +10,6 @@ from medikit.feature.make import which
 
 
 class KubeConfig(Feature.Config):
-    __usage__ = """
-    
-    *This feature is brand new and should be used with care.*
-    
-    """
-
     def __init__(self):
         self._targets = list()
         self._targets_data = dict()

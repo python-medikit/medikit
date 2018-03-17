@@ -43,6 +43,7 @@ Here is an example:
     features/django
     features/docker
     features/git
+    features/kube
     features/make
     features/nodejs
     features/pylint

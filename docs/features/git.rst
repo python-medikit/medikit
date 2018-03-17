@@ -25,12 +25,10 @@ To get a handle to the :class:`GitConfig` instance, you can:
 
 
 
-Currently, **this feature is required for medikit to work**.
 
-There are plans to add the ability to disable it, but it's not a priority.
-
-
+.. include:: _usage/git.rst
     
+
 
 
 Configuration

@@ -51,6 +51,13 @@ The `{{ name }}` handle is a :class:`{{ config_class }}` instance, and can be us
     
 {% endif %}
 
+{% if usage_file %}
+
+.. include:: _usage/{{ name }}.rst
+    
+{% endif %}
+
+
 {% if has_custom_config -%}
 
 Configuration
@@ -98,6 +105,7 @@ def main():
             config_class=config.__name__,
             feature_class=feature.__name__,
             usage=usage,
+            usage_file=os.path.exists(os.path.join(doc_path, 'features/_usage', name+'.rst')),
             is_default=is_default,
         )
 
