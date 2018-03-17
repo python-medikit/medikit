@@ -2,13 +2,13 @@
 # All changes will be overriden.
 # Edit Projectfile and run “make update” (or “medikit update”) to regenerate.
 
+PACKAGE ?= medikit
 PYTHON ?= $(shell which python || echo python)
 PYTHON_BASENAME ?= $(shell basename $(PYTHON))
 PYTHON_DIRNAME ?= $(shell dirname $(PYTHON))
 PYTHON_REQUIREMENTS_FILE ?= requirements.txt
 PYTHON_REQUIREMENTS_DEV_FILE ?= requirements-dev.txt
 QUICK ?= 
-PACKAGE ?= medikit
 PIP ?= $(PYTHON_DIRNAME)/pip
 PIP_INSTALL_OPTIONS ?= 
 VERSION ?= $(shell git describe 2>/dev/null || git rev-parse --short HEAD)
@@ -27,7 +27,7 @@ MEDIKIT_VERSION ?= 0.5.13
 
 .PHONY: $(SPHINX_SOURCEDIR) clean format help install install-dev medikit quick release test update update-requirements watch-$(SPHINX_SOURCEDIR)
 
-install: .medikit/install   ## Installs the local project dependencies.
+install: .medikit/install   ## Installs the project.
 .medikit/install: $(PYTHON_REQUIREMENTS_FILE) setup.py
 	$(eval target := $(shell echo $@ | rev | cut -d/ -f1 | rev))
 ifeq ($(filter quick,$(MAKECMDGOALS)),quick)
@@ -41,7 +41,7 @@ else
 	@mkdir -p .medikit; touch $@
 endif
 
-install-dev: .medikit/install-dev   ## Installs the local project dependencies, including development-only libraries.
+install-dev: .medikit/install-dev   ## Installs the project (with dev dependencies).
 .medikit/install-dev: $(PYTHON_REQUIREMENTS_DEV_FILE) $(PYTHON_REQUIREMENTS_FILE) setup.py
 	$(eval target := $(shell echo $@ | rev | cut -d/ -f1 | rev))
 ifeq ($(filter quick,$(MAKECMDGOALS)),quick)

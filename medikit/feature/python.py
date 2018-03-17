@@ -213,32 +213,34 @@ class PythonFeature(Feature):
         :param MakefileEvent event:
 
         """
+
+        extra_variables = []
+        for extra in event.config['python'].get_extras():
+            extra_variables.append(
+                (
+                    'PYTHON_REQUIREMENTS_' + extra.upper().replace('-', '_') + '_FILE',
+                    'requirements-' + extra + '.txt',
+                )
+            )
+
         # Python related environment
         event.makefile.updateleft(
             (
                 'PACKAGE',
                 event.config.package_name,
-            ),
-            (
+            ), (
                 'PYTHON',
                 which('python'),
-            ),
-            (
+            ), (
                 'PYTHON_BASENAME',
                 '$(shell basename $(PYTHON))',
-            ),
-            (
+            ), (
                 'PYTHON_DIRNAME',
                 '$(shell dirname $(PYTHON))',
-            ),
-            (
+            ), (
                 'PYTHON_REQUIREMENTS_FILE',
                 'requirements.txt',
-            ),
-            (
-                'PYTHON_REQUIREMENTS_DEV_FILE',
-                'requirements-dev.txt',
-            ),
+            ), *extra_variables
         )
 
         event.makefile['PIP'] = '$(PYTHON_DIRNAME)/pip'
@@ -250,13 +252,15 @@ class PythonFeature(Feature):
         ]
         event.makefile.get_target('install').deps += ['$(PYTHON_REQUIREMENTS_FILE)', 'setup.py']
 
-        event.makefile.get_target('install-dev').install = [
-            '$(PIP) install $(PIP_INSTALL_OPTIONS) -U pip wheel',
-            '$(PIP) install $(PIP_INSTALL_OPTIONS) -U -r $(PYTHON_REQUIREMENTS_DEV_FILE)',
-        ]
-        event.makefile.get_target('install-dev').deps += [
-            '$(PYTHON_REQUIREMENTS_FILE)', '$(PYTHON_REQUIREMENTS_DEV_FILE)', 'setup.py'
-        ]
+        for extra in event.config['python'].get_extras():
+            target = event.makefile.add_install_target(extra)
+            reqs_var = 'PYTHON_REQUIREMENTS_' + extra.upper().replace('-', '_') + '_FILE'
+
+            target.install += [
+                '$(PIP) install $(PIP_INSTALL_OPTIONS) -U pip wheel',
+                '$(PIP) install $(PIP_INSTALL_OPTIONS) -U -r $(' + reqs_var + ')',
+            ]
+            target.deps += ['$(PYTHON_REQUIREMENTS_FILE)', '$(' + reqs_var + ')', 'setup.py']
 
     @subscribe('medikit.on_start', priority=ABSOLUTE_PRIORITY)
     def on_start(self, event):

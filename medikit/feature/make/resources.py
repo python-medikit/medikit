@@ -106,8 +106,23 @@ class Makefile(object):
         if hidden:
             self.hidden.add(target)
 
+    def add_install_target(self, extra=None):
+        if extra:
+            target = 'install-' + extra
+            doc = 'Installs the project (with ' + extra + ' dependencies).'
+        else:
+            target = 'install'
+            doc = 'Installs the project.'
+
+        if not self.has_target(target):
+            self.add_target(target, InstallScript(), phony=True, doc=doc)
+        return self.get_target(target)
+
     def get_target(self, target):
         return self._target_values[target][1]
+
+    def has_target(self, target):
+        return target in self._target_values
 
     def set_deps(self, target, deps=None):
         self._target_values[target] = (
