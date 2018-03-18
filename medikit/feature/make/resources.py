@@ -182,13 +182,18 @@ class InstallScript(Script):
 
 
 class CleanScript(Script):
-    # You should not clean .medikit/.release here, as it will deny releases.
+    # We should not clean .medikit subdirectories here, as it will deny releases.
+    # TODO: move into python feature
     remove = [
-        'build',  # XXX move to python
-        'dist',  # XXX move to python
-        '*.egg-info',  # XXX move to python
+        'build',
+        'dist',
+        '*.egg-info',
     ]
 
     def __iter__(self):
+        # remove the task complete markers, but don't remove subdirectories
+        yield 'rm .medikit/*'
+        # cleanup build directories
         yield 'rm -rf {}'.format(' '.join(self.remove))
-        yield 'find . -name __pycache__ -type d | xargs rm -rf'  # XXX move to python
+        # cleanup python bytecode -
+        yield 'find . -name __pycache__ -type d | xargs rm -rf'
