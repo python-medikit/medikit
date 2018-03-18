@@ -243,7 +243,7 @@ class PythonFeature(Feature):
             ), *extra_variables
         )
 
-        event.makefile['PIP'] = '$(PYTHON_DIRNAME)/pip'
+        event.makefile['PIP'] = '$(PYTHON) -m pip'
         event.makefile['PIP_INSTALL_OPTIONS'] = ''
 
         event.makefile.get_target('install').install = [

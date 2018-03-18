@@ -7,7 +7,7 @@ gitdb2==2.0.3
 gitpython==2.1.8
 jinja2==2.10
 markupsafe==1.0
-mondrian==0.6.3
+mondrian==0.6.4
 packaging==17.1
 pbr==3.1.1
 pip-tools==1.11.0
