@@ -59,7 +59,7 @@ setup(
     ],
     extras_require={
         'dev': [
-            'coverage (~= 4.4)', 'pytest (~= 3.4)', 'pytest-cov (~= 2.5)', 'pytest-sugar (~= 0.9.1)', 'sphinx (~= 1.7)',
+            'coverage (~= 4.4)', 'pytest (~= 3.4)', 'pytest-cov (~= 2.5)', 'sphinx (~= 1.7)',
             'sphinx-sitemap (>= 0.2, < 0.3)', 'yapf'
         ]
     },
