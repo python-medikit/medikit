@@ -182,9 +182,8 @@ class InstallScript(Script):
 
 
 class CleanScript(Script):
+    # You should not clean .medikit/.release here, as it will deny releases.
     remove = [
-        '.medikit',
-        '.release',
         'build',  # XXX move to python
         'dist',  # XXX move to python
         '*.egg-info',  # XXX move to python
