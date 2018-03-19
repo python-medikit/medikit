@@ -17,4 +17,4 @@ six==1.11.0
 smmap2==2.0.3
 stevedore==1.28.0
 whistle==1.0.1
-yapf==0.20.2
+yapf==0.21.0

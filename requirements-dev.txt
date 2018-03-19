@@ -26,4 +26,4 @@ sphinx-sitemap==0.2
 sphinx==1.7.1
 sphinxcontrib-websupport==1.0.1
 urllib3==1.22
-yapf==0.20.2
+yapf==0.21.0
