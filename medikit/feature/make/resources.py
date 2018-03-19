@@ -106,6 +106,11 @@ class Makefile(object):
         if hidden:
             self.hidden.add(target)
 
+    def get_clean_target(self):
+        if not self.has_target('clean'):
+            self.add_target('clean', CleanScript(), phony=True, doc='''Cleans up the working copy.''')
+        return self.get_target('clean')
+
     def add_install_target(self, extra=None):
         if extra:
             target = 'install-' + extra
@@ -116,6 +121,11 @@ class Makefile(object):
 
         if not self.has_target(target):
             self.add_target(target, InstallScript(), phony=True, doc=doc)
+
+        clean_target = self.get_clean_target()
+        marker = '.medikit/' + target
+        if not marker in clean_target.remove:
+            clean_target.remove.append(marker)
         return self.get_target(target)
 
     def get_target(self, target):
@@ -191,8 +201,6 @@ class CleanScript(Script):
     ]
 
     def __iter__(self):
-        # remove the task complete markers, but don't remove subdirectories
-        yield 'rm .medikit/*'
         # cleanup build directories
         yield 'rm -rf {}'.format(' '.join(self.remove))
         # cleanup python bytecode -

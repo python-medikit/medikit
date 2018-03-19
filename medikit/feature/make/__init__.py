@@ -49,7 +49,6 @@ class MakeFeature(Feature):
         for extra in event.config['make'].extras:
             self.makefile.add_install_target(extra)
 
-        self.makefile.add_target('clean', CleanScript(), phony=True, doc='''Cleans up the local mess.''')
         self.makefile.add_target('quick', Script('@printf ""'), phony=True, hidden=True)
 
         self.dispatcher.dispatch(

@@ -6,6 +6,7 @@ from whistle import Event
 
 ENCODING = 'utf-8'
 
+
 class FileEvent(Event):
     def __init__(self, filename, executable, override):
         super(FileEvent, self).__init__()
