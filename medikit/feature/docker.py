@@ -73,6 +73,11 @@ class DockerConfig(Feature.Config):
             DOCKER_TAG='$(VERSION)',
         )
 
+    def disable_builder(self):
+        self.builder = None
+        self._variables = []
+        self.scripts = Namespace()
+
     def use_default_builder(self):
         self.builder = DOCKER
 
@@ -83,16 +88,26 @@ class DockerConfig(Feature.Config):
 
         self.scripts = Namespace(
             build=Script(
-                '$(DOCKER_BUILD) -f $(DOCKER_BUILD_FILE) $(DOCKER_BUILD_OPTIONS) -t $(DOCKER_IMAGE):$(DOCKER_TAG) .'
+                '$(DOCKER_BUILD) -f $(DOCKER_BUILD_FILE) $(DOCKER_BUILD_OPTIONS) -t $(DOCKER_IMAGE):$(DOCKER_TAG) .',
+                doc='Build a docker image.',
             ),
-            push=Script('$(DOCKER_PUSH) $(DOCKER_PUSH_OPTIONS) $(DOCKER_IMAGE):$(DOCKER_TAG)'),
+            push=Script(
+                '$(DOCKER_PUSH) $(DOCKER_PUSH_OPTIONS) $(DOCKER_IMAGE):$(DOCKER_TAG)',
+                doc='Push docker image to remote registry.',
+            ),
             run=Script(
-                '$(DOCKER_RUN) $(DOCKER_RUN_OPTIONS) --interactive --tty --rm --name=$(PACKAGE)_run -p 8000:8000 $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_RUN_COMMAND)'
+                '$(DOCKER_RUN) $(DOCKER_RUN_OPTIONS) --interactive --tty --rm --name=$(PACKAGE)_run -p 8000:8000 $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_RUN_COMMAND)',
+                doc='Run the default entry point in a container based on our docker image.',
             ),
-            shell=Script('DOCKER_RUN_COMMAND="/bin/bash" $(MAKE) docker-run'),
+            shell=Script(
+                'DOCKER_RUN_COMMAND="/bin/bash" $(MAKE) docker-run',
+                doc='Run bash in a container based on our docker image.',
+            ),
         )
 
     def use_rocker_builder(self):
+        self.use_default_builder()
+
         self.builder = ROCKER
 
         self._variables = [
@@ -131,28 +146,20 @@ class DockerFeature(Feature):
             event.makefile[var] = val
 
         # Set DOCKER_IMAGE at runtime, see #71.
-        if not event.makefile['DOCKER_BUILD_FILE']:
+        if 'DOCKER_BUILD_FILE' in event.makefile and not event.makefile['DOCKER_BUILD_FILE']:
             event.makefile['DOCKER_BUILD_FILE'] = docker_config.build_file
-        if not event.makefile['DOCKER_IMAGE']:
+        if 'DOCKER_IMAGE' in event.makefile and not event.makefile['DOCKER_IMAGE']:
             event.makefile['DOCKER_IMAGE'] = docker_config.image
 
         # Targets
-        event.makefile.add_target('docker-build', docker_config.scripts.build, phony=True, doc='Build a docker image.')
-        event.makefile.add_target(
-            'docker-push', docker_config.scripts.push, phony=True, doc='Push docker image to remote registry.'
-        )
-        event.makefile.add_target(
-            'docker-run',
-            docker_config.scripts.run,
-            phony=True,
-            doc='Run the default entry point in a container based on our docker image.'
-        )
-        event.makefile.add_target(
-            'docker-shell',
-            docker_config.scripts.shell,
-            phony=True,
-            doc='Run bash in a container based on our docker image.'
-        )
+        for script_name, script_content in sorted(docker_config.scripts.__dict__.items()):
+            print(script_name, script_content)
+            event.makefile.add_target(
+                'docker-'+script_name,
+                script_content,
+                phony=True,
+                doc=script_content.doc,
+            )
 
     @subscribe('medikit.on_end')
     def on_end(self, event):
@@ -232,5 +239,5 @@ class DockerFeature(Feature):
                 PUSH {{ '{{ .DOCKER_IMAGE }}:{{ .DOCKER_TAG }}' }}
             '''
             )
-        else:
+        elif docker_config.builder is not None:
             raise NotImplementedError('Unknown builder {}'.format(docker_config.builder))

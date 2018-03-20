@@ -9,8 +9,11 @@ class Script(object):
 
     """
 
-    def __init__(self, script=None):
+    doc = None
+
+    def __init__(self, script=None, *, doc=None):
         self.set(script)
+        self.doc = doc
 
     def set(self, script=None):
         self.script = self.parse_script(script)

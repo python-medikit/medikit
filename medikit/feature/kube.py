@@ -39,25 +39,27 @@ class KubeFeature(Feature):
         event.makefile['KUBECONFIG'] = ''
         event.makefile['KUBE_NAMESPACE'] = 'default'
 
-        event.makefile.add_target(
-            'kube-rollout',
-            '\n'.join(
-                [
-                    '$(KUBECTL) $(KUBECTL_OPTIONS) --namespace=$(KUBE_NAMESPACE) patch {target} -p{patch}'.format(
-                        target=target,
-                        patch=repr(json.dumps(patch)),
-                    ) for target, patch in kube_config.get_targets()
-                ]
-            ),
-            phony=True,
-            doc='Rollout docker image onto kubernetes cluster.'
-        )
+        targets = list(kube_config.get_targets())
+        if len(targets):
+            event.makefile.add_target(
+                'kube-rollout',
+                '\n'.join(
+                    [
+                        '$(KUBECTL) $(KUBECTL_OPTIONS) --namespace=$(KUBE_NAMESPACE) patch {target} -p{patch}'.format(
+                            target=target,
+                            patch=repr(json.dumps(patch)),
+                        ) for target, patch in targets
+                    ]
+                ),
+                phony=True,
+                doc='Rollout docker image onto kubernetes cluster.'
+            )
 
-        event.makefile.add_target(
-            'kube-rollback',
-            '\n'.join(
-                ['$(KUBECTL) rollout undo {target}'.format(target=target) for target, patch in kube_config.get_targets()]
-            ),
-            phony=True,
-            doc='Rollbacks last kubernetes patch operation.'
-        )
+            event.makefile.add_target(
+                'kube-rollback',
+                '\n'.join(
+                    ['$(KUBECTL) rollout undo {target}'.format(target=target) for target, patch in targets]
+                ),
+                phony=True,
+                doc='Rollbacks last kubernetes patch operation.'
+            )
