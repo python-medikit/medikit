@@ -146,14 +146,13 @@ class DockerFeature(Feature):
             event.makefile[var] = val
 
         # Set DOCKER_IMAGE at runtime, see #71.
-        if 'DOCKER_BUILD_FILE' in event.makefile and not event.makefile['DOCKER_BUILD_FILE']:
+        if ('DOCKER_BUILD_FILE' in event.makefile) and not event.makefile['DOCKER_BUILD_FILE']:
             event.makefile['DOCKER_BUILD_FILE'] = docker_config.build_file
-        if 'DOCKER_IMAGE' in event.makefile and not event.makefile['DOCKER_IMAGE']:
+        if ('DOCKER_IMAGE' in event.makefile) and not event.makefile['DOCKER_IMAGE']:
             event.makefile['DOCKER_IMAGE'] = docker_config.image
 
         # Targets
         for script_name, script_content in sorted(docker_config.scripts.__dict__.items()):
-            print(script_name, script_content)
             event.makefile.add_target(
                 'docker-'+script_name,
                 script_content,

@@ -28,6 +28,9 @@ class Makefile(object):
         self._env_order.remove(key)
         del self._env_values[key]
 
+    def __contains__(self, item):
+        return item in self._env_values
+
     def __getitem__(self, item):
         return self._env_values[item]
 
