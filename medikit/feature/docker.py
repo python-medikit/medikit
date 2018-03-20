@@ -154,7 +154,7 @@ class DockerFeature(Feature):
         # Targets
         for script_name, script_content in sorted(docker_config.scripts.__dict__.items()):
             event.makefile.add_target(
-                'docker-'+script_name,
+                'docker-' + script_name,
                 script_content,
                 phony=True,
                 doc=script_content.doc,

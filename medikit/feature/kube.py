@@ -57,9 +57,7 @@ class KubeFeature(Feature):
 
             event.makefile.add_target(
                 'kube-rollback',
-                '\n'.join(
-                    ['$(KUBECTL) rollout undo {target}'.format(target=target) for target, patch in targets]
-                ),
+                '\n'.join(['$(KUBECTL) rollout undo {target}'.format(target=target) for target, patch in targets]),
                 phony=True,
                 doc='Rollbacks last kubernetes patch operation.'
             )
