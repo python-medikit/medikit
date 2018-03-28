@@ -70,12 +70,10 @@ def on_make_generate_pipelines(event):
     # Releases
     event.makefile.add_target(
         'release',
-        '''
-            python -c 'import medikit; print(medikit.__version__)' || pip install medikit;
-            $(PYTHON) -m medikit pipeline release start
-        ''',
+        '$(MEDIKIT) pipeline release start',
+        deps=('medikit', ),
         phony=True,
-        doc='Releases medikit.'
+        doc='Runs the "release" pipeline.'
     )
 
 

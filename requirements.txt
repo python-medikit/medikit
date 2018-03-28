@@ -4,12 +4,12 @@ colorama==0.3.9
 first==2.0.1
 git-semver==0.2.2
 gitdb2==2.0.3
-gitpython==2.1.8
+gitpython==2.1.9
 jinja2==2.10
 markupsafe==1.0
-mondrian==0.6.5
+mondrian==0.6.6
 packaging==17.1
-pbr==3.1.1
+pbr==4.0.0
 pip-tools==1.11.0
 pyparsing==2.2.0
 semantic-version==2.6.0
