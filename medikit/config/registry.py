@@ -22,10 +22,7 @@ class ConfigurationRegistry():
         def on_load_feature_failure(mgr, entrypoint, err):
             logger.exception('Exception caught while loading {}.'.format(entrypoint), err)
 
-        mgr = ExtensionManager(
-            namespace='medikit.feature',
-            on_load_failure_callback=on_load_feature_failure
-        )
+        mgr = ExtensionManager(namespace='medikit.feature', on_load_failure_callback=on_load_feature_failure)
         mgr.map(register_feature)
 
     def __getitem__(self, item):

@@ -5,6 +5,7 @@ _all_features = {}
 
 def load_feature_extensions():
     if not _all_features:
+
         def register_feature(ext, all_features=_all_features):
             all_features[ext.name] = ext.plugin
 

@@ -247,7 +247,7 @@ class PythonFeature(Feature):
         event.makefile['PIP_INSTALL_OPTIONS'] = ''
 
         event.makefile.get_target('install').install = [
-            '$(PIP) install $(PIP_INSTALL_OPTIONS) -U pip wheel',
+            '$(PIP) install $(PIP_INSTALL_OPTIONS) -U "pip <10" wheel',
             '$(PIP) install $(PIP_INSTALL_OPTIONS) -U -r $(PYTHON_REQUIREMENTS_FILE)',
         ]
         event.makefile.get_target('install').deps += ['$(PYTHON_REQUIREMENTS_FILE)', 'setup.py']
@@ -257,7 +257,7 @@ class PythonFeature(Feature):
             reqs_var = 'PYTHON_REQUIREMENTS_' + extra.upper().replace('-', '_') + '_FILE'
 
             target.install += [
-                '$(PIP) install $(PIP_INSTALL_OPTIONS) -U pip wheel',
+                '$(PIP) install $(PIP_INSTALL_OPTIONS) -U "pip <10" wheel',
                 '$(PIP) install $(PIP_INSTALL_OPTIONS) -U -r $(' + reqs_var + ')',
             ]
             target.deps += ['$(PYTHON_REQUIREMENTS_FILE)', '$(' + reqs_var + ')', 'setup.py']

@@ -82,14 +82,14 @@ class MakeFeature(Feature):
         self.makefile['MEDIKIT_VERSION'] = medikit.__version__
 
         source = [
-            'import medikit, sys',
+            'import medikit, pip, sys',
             'from packaging.version import Version',
-            'sys.exit(0 if Version(medikit.__version__) >= Version("$(MEDIKIT_VERSION)") else 1)',
+            'sys.exit(0 if (Version(medikit.__version__) >= Version("$(MEDIKIT_VERSION)")) and (Version(pip.__version__) < Version("10")) else 1)',
         ]
 
         self.makefile.add_target(
             'medikit',
-            '@$(PYTHON) -c {!r} || $(PYTHON) -m pip install -U "medikit>=$(MEDIKIT_VERSION)"'.format('; '.join(source)),
+            '@$(PYTHON) -c {!r} || $(PYTHON) -m pip install -U "pip <10" "medikit>=$(MEDIKIT_VERSION)"'.format('; '.join(source)),
             phony=True,
             hidden=True,
             doc='Checks installed medikit version and updates it if it is outdated.'
