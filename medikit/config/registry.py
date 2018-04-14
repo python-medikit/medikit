@@ -1,9 +1,12 @@
+import logging
 from collections import OrderedDict
 from contextlib import contextmanager
 
 from stevedore import ExtensionManager
 
 from medikit.pipeline import Pipeline
+
+logger = logging.getLogger(__name__)
 
 
 class ConfigurationRegistry():
@@ -16,7 +19,13 @@ class ConfigurationRegistry():
         def register_feature(ext):
             self._features[ext.name] = ext.plugin
 
-        mgr = ExtensionManager(namespace='medikit.feature')
+        def on_load_feature_failure(mgr, entrypoint, err):
+            logger.exception('Exception caught while loading {}.'.format(entrypoint), err)
+
+        mgr = ExtensionManager(
+            namespace='medikit.feature',
+            on_load_failure_callback=on_load_feature_failure
+        )
         mgr.map(register_feature)
 
     def __getitem__(self, item):

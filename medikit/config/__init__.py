@@ -8,6 +8,7 @@ from medikit.settings import DEFAULT_FEATURES
 from medikit.utils import format_file_content
 
 
+
 def read_configuration(dispatcher, filename, variables, features, files):
     config = ConfigurationRegistry()
     setup_default_pipelines(config)
