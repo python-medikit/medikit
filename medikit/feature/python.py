@@ -34,12 +34,12 @@ import os
 import tempfile
 from getpass import getuser
 
-from pip._vendor.distlib.util import parse_requirement
-from pip.req import parse_requirements
 from piptools.repositories import PyPIRepository
 from piptools.resolver import Resolver
 from piptools.scripts.compile import get_pip_command
 from piptools.utils import format_requirement
+from piptools._vendored.pip.req import parse_requirements
+from piptools._vendored.pip._vendor.distlib.util import parse_requirement
 
 from medikit.events import subscribe
 from medikit.feature import Feature, ABSOLUTE_PRIORITY
@@ -247,7 +247,7 @@ class PythonFeature(Feature):
         event.makefile['PIP_INSTALL_OPTIONS'] = ''
 
         event.makefile.get_target('install').install = [
-            '$(PIP) install $(PIP_INSTALL_OPTIONS) -U "pip <10" wheel',
+            '$(PIP) install $(PIP_INSTALL_OPTIONS) -U "pip ~=10.0" wheel',
             '$(PIP) install $(PIP_INSTALL_OPTIONS) -U -r $(PYTHON_REQUIREMENTS_FILE)',
         ]
         event.makefile.get_target('install').deps += ['$(PYTHON_REQUIREMENTS_FILE)', 'setup.py']
@@ -257,7 +257,7 @@ class PythonFeature(Feature):
             reqs_var = 'PYTHON_REQUIREMENTS_' + extra.upper().replace('-', '_') + '_FILE'
 
             target.install += [
-                '$(PIP) install $(PIP_INSTALL_OPTIONS) -U "pip <10" wheel',
+                '$(PIP) install $(PIP_INSTALL_OPTIONS) -U "pip ~=10.0" wheel',
                 '$(PIP) install $(PIP_INSTALL_OPTIONS) -U -r $(' + reqs_var + ')',
             ]
             target.deps += ['$(PYTHON_REQUIREMENTS_FILE)', '$(' + reqs_var + ')', 'setup.py']
@@ -360,7 +360,7 @@ class PythonFeature(Feature):
         session = pip_command._build_session(pip_options)
         repository = PyPIRepository(pip_options, session)
 
-        for extra in itertools.chain((None, ), python_config.get_extras()):
+        for extra in itertools.chain((None,), python_config.get_extras()):
             requirements_file = 'requirements{}.txt'.format('-' + extra if extra else '')
 
             if python_config.override_requirements or not os.path.exists(requirements_file):
@@ -382,7 +382,7 @@ class PythonFeature(Feature):
                     '\n'.join(
                         (
                             '-e .{}'.format('[' + extra + ']' if extra else ''),
-                            *(('-r requirements.txt', ) if extra else ()),
+                            *(('-r requirements.txt',) if extra else ()),
                             *sorted(
                                 format_requirement(req) for req in resolver.resolve(max_rounds=10)
                                 if req.name != python_config.get('name')
