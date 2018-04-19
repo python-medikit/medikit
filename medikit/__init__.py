@@ -1,3 +1,6 @@
+# noinspection PyUnresolvedReferences
+import piptools
+
 from medikit._version import __version__
 
 
