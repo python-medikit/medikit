@@ -39,7 +39,7 @@ python.setup(
 python.add_requirements(
     'git-semver ~=0.2.1',
     'jinja2 ~=2.9',
-    'mondrian ~=0.7.0',
+    'mondrian ~=0.7',
     'packaging ~=17.0',
     'pip-tools ~=2.0.1',
     'stevedore ~=1.28',

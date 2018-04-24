@@ -63,6 +63,7 @@ class PythonConfig(Feature.Config):
         self._setup = {}
         self._requirements = {None: {}, 'dev': {}}
         self._constraints = {}
+        self._vendors = {}
         self._version_file = None
         self._create_packages = True
         self.override_requirements = False
@@ -137,6 +138,13 @@ class PythonConfig(Feature.Config):
             self.__add_requirements(reqs, extra=extra)
         return self
 
+    def add_vendors(self, *reqs, **kwargs):
+        self.__add_vendors(reqs)
+        for extra, reqs in kwargs.items():
+            extra = extra.replace('_', '-')
+            self.__add_vendors(reqs, extra=extra)
+        return self
+
     def get_extras(self):
         return sorted(filter(None, self._requirements.keys()))
 
@@ -149,6 +157,9 @@ class PythonConfig(Feature.Config):
             yield from self.get_constraints(extra=extra)
         for name, req in sorted(self._requirements[extra].items()):
             yield _normalize_requirement(req)
+
+    def get_vendors(self, extra=None):
+        return self._vendors.get(extra, [])
 
     def setup(self, **kwargs):
         self._setup.update(kwargs)
@@ -176,6 +187,13 @@ class PythonConfig(Feature.Config):
             if req.name in self._requirements[extra]:
                 raise ValueError('Duplicate requirement for {}.'.format(req.name))
             self._requirements[extra][req.name] = req
+
+    def __add_vendors(self, reqs, extra=None):
+        if len(reqs):
+            if extra not in self._vendors:
+                self._vendors[extra] = []
+        for req in reqs:
+            self._vendors[extra].append(req)
 
 
 class PythonFeature(Feature):
@@ -360,7 +378,7 @@ class PythonFeature(Feature):
         session = pip_command._build_session(pip_options)
         repository = PyPIRepository(pip_options, session)
 
-        for extra in itertools.chain((None,), python_config.get_extras()):
+        for extra in itertools.chain((None, ), python_config.get_extras()):
             requirements_file = 'requirements{}.txt'.format('-' + extra if extra else '')
 
             if python_config.override_requirements or not os.path.exists(requirements_file):
@@ -382,7 +400,8 @@ class PythonFeature(Feature):
                     '\n'.join(
                         (
                             '-e .{}'.format('[' + extra + ']' if extra else ''),
-                            *(('-r requirements.txt',) if extra else ()),
+                            *(('-r requirements.txt', ) if extra else ()),
+                            *python_config.get_vendors(extra=extra),
                             *sorted(
                                 format_requirement(req) for req in resolver.resolve(max_rounds=10)
                                 if req.name != python_config.get('name')
