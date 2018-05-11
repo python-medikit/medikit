@@ -48,7 +48,7 @@ Now, you may want to bootstrap a python package source tree.
 
     mkdir my.awesome.pkg
     cd my.awesome.pkg
-    medikit init
+    medikit init .
 
 You're done with the bootstrap. You can now run:
 
