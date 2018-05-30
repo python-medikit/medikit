@@ -20,7 +20,7 @@ def generate_secret_key():
 class DjangoConfig(Feature.Config):
     """ Configuration class for the “django” feature. """
 
-    version = '~=2.1,<2.2'
+    version = '~=2.0,<2.1'
     """Which django version requirement do you want?"""
 
     __usage__ = """
