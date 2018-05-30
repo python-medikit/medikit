@@ -34,16 +34,16 @@ import os
 import tempfile
 from getpass import getuser
 
+from piptools._vendored.pip._vendor.distlib.util import parse_requirement
+from piptools._vendored.pip.req import parse_requirements
 from piptools.repositories import PyPIRepository
 from piptools.resolver import Resolver
 from piptools.scripts.compile import get_pip_command
 from piptools.utils import format_requirement
-from piptools._vendored.pip.req import parse_requirements
-from piptools._vendored.pip._vendor.distlib.util import parse_requirement
 
 from medikit.events import subscribe
 from medikit.feature import Feature, ABSOLUTE_PRIORITY
-from medikit.feature.make import which
+from medikit.feature.make import which, InstallScript
 from medikit.utils import get_override_warning_banner
 
 
@@ -63,10 +63,12 @@ class PythonConfig(Feature.Config):
         self._setup = {}
         self._requirements = {None: {}, 'dev': {}}
         self._constraints = {}
+        self._inline_requirements = {}
         self._vendors = {}
         self._version_file = None
         self._create_packages = True
         self.override_requirements = False
+        self.use_wheelhouse = False
 
     @property
     def package_dir(self):
@@ -138,6 +140,13 @@ class PythonConfig(Feature.Config):
             self.__add_requirements(reqs, extra=extra)
         return self
 
+    def add_inline_requirements(self, *reqs, **kwargs):
+        self.__add_inline_requirements(reqs)
+        for extra, reqs in kwargs.items():
+            extra = extra.replace('_', '-')
+            self.__add_inline_requirements(reqs, extra=extra)
+        return self
+
     def add_vendors(self, *reqs, **kwargs):
         self.__add_vendors(reqs)
         for extra, reqs in kwargs.items():
@@ -157,6 +166,9 @@ class PythonConfig(Feature.Config):
             yield from self.get_constraints(extra=extra)
         for name, req in sorted(self._requirements[extra].items()):
             yield _normalize_requirement(req)
+
+    def get_inline_requirements(self, extra=None):
+        return self._inline_requirements.get(extra, [])
 
     def get_vendors(self, extra=None):
         return self._vendors.get(extra, [])
@@ -187,6 +199,13 @@ class PythonConfig(Feature.Config):
             if req.name in self._requirements[extra]:
                 raise ValueError('Duplicate requirement for {}.'.format(req.name))
             self._requirements[extra][req.name] = req
+
+    def __add_inline_requirements(self, reqs, extra=None):
+        if len(reqs):
+            if extra not in self._inline_requirements:
+                self._inline_requirements[extra] = []
+        for req in reqs:
+            self._inline_requirements[extra].append(req)
 
     def __add_vendors(self, reqs, extra=None):
         if len(reqs):
@@ -232,14 +251,24 @@ class PythonFeature(Feature):
 
         """
 
+        python_config = event.config['python']  # type: PythonConfig
+
+        def _get_reqs_file_varname(extra=None):
+            if extra:
+                return 'PYTHON_REQUIREMENTS_' + extra.upper().replace('-', '_') + '_FILE'
+            return 'PYTHON_REQUIREMENTS_FILE'
+
+        def _get_reqs_inline_varname(extra=None):
+            if extra:
+                return 'PYTHON_REQUIREMENTS_' + extra.upper().replace('-', '_') + '_INLINE'
+            return 'PYTHON_REQUIREMENTS_INLINE'
+
         extra_variables = []
         for extra in event.config['python'].get_extras():
-            extra_variables.append(
-                (
-                    'PYTHON_REQUIREMENTS_' + extra.upper().replace('-', '_') + '_FILE',
-                    'requirements-' + extra + '.txt',
-                )
-            )
+            extra_variables += [
+                (_get_reqs_file_varname(extra=extra), 'requirements-' + extra + '.txt',),
+                (_get_reqs_inline_varname(extra=extra), ' '.join(python_config.get_inline_requirements(extra=extra)),)
+            ]
 
         # Python related environment
         event.makefile.updateleft(
@@ -256,29 +285,73 @@ class PythonFeature(Feature):
                 'PYTHON_DIRNAME',
                 '$(shell dirname $(PYTHON))',
             ), (
-                'PYTHON_REQUIREMENTS_FILE',
+                _get_reqs_file_varname(),
                 'requirements.txt',
+            ), (
+                _get_reqs_inline_varname(),
+                ' '.join(python_config.get_inline_requirements()),
             ), *extra_variables
         )
 
         event.makefile['PIP'] = '$(PYTHON) -m pip'
         event.makefile['PIP_INSTALL_OPTIONS'] = ''
 
-        event.makefile.get_target('install').install = [
-            '$(PIP) install $(PIP_INSTALL_OPTIONS) -U "pip ~=10.0" wheel',
-            '$(PIP) install $(PIP_INSTALL_OPTIONS) -U -r $(PYTHON_REQUIREMENTS_FILE)',
-        ]
-        event.makefile.get_target('install').deps += ['$(PYTHON_REQUIREMENTS_FILE)', 'setup.py']
+        if python_config.use_wheelhouse:
+            def _get_wheelhouse(extra=None):
+                if extra:
+                    return '.wheelhouse-' + extra
+                return '.wheelhouse'
 
-        for extra in event.config['python'].get_extras():
+            def _get_wheelhouse_options(extra=None):
+                return '--no-index --find-links=' + _get_wheelhouse(extra=extra)
+
+            def _get_install_commands(extra=None):
+                return [
+                    '$(PIP) install $(PIP_INSTALL_OPTIONS) ' + _get_wheelhouse_options(
+                        extra=extra) + ' -U "pip ~=10.0" wheel',
+                    '$(PIP) install $(PIP_INSTALL_OPTIONS) ' + _get_wheelhouse_options(
+                        extra=extra) + ' -U $(' + _get_reqs_inline_varname(
+                        extra=extra) + ') -r $(' + _get_reqs_file_varname(extra=extra) + ')',
+                ]
+
+            def _get_install_deps(extra=None):
+                # TODO add inline requirements without -e/-r ?
+                return [
+                    '.medikit/'+_get_wheelhouse(extra=extra),
+                    '$(' + _get_reqs_file_varname(extra=extra) + ')',
+                    'setup.py'
+                ]
+
+            for extra in (None, *python_config.get_extras()):
+                target = _get_wheelhouse(extra=extra)
+
+                if not event.makefile.has_target(target):
+                    event.makefile.add_target(target, InstallScript(), phony=True)
+
+                clean_target = event.makefile.get_clean_target()
+                marker = '.medikit/' + target
+                if not marker in clean_target.remove:
+                    clean_target.remove.append(marker)
+
+                event.makefile.get_target(target).install +=[
+                    '$(PIP) wheel -w '+_get_wheelhouse(extra=extra)+' $(' + _get_reqs_inline_varname(extra=extra) + ') -r $(' + _get_reqs_file_varname(extra=extra) + ')',
+                ]
+
+        else:
+            def _get_install_commands(extra=None):
+                return [
+                    '$(PIP) install $(PIP_INSTALL_OPTIONS) -U "pip ~=10.0" wheel',
+                    '$(PIP) install $(PIP_INSTALL_OPTIONS) -U $(' + _get_reqs_inline_varname(extra=extra) + ') -r $(' + _get_reqs_file_varname(extra=extra) + ')',
+                ]
+
+            def _get_install_deps(extra=None):
+                # TODO add inline requirements without -e/-r ?
+                return ['$(' + _get_reqs_file_varname(extra=extra) + ')', 'setup.py']
+
+        for extra in (None, *python_config.get_extras()):
             target = event.makefile.add_install_target(extra)
-            reqs_var = 'PYTHON_REQUIREMENTS_' + extra.upper().replace('-', '_') + '_FILE'
-
-            target.install += [
-                '$(PIP) install $(PIP_INSTALL_OPTIONS) -U "pip ~=10.0" wheel',
-                '$(PIP) install $(PIP_INSTALL_OPTIONS) -U -r $(' + reqs_var + ')',
-            ]
-            target.deps += ['$(PYTHON_REQUIREMENTS_FILE)', '$(' + reqs_var + ')', 'setup.py']
+            target.install += _get_install_commands(extra=extra)
+            target.deps += _get_install_deps(extra=extra)
 
     @subscribe('medikit.on_start', priority=ABSOLUTE_PRIORITY)
     def on_start(self, event):
@@ -378,7 +451,7 @@ class PythonFeature(Feature):
         session = pip_command._build_session(pip_options)
         repository = PyPIRepository(pip_options, session)
 
-        for extra in itertools.chain((None, ), python_config.get_extras()):
+        for extra in itertools.chain((None,), python_config.get_extras()):
             requirements_file = 'requirements{}.txt'.format('-' + extra if extra else '')
 
             if python_config.override_requirements or not os.path.exists(requirements_file):
@@ -400,7 +473,7 @@ class PythonFeature(Feature):
                     '\n'.join(
                         (
                             '-e .{}'.format('[' + extra + ']' if extra else ''),
-                            *(('-r requirements.txt', ) if extra else ()),
+                            *(('-r requirements.txt',) if extra else ()),
                             *python_config.get_vendors(extra=extra),
                             *sorted(
                                 format_requirement(req) for req in resolver.resolve(max_rounds=10)

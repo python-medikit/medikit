@@ -12,6 +12,7 @@ import os
 from medikit import settings
 from medikit.events import subscribe
 from medikit.feature import Feature, SUPPORT_PRIORITY, ABSOLUTE_PRIORITY
+from medikit.structs import Script
 
 
 class YapfFeature(Feature):
@@ -28,11 +29,11 @@ class YapfFeature(Feature):
         makefile['YAPF_OPTIONS'] = '-rip'
         makefile.add_target(
             'format',
-            '''
-            $(YAPF) $(YAPF_OPTIONS) .
-            $(YAPF) $(YAPF_OPTIONS) Projectfile
-        ''',
-            deps=('install-dev', ),
+            Script('\n'.join([
+                '$(YAPF) $(YAPF_OPTIONS) .',
+                '$(YAPF) $(YAPF_OPTIONS) Projectfile',
+            ])),
+            deps=('install-dev',),
             phony=True,
             doc='Reformats the whole python codebase using yapf.'
         )
