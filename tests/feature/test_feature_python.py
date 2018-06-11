@@ -48,9 +48,7 @@ class TestPythonFeature(FeatureTestCase):
         python_feature, dispatcher = self.create_feature()
         config = self.create_config()
 
-        with pytest.raises(KeyError):
-            # This should fail, as the install/install-dev targets are defined in MakeFeature
-            python_feature.on_make_generate(MakefileEvent(PACKAGE_NAME, Makefile(), config))
+        python_feature.on_make_generate(MakefileEvent(PACKAGE_NAME, Makefile(), config))
 
         make_feature, dispatcher = self.create_feature(feature_type=MakeFeature)
         self.create_feature(dispatcher=dispatcher)
