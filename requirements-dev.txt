@@ -19,13 +19,13 @@ py==1.5.3
 pygments==2.2.0
 pyparsing==2.2.0
 pytest-cov==2.5.1
-pytest==3.6.0
+pytest==3.6.1
 pytz==2018.4
 requests==2.18.4
 six==1.11.0
 snowballstemmer==1.2.1
 sphinx-sitemap==0.2
 sphinx==1.7.5
-sphinxcontrib-websupport==1.0.1
+sphinxcontrib-websupport==1.1.0
 urllib3==1.22
 yapf==0.22.0
