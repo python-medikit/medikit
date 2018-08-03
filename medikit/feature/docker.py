@@ -98,7 +98,7 @@ class DockerConfig(Feature.Config):
                 doc='Push docker image to remote registry.',
             ),
             run=Script(
-                '$(DOCKER_RUN) $(DOCKER_RUN_OPTIONS) --interactive --tty --rm --name=$(DOCKER_NAME) $(DOCKER_RUN_PORTS) $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_RUN_COMMAND)',
+                '$(DOCKER_RUN) $(DOCKER_RUN_OPTIONS) --interactive --tty --rm --name=$(DOCKER_RUN_NAME) $(DOCKER_RUN_PORTS) $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_RUN_COMMAND)',
                 doc='Run the default entry point in a container based on our docker image.',
             ),
             shell=Script(
