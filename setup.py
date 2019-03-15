@@ -67,6 +67,7 @@ setup(
     extras_require={
         "dev": [
             "coverage ~= 4.4",
+            "isort",
             "pytest ~= 3.4",
             "pytest-cov ~= 2.5",
             "releases >= 1.6, < 1.7",
@@ -79,6 +80,7 @@ setup(
         "medikit.feature": [
             "django = medikit.feature.django:DjangoFeature",
             "docker = medikit.feature.docker:DockerFeature",
+            "format = medikit.feature.format:FormatFeature",
             "git = medikit.feature.git:GitFeature",
             "kube = medikit.feature.kube:KubeFeature",
             "make = medikit.feature.make:MakeFeature",

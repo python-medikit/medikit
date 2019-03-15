@@ -37,7 +37,7 @@ class UpdateCommand(Command):
 
         sorted_features = sorted(features)  # sort to have a predictable display order
         for feature_name in sorted_features:
-            logger.debug("Initializing feature {}...".format(term.bold(term.green(feature_name))))
+            logger.debug('Initializing feature "{}"...'.format(term.bold(term.green(feature_name))))
             try:
                 feature = all_features[feature_name]
             except KeyError as exc:
@@ -48,11 +48,13 @@ class UpdateCommand(Command):
 
                 for req in feature_instances[feature_name].requires:
                     if not req in sorted_features:
-                        raise RuntimeError("Unmet dependency: {} requires {}.".format(feature_name, req))
+                        raise RuntimeError('Unmet dependency: "{}" requires "{}".'.format(feature_name, req))
 
                 for con in feature_instances[feature_name].conflicts:
                     if con in sorted_features:
-                        raise RuntimeError("Conflicting dependency: {} conflicts with {}.".format(con, feature_name))
+                        raise RuntimeError(
+                            'Conflicting dependency: "{}" conflicts with "{}".'.format(con, feature_name)
+                        )
             else:
                 raise RuntimeError("Required feature {} not found.".format(feature_name))
 

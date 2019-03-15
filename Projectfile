@@ -9,6 +9,9 @@ pytest = require("pytest")
 python = require("python")
 sphinx = require("sphinx")
 
+# code formater
+require("format").using("black", "isort")
+
 python.setup(
     name="medikit",
     python_requires=">=3.5",
@@ -23,6 +26,7 @@ python.setup(
         "medikit.feature": [
             "django = medikit.feature.django:DjangoFeature",
             "docker = medikit.feature.docker:DockerFeature",
+            "format = medikit.feature.format:FormatFeature",
             "git = medikit.feature.git:GitFeature",
             "kube = medikit.feature.kube:KubeFeature",
             "make = medikit.feature.make:MakeFeature",
@@ -74,24 +78,6 @@ def on_make_generate_pipelines(event):
         deps=("medikit",),
         phony=True,
         doc='Runs the "release" pipeline.',
-    )
-
-
-@listen(make.on_generate)
-def on_make_generate(event):
-    makefile = event.makefile
-
-    # Formating
-    makefile["BLACK"] = which("black")
-    makefile["ISORT"] = which("isort")
-    makefile.add_target(
-        "format",
-        """
-            $(BLACK) -l 120 .
-            $(ISORT) -rc -o mondrian -o whistle -y .
-        """,
-        phony=True,
-        doc="Reformats the whole codebase using our standards (requires black and isort).",
     )
 
 

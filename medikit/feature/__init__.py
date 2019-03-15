@@ -100,6 +100,16 @@ class Feature(object):
             with self.file(target, override=override) as f:
                 self._log_file(target, override)
 
+    def get_config(self, event, feature=None):
+        """
+        Retrieve the config object for a feature, defaults to current feature.
+
+        :param event: event from which to extract the config.
+        :param feature: feature name, or None for current.
+        :return: Feature.Config
+        """
+        return event.config[feature or self.__shortname__]
+
 
 class ProjectInitializer(Feature):
     def __init__(self, dispatcher, options):

@@ -15,6 +15,10 @@ QUICK ?=
 PIP ?= $(PYTHON) -m pip
 PIP_INSTALL_OPTIONS ?= 
 VERSION ?= $(shell git describe 2>/dev/null || git rev-parse --short HEAD)
+BLACK ?= $(shell which black || echo black)
+BLACK_OPTIONS ?= --line-length 120
+ISORT ?= $(PYTHON) -m isort
+ISORT_OPTIONS ?= --recursive --apply
 PYTEST ?= $(PYTHON_DIRNAME)/pytest
 PYTEST_OPTIONS ?= --capture=no --cov=$(PACKAGE) --cov-report html
 SPHINX_BUILD ?= $(PYTHON_DIRNAME)/sphinx-build
@@ -22,8 +26,6 @@ SPHINX_OPTIONS ?=
 SPHINX_SOURCEDIR ?= docs
 SPHINX_BUILDDIR ?= $(SPHINX_SOURCEDIR)/_build
 SPHINX_AUTOBUILD ?= $(PYTHON_DIRNAME)/sphinx-autobuild
-BLACK ?= $(shell which black || echo black)
-ISORT ?= $(shell which isort || echo isort)
 MEDIKIT ?= $(PYTHON) -m medikit
 MEDIKIT_UPDATE_OPTIONS ?= 
 MEDIKIT_VERSION ?= 0.7.1
@@ -65,6 +67,10 @@ endif
 quick:   #
 	@printf ""
 
+format: install-dev  ## Reformats the codebase (with black, isort).
+	$(BLACK) $(BLACK_OPTIONS) . Projectfile
+	$(ISORT) $(ISORT_OPTIONS) . Projectfile
+
 test: install-dev  ## Runs the test suite.
 	$(PYTEST) $(PYTEST_OPTIONS) tests
 
@@ -76,10 +82,6 @@ watch-$(SPHINX_SOURCEDIR):   ##
 
 release: medikit  ## Runs the "release" pipeline.
 	$(MEDIKIT) pipeline release start
-
-format:   ## Reformats the whole codebase using our standards (requires black and isort).
-	$(BLACK) -l 120 .
-	$(ISORT) -rc -o mondrian -o whistle -y .
 
 medikit:   # Checks installed medikit version and updates it if it is outdated.
 	@$(PYTHON) -c 'import medikit, pip, sys; from packaging.version import Version; sys.exit(0 if (Version(medikit.__version__) >= Version("$(MEDIKIT_VERSION)")) and (Version(pip.__version__) < Version("10")) else 1)' || $(PYTHON) -m pip install -U "pip ~=19.0" "medikit>=$(MEDIKIT_VERSION)"

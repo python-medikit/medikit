@@ -8,6 +8,7 @@ YAPF support, to automatically reformat all your (python) source code.
 """
 
 import os
+import warnings
 
 from medikit import settings
 from medikit.events import subscribe
@@ -17,6 +18,14 @@ from medikit.structs import Script
 
 class YapfFeature(Feature):
     requires = {"python"}
+    conflicts = {"format"}
+
+    def __init__(self, dispatcher):
+        super().__init__(dispatcher)
+        warnings.warn(
+            'The "yapf" feature is deprecated, please switch to "format" feature and call .using("yapf") on its configuration object.',
+            DeprecationWarning,
+        )
 
     @subscribe("medikit.feature.python.on_generate")
     def on_python_generate(self, event):
