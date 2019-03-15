@@ -1,80 +1,97 @@
 # medikit (see github.com/python-edgy/medikit)
 
 from medikit import listen, require
+from medikit.feature.make.utils import which
 
-git = require('git')
-make = require('make')
-pytest = require('pytest')
-python = require('python')
-sphinx = require('sphinx')
-yapf = require('yapf')
+git = require("git")
+make = require("make")
+pytest = require("pytest")
+python = require("python")
+sphinx = require("sphinx")
 
 python.setup(
-    name='medikit',
-    python_requires='>=3.5',
-    description='Opinionated python 3.5+ project management.',
-    license='Apache License, Version 2.0',
-    url='https://python-medikit.github.io/',
-    download_url='https://github.com/python-medikit/medikit/archive/{version}.tar.gz',
-    author='Romain Dorgueil',
-    author_email='romain@dorgueil.net',
+    name="medikit",
+    python_requires=">=3.5",
+    description="Opinionated python 3.5+ project management.",
+    license="Apache License, Version 2.0",
+    url="https://python-medikit.github.io/",
+    download_url="https://github.com/python-medikit/medikit/archive/{version}.tar.gz",
+    author="Romain Dorgueil",
+    author_email="romain@dorgueil.net",
     entry_points={
-        'console_scripts': ['medikit=medikit.__main__:main'],
-        'medikit.feature': [
-            'django = medikit.feature.django:DjangoFeature',
-            'docker = medikit.feature.docker:DockerFeature',
-            'git = medikit.feature.git:GitFeature',
-            'kube = medikit.feature.kube:KubeFeature',
-            'make = medikit.feature.make:MakeFeature',
-            'nodejs = medikit.feature.nodejs:NodeJSFeature',
-            'pylint = medikit.feature.pylint:PylintFeature',
-            'pytest = medikit.feature.pytest:PytestFeature',
-            'python = medikit.feature.python:PythonFeature',
-            'sphinx = medikit.feature.sphinx:SphinxFeature',
-            'webpack = medikit.feature.webpack:WebpackFeature',
-            'yapf = medikit.feature.yapf:YapfFeature',
+        "console_scripts": ["medikit=medikit.__main__:main"],
+        "medikit.feature": [
+            "django = medikit.feature.django:DjangoFeature",
+            "docker = medikit.feature.docker:DockerFeature",
+            "git = medikit.feature.git:GitFeature",
+            "kube = medikit.feature.kube:KubeFeature",
+            "make = medikit.feature.make:MakeFeature",
+            "nodejs = medikit.feature.nodejs:NodeJSFeature",
+            "pylint = medikit.feature.pylint:PylintFeature",
+            "pytest = medikit.feature.pytest:PytestFeature",
+            "python = medikit.feature.python:PythonFeature",
+            "sphinx = medikit.feature.sphinx:SphinxFeature",
+            "webpack = medikit.feature.webpack:WebpackFeature",
+            "yapf = medikit.feature.yapf:YapfFeature",
         ],
-    }
+    },
 )
 python.add_requirements(
-    'git-semver ~=0.2.3',
-    'jinja2 ~=2.9',
-    'mondrian ~=0.7',
-    'packaging ~=19.0',
-    'pip-tools ~=2.0.2',
-    'stevedore ~=1.28',
-    'whistle ~=1.0',
-    'yapf ~=0.20',
-    dev=[
-        'sphinx-sitemap ~=1.0',
-        'releases >=1.6,<1.7',
-    ]
+    "git-semver ~=0.2.3",
+    "jinja2 ~=2.9",
+    "mondrian ~=0.7",
+    "packaging ~=19.0",
+    "pip-tools ~=2.0.2",
+    "stevedore ~=1.28",
+    "whistle ~=1.0",
+    "yapf ~=0.20",
+    dev=["sphinx-sitemap ~=1.0", "releases >=1.6,<1.7"],
 )
 
 
 # Sphinx
 @listen(make.on_generate)
 def on_make_generate_sphinx(event):
-    event.makefile['SPHINX_AUTOBUILD'] = '$(PYTHON_DIRNAME)/sphinx-autobuild'
+    event.makefile["SPHINX_AUTOBUILD"] = "$(PYTHON_DIRNAME)/sphinx-autobuild"
     event.makefile.add_target(
-        'watch-$(SPHINX_SOURCEDIR)',
-        '''
+        "watch-$(SPHINX_SOURCEDIR)",
+        """
         $(SPHINX_AUTOBUILD) $(SPHINX_SOURCEDIR) $(shell mktemp -d)
-    ''',
-        phony=True
+    """,
+        phony=True,
     )
 
 
 # Pipelines
 @listen(make.on_generate)
 def on_make_generate_pipelines(event):
+    makefile = event.makefile
+
     # Releases
     event.makefile.add_target(
-        'release',
-        '$(MEDIKIT) pipeline release start',
-        deps=('medikit', ),
+        "release",
+        "$(MEDIKIT) pipeline release start",
+        deps=("medikit",),
         phony=True,
-        doc='Runs the "release" pipeline.'
+        doc='Runs the "release" pipeline.',
+    )
+
+
+@listen(make.on_generate)
+def on_make_generate(event):
+    makefile = event.makefile
+
+    # Formating
+    makefile["BLACK"] = which("black")
+    makefile["ISORT"] = which("isort")
+    makefile.add_target(
+        "format",
+        """
+            $(BLACK) -l 120 .
+            $(ISORT) -rc -o mondrian -o whistle -y .
+        """,
+        phony=True,
+        doc="Reformats the whole codebase using our standards (requires black and isort).",
     )
 
 

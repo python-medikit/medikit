@@ -7,10 +7,10 @@ from medikit.config.loader import load_feature_extensions
 from medikit.settings import DEFAULT_FEATURES
 
 env = Environment()
-env.filters['underline'] = lambda s, c: s + '\n' + c * len(s)
+env.filters["underline"] = lambda s, c: s + "\n" + c * len(s)
 
 TEMPLATE = env.from_string(
-    '''
+    """
 .. This file is auto-generated (see bin/generate_apidoc.py), do not change it manually, your changes would be overriden.
 
 {{ title | underline('=') }}
@@ -77,13 +77,14 @@ Implementation
     :members:
     :undoc-members:
 
-'''.strip() + '\n\n'
+""".strip()
+    + "\n\n"
 )
 
 
 def main():
-    root_path = os.path.realpath(os.path.join(os.path.dirname(os.path.join(os.getcwd(), __file__)), '..'))
-    doc_path = os.path.join(root_path, 'docs')
+    root_path = os.path.realpath(os.path.join(os.path.dirname(os.path.join(os.getcwd(), __file__)), ".."))
+    doc_path = os.path.join(root_path, "docs")
 
     features = load_feature_extensions()
 
@@ -94,25 +95,25 @@ def main():
         config_module = config.__module__
         is_default = name in DEFAULT_FEATURES
 
-        usage = getattr(config, '__usage__', None)
+        usage = getattr(config, "__usage__", None)
         if usage:
-            usage = dedent(usage.strip('\n'))
+            usage = dedent(usage.strip("\n"))
 
         rst = TEMPLATE.render(
             name=name,
-            title=feature.__name__.replace('Feature', ' Feature'),
+            title=feature.__name__.replace("Feature", " Feature"),
             module=module,
             has_custom_config=(module == config_module),
             config_class=config.__name__,
             feature_class=feature.__name__,
             usage=usage,
-            usage_file=os.path.exists(os.path.join(doc_path, 'features/_usage', name + '.rst')),
+            usage_file=os.path.exists(os.path.join(doc_path, "features/_usage", name + ".rst")),
             is_default=is_default,
         )
 
-        with open(os.path.join(doc_path, 'features', name + '.rst'), 'w+') as f:
+        with open(os.path.join(doc_path, "features", name + ".rst"), "w+") as f:
             f.write(rst)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

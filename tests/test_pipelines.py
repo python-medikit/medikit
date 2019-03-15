@@ -5,7 +5,7 @@ from medikit.steps import Step
 
 class FailingStep(Step):
     def run(self, meta):
-        self.exec('false')
+        self.exec("false")
         self.set_complete()
 
 
