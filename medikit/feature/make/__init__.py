@@ -31,7 +31,7 @@ class MakeFeature(Feature):
     def configure(self):
         self.makefile = Makefile()
 
-    @subscribe("medikit.on_start", priority=HIGH_PRIORITY)
+    @subscribe(medikit.on_start, priority=HIGH_PRIORITY)
     def on_start(self, event):
         """
         :param ProjectEvent event:

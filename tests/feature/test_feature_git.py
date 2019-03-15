@@ -2,6 +2,7 @@ from unittest.mock import patch
 
 import pytest
 
+import medikit
 from medikit.events import ProjectEvent
 from medikit.feature.git import GitFeature
 from medikit.testing import FeatureTestCase
@@ -17,8 +18,8 @@ class TestGitFeature(FeatureTestCase):
         feature, dispatcher = self.create_feature()
         listeners = dispatcher.get_listeners()
 
-        assert feature.on_start in listeners["medikit.on_start"]
-        assert feature.on_end in listeners["medikit.on_end"]
+        assert feature.on_start in listeners[medikit.on_start]
+        assert feature.on_end in listeners[medikit.on_end]
 
     def test_on_start(self):
         feature, dispatcher = self.create_feature()

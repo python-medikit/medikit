@@ -1,9 +1,14 @@
 from mondrian import term
 
+import medikit
 from medikit.commands.base import Command
 from medikit.commands.utils import _read_configuration
 from medikit.config.loader import load_feature_extensions
 from medikit.events import LoggingDispatcher, ProjectEvent
+
+
+def write_resources(event):
+    pass
 
 
 class UpdateCommand(Command):
@@ -63,8 +68,8 @@ class UpdateCommand(Command):
 
         # todo: add listener dump list in debug/verbose mode ?
 
-        event = dispatcher.dispatch("medikit.on_start", event)
+        event = dispatcher.dispatch(medikit.on_start, event)
 
-        dispatcher.dispatch("medikit.on_end", event)
+        dispatcher.dispatch(medikit.on_end, event)
 
         logger.info("Done.")

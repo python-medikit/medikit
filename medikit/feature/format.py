@@ -11,10 +11,12 @@ Superseeds "yapf" feature that was only using one tool for one language.
 import functools
 import os
 
+import medikit
 from medikit import settings
 from medikit.events import subscribe
 from medikit.feature import ABSOLUTE_PRIORITY, SUPPORT_PRIORITY, Feature
 from medikit.feature.make import which
+from medikit.globals import LINE_LENGTH
 from medikit.structs import Script
 
 
@@ -59,7 +61,7 @@ class FormatFeature(Feature):
 
         if "black" in config.active_tools:
             makefile["BLACK"] = which("black")
-            makefile["BLACK_OPTIONS"] = "--line-length 120"  # TODO line length global option
+            makefile["BLACK_OPTIONS"] = "--line-length " + str(LINE_LENGTH)  # TODO line length global option
             format_script += ["$(BLACK) $(BLACK_OPTIONS) . Projectfile"]
 
         if "yapf" in config.active_tools:
@@ -86,13 +88,20 @@ class FormatFeature(Feature):
             doc="Reformats the codebase (with " + ", ".join(sorted(config.active_tools)) + ").",
         )
 
-    @subscribe("medikit.on_start", priority=SUPPORT_PRIORITY)
+    @subscribe(medikit.on_start, priority=SUPPORT_PRIORITY)
     def on_start(self, event):
-        self.render_file(".style.yapf", "yapf/style.yapf.j2")
+        config = self.get_config(event)  # type: FormatConfig
+        if "isort" in config.active_tools:
+            with event.config.get_resource("setup.cfg") as setup_cfg:
+                setup_cfg.set_managed_values({"isort": {"line_length": str(LINE_LENGTH)}})
+        if "yapf" in config.active_tools:
+            self.render_file(".style.yapf", "yapf/style.yapf.j2")
 
-    @subscribe("medikit.on_start", priority=ABSOLUTE_PRIORITY - 1)
+    @subscribe(medikit.on_start, priority=ABSOLUTE_PRIORITY - 1)
     def on_before_start(self, event):
-        style_config = os.path.join(os.getcwd(), ".style.yapf")
-        if os.path.exists(style_config):
-            self.dispatcher.info("YAPF_STYLE_CONFIG = " + style_config)
-            settings.YAPF_STYLE_CONFIG = style_config
+        config = self.get_config(event)  # type: FormatConfig
+        if "yapf" in config.active_tools:
+            style_config = os.path.join(os.getcwd(), ".style.yapf")
+            if os.path.exists(style_config):
+                self.dispatcher.info("YAPF_STYLE_CONFIG = " + style_config)
+                settings.YAPF_STYLE_CONFIG = style_config

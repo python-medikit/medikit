@@ -9,7 +9,7 @@ from medikit.utils import format_file_content
 
 
 def read_configuration(dispatcher, filename, variables, features, files):
-    config = ConfigurationRegistry()
+    config = ConfigurationRegistry(dispatcher)
     setup_default_pipelines(config)
     default_context = {"listen": dispatcher.listen}
 

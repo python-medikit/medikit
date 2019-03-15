@@ -41,10 +41,12 @@ from piptools.resolver import Resolver
 from piptools.scripts.compile import get_pip_command
 from piptools.utils import format_requirement
 
+import medikit
 from medikit.events import subscribe
 from medikit.feature import ABSOLUTE_PRIORITY, Feature
 from medikit.feature.make import InstallScript, which
 from medikit.globals import PIP_VERSION
+from medikit.resources.configparser import ConfigParserResource
 from medikit.utils import get_override_warning_banner
 
 
@@ -360,7 +362,7 @@ class PythonFeature(Feature):
             target.install += _get_install_commands(extra=extra)
             target.deps += _get_install_deps(extra=extra)
 
-    @subscribe("medikit.on_start", priority=ABSOLUTE_PRIORITY)
+    @subscribe(medikit.on_start, priority=ABSOLUTE_PRIORITY)
     def on_start(self, event):
         """
         **Events**
@@ -389,19 +391,10 @@ class PythonFeature(Feature):
         # Some metadata that will prove useful.
         self.render_empty_files("classifiers.txt", "README.rst")
         self.render_file_inline("MANIFEST.in", "include *.txt")
-        self.render_file_inline(
-            "setup.cfg",
-            """
-                    [bdist_wheel]
-                    # This flag says that the code is written to work on both Python 2 and Python
-                    # 3. If at all possible, it is good practice to do this. If you cannot, you
-                    # will need to generate wheels for each Python version that you support.
-                    universal=1
-                    
-                    [metadata]
-                    description-file = README.rst
-                """,
-        )
+        with event.config.define_resource(ConfigParserResource, "setup.cfg") as setup_cfg:
+            setup_cfg.set_initial_values(
+                {"bdist_wheel": {"universal": "1"}, "metadata": {"description-file": "README.rst"}}
+            )
 
         # XXX there is an important side effect in get_init_files that defines namespace packages for later use in
         # setup.py rendering. Even if we do not want to create the packages here, it is important to make the call
@@ -444,7 +437,7 @@ class PythonFeature(Feature):
         # Render (with overwriting) the allmighty setup.py
         self.render_file("setup.py", "python/setup.py.j2", context, override=True)
 
-    @subscribe("medikit.on_end", priority=ABSOLUTE_PRIORITY)
+    @subscribe(medikit.on_end, priority=ABSOLUTE_PRIORITY)
     def on_end(self, event):
         # Our config object
         python_config = event.config["python"]

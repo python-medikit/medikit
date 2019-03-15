@@ -1,3 +1,4 @@
+import medikit
 from medikit.events import ProjectEvent
 from medikit.feature.make import Makefile, MakefileEvent
 from medikit.feature.pytest import PytestFeature
@@ -14,7 +15,7 @@ class TestPytestFeature(FeatureTestCase):
         feature, dispatcher = self.create_feature()
         listeners = dispatcher.get_listeners()
 
-        assert feature.on_start in listeners["medikit.on_start"]
+        assert feature.on_start in listeners[medikit.on_start]
         assert feature.on_make_generate in listeners["medikit.feature.make.on_generate"]
 
     def test_on_make_generate(self):

@@ -3,6 +3,9 @@ import piptools
 
 from medikit._version import __version__
 
+on_start = "medikit.on_start"
+on_end = "medikit.on_end"
+
 
 def listen(*args, **kwargs):
     raise NotImplementedError("This is a stub.")

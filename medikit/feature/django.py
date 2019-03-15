@@ -6,6 +6,7 @@ The «django» feature adds the django framework to your project.
 import os
 import random
 
+import medikit
 from medikit.events import subscribe
 
 from . import SUPPORT_PRIORITY, Feature
@@ -71,7 +72,7 @@ class DjangoFeature(Feature):
         makefile["DJANGO"] = "$(PYTHON) manage.py"
         makefile.add_target("runserver", """$(DJANGO) runserver""", deps=("install-dev",), phony=True)
 
-    @subscribe("medikit.on_start")
+    @subscribe(medikit.on_start)
     def on_start(self, event):
         django_config = event.config["django"]
         python_config = event.config["python"]

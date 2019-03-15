@@ -9,6 +9,7 @@ import json
 import os
 import runpy
 
+import medikit
 from medikit.events import subscribe
 from medikit.feature import LAST_PRIORITY, Feature
 from medikit.feature.make import which
@@ -63,7 +64,7 @@ class NodeJSFeature(Feature):
 
         event.makefile.get_target("install-dev").install += ["$(YARN) install"]
 
-    @subscribe("medikit.on_start")
+    @subscribe(medikit.on_start)
     def on_start(self, event):
         name = event.config["python"].get("name")
 
@@ -87,7 +88,7 @@ class NodeJSFeature(Feature):
             os.path.join(base_dir, "package.json"), json.dumps(package, sort_keys=True, indent=4), override=True
         )
 
-    @subscribe("medikit.on_end", priority=LAST_PRIORITY)
+    @subscribe(medikit.on_end, priority=LAST_PRIORITY)
     def on_end(self, event):
         base_dir = event.config["nodejs"].base_dir or "."
         os.system("cd {base_dir}; yarn install".format(base_dir=base_dir))

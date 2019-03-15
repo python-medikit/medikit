@@ -10,6 +10,7 @@ YAPF support, to automatically reformat all your (python) source code.
 import os
 import warnings
 
+import medikit
 from medikit import settings
 from medikit.events import subscribe
 from medikit.feature import ABSOLUTE_PRIORITY, SUPPORT_PRIORITY, Feature
@@ -44,11 +45,11 @@ class YapfFeature(Feature):
             doc="Reformats the whole python codebase using yapf.",
         )
 
-    @subscribe("medikit.on_start", priority=SUPPORT_PRIORITY)
+    @subscribe(medikit.on_start, priority=SUPPORT_PRIORITY)
     def on_start(self, event):
         self.render_file(".style.yapf", "yapf/style.yapf.j2")
 
-    @subscribe("medikit.on_start", priority=ABSOLUTE_PRIORITY - 1)
+    @subscribe(medikit.on_start, priority=ABSOLUTE_PRIORITY - 1)
     def on_before_start(self, event):
         style_config = os.path.join(os.getcwd(), ".style.yapf")
         if os.path.exists(style_config):

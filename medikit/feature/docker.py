@@ -5,6 +5,7 @@ your code, in a fully functionnal python virtualenv.
 """
 from argparse import Namespace
 
+import medikit
 from medikit.events import subscribe
 from medikit.feature import Feature
 from medikit.feature.make import which
@@ -153,7 +154,7 @@ class DockerFeature(Feature):
         for script_name, script_content in sorted(docker_config.scripts.__dict__.items()):
             event.makefile.add_target("docker-" + script_name, script_content, phony=True, doc=script_content.doc)
 
-    @subscribe("medikit.on_end")
+    @subscribe(medikit.on_end)
     def on_end(self, event):
         docker_config = event.config["docker"]
 

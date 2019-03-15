@@ -4,8 +4,11 @@ import runpy
 from collections import OrderedDict
 from contextlib import contextmanager
 
+from mondrian import term
 from stevedore import ExtensionManager
+from whistle import EventDispatcher
 
+import medikit
 from medikit.pipeline import Pipeline
 from medikit.utils import run_command
 
@@ -13,11 +16,14 @@ logger = logging.getLogger(__name__)
 
 
 class ConfigurationRegistry:
-    def __init__(self):
+    def __init__(self, dispatcher: EventDispatcher):
         self._configs = {}
         self._features = {}
         self._pipelines = {}
         self._variables = OrderedDict()
+
+        self.dispatcher = dispatcher
+        self.resources = OrderedDict()
 
         def register_feature(ext):
             self._features[ext.name] = ext.plugin
@@ -27,6 +33,8 @@ class ConfigurationRegistry:
 
         mgr = ExtensionManager(namespace="medikit.feature", on_load_failure_callback=on_load_feature_failure)
         mgr.map(register_feature)
+
+        dispatcher.add_listener(medikit.on_end, self.write_resources)
 
     def __getitem__(self, item):
         return self._configs[item]
@@ -106,3 +114,28 @@ class ConfigurationRegistry:
             self._configs[name] = self._features[name].Config()
 
         return self._configs[name]
+
+    def get_resource(self, target):
+        if not target in self.resources:
+            raise RuntimeError(
+                'Resource for "{}" is not defined, you must define it first by providing an implementation.'.format(
+                    target
+                )
+            )
+        return self.resources[target]
+
+    def define_resource(self, ResourceType, target, *args, **kwargs):
+        if target in self.resources:
+            raise RuntimeError(
+                'Resource for "{}" is already defined as {!r}, you can only enhance it at this point.'.format(
+                    target, self.resources[target]
+                )
+            )
+        self.resources[target] = ResourceType(*args, **kwargs)
+        return self.resources[target]
+
+    def write_resources(self, event):
+        for target, resource in self.resources.items():
+            exists = os.path.exists(target)
+            resource.write(event, target)
+            self.dispatcher.info(term.bold((term.red if exists else term.green)("W!")), target)

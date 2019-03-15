@@ -5,6 +5,7 @@ Adds the pytest testing framework to your project.
 
 import os
 
+import medikit
 from medikit.events import subscribe
 
 from . import SUPPORT_PRIORITY, Feature
@@ -36,7 +37,7 @@ class PytestFeature(Feature):
             doc="Runs the test suite.",
         )
 
-    @subscribe("medikit.on_start", priority=SUPPORT_PRIORITY)
+    @subscribe(medikit.on_start, priority=SUPPORT_PRIORITY)
     def on_start(self, event):
         tests_dir = "tests"
         if not os.path.exists(tests_dir):

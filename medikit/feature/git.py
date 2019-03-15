@@ -5,6 +5,7 @@ Git version control system support.
 
 import os
 
+import medikit
 from medikit.events import subscribe
 from medikit.feature import ABSOLUTE_PRIORITY, Feature
 
@@ -27,7 +28,7 @@ class GitConfig(Feature.Config):
 class GitFeature(Feature):
     Config = GitConfig
 
-    @subscribe("medikit.on_start", priority=ABSOLUTE_PRIORITY)
+    @subscribe(medikit.on_start, priority=ABSOLUTE_PRIORITY)
     def on_start(self, event):
         if not event.config["git"].enabled:
             return
@@ -43,7 +44,7 @@ class GitFeature(Feature):
 
         self.dispatcher.add_listener("medikit.on_file_closed", on_file_change, priority=-1)
 
-    @subscribe("medikit.on_end")
+    @subscribe(medikit.on_end)
     def on_end(self, event):
         self.render_file_inline(
             ".gitignore",

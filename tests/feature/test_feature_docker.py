@@ -1,3 +1,4 @@
+import medikit
 from medikit.feature.docker import DockerFeature
 from medikit.feature.make import Makefile, MakefileEvent
 from medikit.testing import FeatureTestCase
@@ -14,7 +15,7 @@ class TestDockerFeature(FeatureTestCase):
         listeners = dispatcher.get_listeners()
 
         assert feature.on_make_generate in listeners["medikit.feature.make.on_generate"]
-        assert feature.on_end in listeners["medikit.on_end"]
+        assert feature.on_end in listeners[medikit.on_end]
 
     def test_issue71_override_image_and_default_builder(self):
         feature, dispatcher = self.create_feature()
