@@ -7,41 +7,45 @@ import datetime
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('..'))
-sys.path.insert(0, os.path.abspath('_themes'))
+sys.path.insert(0, os.path.abspath(".."))
+sys.path.insert(0, os.path.abspath("_themes"))
 
 import medikit
 
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.doctest',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.todo',
-    'sphinx.ext.coverage',
-    'sphinx.ext.ifconfig',
-    'sphinx.ext.viewcode',
-    'sphinx_sitemap',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.doctest",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.todo",
+    "sphinx.ext.coverage",
+    "sphinx.ext.ifconfig",
+    "sphinx.ext.viewcode",
+    "sphinx_sitemap",
+    "releases",
 ]
 
-site_url = 'http://medikit.rdc.li/en/latest/'
+releases_release_uri = "https://github.com/python-medikit/medikit/releases/tag/%s"
+releases_issue_uri = "https://github.com/python-medikit/medikit/issues/%s"
+
+site_url = "http://medikit.rdc.li/en/latest/"
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # The suffix of source filenames.
-source_suffix = '.rst'
+source_suffix = ".rst"
 
 # The encoding of source files.
 #
 # source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
-project = 'Medikit'
-author = 'Romain Dorgueil'
-copyright = '2015-{}, {}'.format(datetime.datetime.now().year, author)
+project = "Medikit"
+author = "Romain Dorgueil"
+copyright = "2015-{}, {}".format(datetime.datetime.now().year, author)
 
 # Version infos
 version = release = medikit.__version__
@@ -65,7 +69,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -87,7 +91,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = "sphinx"
 
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
@@ -100,41 +104,41 @@ todo_include_todos = True
 
 # -- Options for HTML output ----------------------------------------------
 
-html_theme = 'alabaster'
+html_theme = "alabaster"
 html_theme_options = {
-    'github_user': 'python-medikit',
-    'github_repo': 'medikit',
-    'github_button': 'true',
-    'github_banner': 'true',
-    'show_powered_by': 'false',
-    'show_related': 'true',
+    "github_user": "python-medikit",
+    "github_repo": "medikit",
+    "github_button": "true",
+    "github_banner": "true",
+    "show_powered_by": "false",
+    "show_related": "true",
 }
 
 html_sidebars = {
-    'index': [
-        'sidebarlogo.html',
-        'navigation.html',
-        'localtoc.html',
-        'sidebarintro.html',
-        'sourcelink.html',
-        'searchbox.html',
-        'sidebarinfos.html',
+    "index": [
+        "sidebarlogo.html",
+        "navigation.html",
+        "localtoc.html",
+        "sidebarintro.html",
+        "sourcelink.html",
+        "searchbox.html",
+        "sidebarinfos.html",
     ],
-    '**': [
-        'sidebarlogo.html',
-        'navigation.html',
-        'localtoc.html',
-        'relations.html',
-        'sourcelink.html',
-        'searchbox.html',
-        'sidebarinfos.html',
-    ]
+    "**": [
+        "sidebarlogo.html",
+        "navigation.html",
+        "localtoc.html",
+        "relations.html",
+        "sourcelink.html",
+        "searchbox.html",
+        "sidebarinfos.html",
+    ],
 }
 
-html_theme_path = ['_themes']
-html_additional_pages = {'index': 'index.html'}
+html_theme_path = ["_themes"]
+html_additional_pages = {"index": "index.html"}
 
-html_static_path = ['_static']
+html_static_path = ["_static"]
 html_show_sphinx = False
 
 # If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
@@ -169,7 +173,7 @@ html_show_sphinx = False
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'medikitdoc'
+htmlhelp_basename = "medikitdoc"
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -177,15 +181,12 @@ latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     #
     # 'papersize': 'letterpaper',
-
     # The font size ('10pt', '11pt' or '12pt').
     #
     # 'pointsize': '10pt',
-
     # Additional stuff for the LaTeX preamble.
     #
     # 'preamble': '',
-
     # Latex figure (float) alignment
     #
     # 'figure_align': 'htbp',
@@ -194,9 +195,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-    (master_doc, 'medikit.tex', 'Medikit Documentation', 'Romain Dorgueil', 'manual'),
-]
+latex_documents = [(master_doc, "medikit.tex", "Medikit Documentation", "Romain Dorgueil", "manual")]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
@@ -234,7 +233,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, 'medikit', 'Medikit Documentation', [author], 1)]
+man_pages = [(master_doc, "medikit", "Medikit Documentation", [author], 1)]
 
 # If true, show URL addresses after external links.
 #
@@ -247,9 +246,14 @@ man_pages = [(master_doc, 'medikit', 'Medikit Documentation', [author], 1)]
 #  dir menu entry, description, category)
 texinfo_documents = [
     (
-        master_doc, 'medikit', 'medikit Documentation', author, 'medikit', 'One line description of project.',
-        'Miscellaneous'
-    ),
+        master_doc,
+        "medikit",
+        "medikit Documentation",
+        author,
+        "medikit",
+        "One line description of project.",
+        "Miscellaneous",
+    )
 ]
 
 # Documents to append as an appendix to all manuals.
@@ -322,7 +326,7 @@ epub_copyright = copyright
 # epub_post_files = []
 
 # A list of files that should not be packed into the epub file.
-epub_exclude_files = ['search.html']
+epub_exclude_files = ["search.html"]
 
 # The depth of the table of contents in toc.ncx.
 #
@@ -354,6 +358,6 @@ epub_exclude_files = ['search.html']
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3', None),
-    'virtualenv': ('https://virtualenv.pypa.io/en/stable/', None),
+    "python": ("https://docs.python.org/3", None),
+    "virtualenv": ("https://virtualenv.pypa.io/en/stable/", None),
 }

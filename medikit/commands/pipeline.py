@@ -83,8 +83,8 @@ class PipelineCommand(Command):
         if os.path.exists(filename):
             if not force:
                 raise FileExistsError(
-                    'Already started, use `medikit pipeline {name} start --force` to force a restart, or use `medikit pipeline {name} continue`.'.
-                    format(name=pipeline.name)
+                    'Already started, use `medikit pipeline {name} start --force` to force a restart, or use `medikit pipeline {name} continue`.'
+                    .format(name=pipeline.name)
                 )
             os.unlink(filename)
 
@@ -102,8 +102,8 @@ class PipelineCommand(Command):
     def _handle_continue(cls, pipeline, *, filename):
         if not os.path.exists(filename):
             raise FileNotFoundError(
-                'Pipeline “{}” not started, hence you cannot “continue” it. Are you looking for `medikit pipeline {name} start`?'.
-                format(name=pipeline.name)
+                'Pipeline “{}” not started, hence you cannot “continue” it. Are you looking for `medikit pipeline {name} start`?'
+                .format(name=pipeline.name)
             )
 
         # XXX TODO add a lock file during the step and unlock at the end.
@@ -125,16 +125,16 @@ class PipelineCommand(Command):
             step.run(pipeline.meta)
             if step.complete:
                 logger.info(
-                    term.black(' » ')
-                    .join((
+                    term.black(' » ').
+                    join((
                         term.lightblue('{} ({}/{})'.format(name.upper(), current, size)),
                         term.green('SUCCESS'),
                     )) + '\n'
                 )
             else:
                 logger.info(
-                    term.black(' » ')
-                    .join((
+                    term.black(' » ').
+                    join((
                         term.lightblue('{} ({}/{})'.format(name.upper(), current, size)),
                         term.red('FAILED'),
                     )) + '\n'

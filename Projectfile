@@ -37,16 +37,17 @@ python.setup(
     }
 )
 python.add_requirements(
-    'git-semver ~=0.2.1',
+    'git-semver ~=0.2.3',
     'jinja2 ~=2.9',
     'mondrian ~=0.7',
-    'packaging ~=17.0',
+    'packaging ~=19.0',
     'pip-tools ~=2.0.2',
     'stevedore ~=1.28',
     'whistle ~=1.0',
     'yapf ~=0.20',
     dev=[
-        'sphinx-sitemap >=0.2,<0.3',
+        'sphinx-sitemap ~=1.0',
+        'releases >=1.6,<1.7',
     ]
 )
 

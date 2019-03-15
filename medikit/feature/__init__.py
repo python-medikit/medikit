@@ -128,8 +128,8 @@ class ProjectInitializer(Feature):
         if self.options.get('license'):
             context['license'] = self.options['license']
         else:
-            context['license'
-                    ] = input('License [Apache License, Version 2.0]: ').strip() or 'Apache License, Version 2.0'
+            context['license'] = input('License [Apache License, Version 2.0]: '
+                                       ).strip() or 'Apache License, Version 2.0'
 
         context['url'] = ''
         context['download_url'] = ''

@@ -54,13 +54,13 @@ setup(
     packages=find_packages(exclude=['ez_setup', 'example', 'test']),
     include_package_data=True,
     install_requires=[
-        'git-semver (~= 0.2.1)', 'jinja2 (~= 2.9)', 'mondrian (~= 0.7)', 'packaging (~= 17.0)', 'pip-tools (~= 2.0.2)',
+        'git-semver (~= 0.2.3)', 'jinja2 (~= 2.9)', 'mondrian (~= 0.7)', 'packaging (~= 19.0)', 'pip-tools (~= 2.0.2)',
         'stevedore (~= 1.28)', 'whistle (~= 1.0)', 'yapf (~= 0.20)'
     ],
     extras_require={
         'dev': [
-            'coverage (~= 4.4)', 'pytest (~= 3.4)', 'pytest-cov (~= 2.5)', 'sphinx (~= 1.7)',
-            'sphinx-sitemap (>= 0.2, < 0.3)', 'yapf'
+            'coverage (~= 4.4)', 'pytest (~= 3.4)', 'pytest-cov (~= 2.5)', 'releases (>= 1.6, < 1.7)',
+            'sphinx (~= 1.7)', 'sphinx-sitemap (~= 1.0)', 'yapf'
         ]
     },
     entry_points={

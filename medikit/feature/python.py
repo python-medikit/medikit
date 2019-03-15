@@ -269,7 +269,8 @@ class PythonFeature(Feature):
                 (
                     _get_reqs_file_varname(extra=extra),
                     'requirements-' + extra + '.txt',
-                ), (
+                ),
+                (
                     _get_reqs_inline_varname(extra=extra),
                     ' '.join(python_config.get_inline_requirements(extra=extra)),
                 )
@@ -483,8 +484,8 @@ class PythonFeature(Feature):
                             *(('-r requirements.txt', ) if extra else ()),
                             *python_config.get_vendors(extra=extra),
                             *sorted(
-                                format_requirement(req) for req in resolver.resolve(max_rounds=10)
-                                if req.name != python_config.get('name')
+                                format_requirement(req)
+                                for req in resolver.resolve(max_rounds=10) if req.name != python_config.get('name')
                             ),
                         )
                     ),
