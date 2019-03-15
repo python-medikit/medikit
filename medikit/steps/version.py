@@ -24,13 +24,21 @@ class PythonVersion(Version):
 
 
 class BumpVersion(Step):
+    def get_name(self):
+        try:
+            # TODO see if we can ignore this, left here for BC
+            return self.exec('python setup.py --name')
+        except RuntimeError:
+            return self.config.get_name()
+
     def run(self, meta):
         '''
         git add $VERSION_FILE
         '''
-        name = self.exec('python setup.py --name')
-        version_file = os.path.join(name.replace('.', '/'), '_version.py')
+        name = self.get_name()
+        version_file = self.config.get_version_file()
 
+        # todo move this in config ?
         if not os.path.exists(version_file):
             raise FileNotFoundError('Cannot find version file for {} (searched in {!r}).'.format(name, version_file))
 
@@ -42,7 +50,8 @@ class BumpVersion(Step):
         git_version = get_current_version(repo, Version=PythonVersion)
         if git_version:
             git_version.partial = False
-        current_version = PythonVersion.coerce(runpy.run_path(version_file).get('__version__'), partial=True)
+
+        current_version = PythonVersion.coerce(self.config.get_version(), partial=True)
         current_version.partial = False
 
         next_version = None
@@ -58,7 +67,11 @@ class BumpVersion(Step):
                 next_version = None
 
         with open(version_file, 'w+') as f:
-            f.write("__version__ = '{}'\n".format(str(next_version)))
+            # Support both py format and txt version, let's move this logic to config at some point (TODO).
+            if os.path.splitext(version_file)[1] == '.py':
+                f.write("__version__ = '{}'\n".format(str(next_version)))
+            else:
+                f.write(str(next_version))
 
         self.exec('git add {}'.format(version_file))
 

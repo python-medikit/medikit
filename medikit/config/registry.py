@@ -1,4 +1,6 @@
 import logging
+import os
+import runpy
 from collections import OrderedDict
 from contextlib import contextmanager
 
@@ -50,6 +52,30 @@ class ConfigurationRegistry():
             if not name:
                 raise RuntimeError('You must define a package name, using either python.setup() or PACKAGE = ...')
             return name
+
+    def get_name(self):
+        return self.package_name
+
+    def get_version_file(self):
+        if 'python' in self:
+            return self['python'].version_file
+        elif self.get_var('VERSION_FILE'):
+            return self.get_var('VERSION_FILE')
+        return 'version.txt'
+
+    def get_version(self):
+        if 'python' in self:
+            try:
+                return self.exec('python setup.py --version')
+            except RuntimeError:
+                pass  # ignore and fallback to alternative version getters
+
+        version_file = self.get_version_file()
+        if os.path.splitext(version_file)[1] == '.py':
+            return runpy.run_path(version_file).get('__version__')
+        else:
+            with open(version_file) as f:
+                return f.read().strip()
 
     def keys(self):
         return self._configs.keys()

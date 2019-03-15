@@ -45,7 +45,7 @@ class PipelineCommand(Command):
                 )
             )
 
-        pipeline = ConfiguredPipeline(pipeline, config.pipelines[pipeline])
+        pipeline = ConfiguredPipeline(pipeline, config.pipelines[pipeline], config)
         path = os.path.dirname(config_filename)
         pipeline_file = os.path.join(path, '.medikit/pipelines', pipeline.name + '.json')
         pipeline_dirname = os.path.dirname(pipeline_file)

@@ -22,6 +22,7 @@ class Step:
     def __init__(self):
         self._state = {}
         self.__args__ = ()
+        self.config = None
 
     def __str__(self):
         return '{}({})'.format(type(self).__name__, ', '.join(map(repr, self.__args__)))

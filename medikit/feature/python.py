@@ -266,8 +266,13 @@ class PythonFeature(Feature):
         extra_variables = []
         for extra in event.config['python'].get_extras():
             extra_variables += [
-                (_get_reqs_file_varname(extra=extra), 'requirements-' + extra + '.txt',),
-                (_get_reqs_inline_varname(extra=extra), ' '.join(python_config.get_inline_requirements(extra=extra)),)
+                (
+                    _get_reqs_file_varname(extra=extra),
+                    'requirements-' + extra + '.txt',
+                ), (
+                    _get_reqs_inline_varname(extra=extra),
+                    ' '.join(python_config.get_inline_requirements(extra=extra)),
+                )
             ]
 
         # Python related environment
@@ -297,6 +302,7 @@ class PythonFeature(Feature):
         event.makefile['PIP_INSTALL_OPTIONS'] = ''
 
         if python_config.use_wheelhouse:
+
             def _get_wheelhouse(extra=None):
                 if extra:
                     return '.wheelhouse-' + extra
@@ -307,18 +313,16 @@ class PythonFeature(Feature):
 
             def _get_install_commands(extra=None):
                 return [
-                    '$(PIP) install $(PIP_INSTALL_OPTIONS) ' + _get_wheelhouse_options(
-                        extra=extra) + ' -U "pip ~=10.0" wheel',
-                    '$(PIP) install $(PIP_INSTALL_OPTIONS) ' + _get_wheelhouse_options(
-                        extra=extra) + ' -U $(' + _get_reqs_inline_varname(
-                        extra=extra) + ') -r $(' + _get_reqs_file_varname(extra=extra) + ')',
+                    '$(PIP) install $(PIP_INSTALL_OPTIONS) ' + _get_wheelhouse_options(extra=extra
+                                                                                       ) + ' -U "pip ~=18.0" wheel',
+                    '$(PIP) install $(PIP_INSTALL_OPTIONS) ' + _get_wheelhouse_options(extra=extra) + ' -U $(' +
+                    _get_reqs_inline_varname(extra=extra) + ') -r $(' + _get_reqs_file_varname(extra=extra) + ')',
                 ]
 
             def _get_install_deps(extra=None):
                 # TODO add inline requirements without -e/-r ?
                 return [
-                    '.medikit/'+_get_wheelhouse(extra=extra),
-                    '$(' + _get_reqs_file_varname(extra=extra) + ')',
+                    '.medikit/' + _get_wheelhouse(extra=extra), '$(' + _get_reqs_file_varname(extra=extra) + ')',
                     'setup.py'
                 ]
 
@@ -333,15 +337,18 @@ class PythonFeature(Feature):
                 if not marker in clean_target.remove:
                     clean_target.remove.append(marker)
 
-                event.makefile.get_target(target).install +=[
-                    '$(PIP) wheel -w '+_get_wheelhouse(extra=extra)+' $(' + _get_reqs_inline_varname(extra=extra) + ') -r $(' + _get_reqs_file_varname(extra=extra) + ')',
+                event.makefile.get_target(target).install += [
+                    '$(PIP) wheel -w ' + _get_wheelhouse(extra=extra) + ' $(' + _get_reqs_inline_varname(extra=extra) +
+                    ') -r $(' + _get_reqs_file_varname(extra=extra) + ')',
                 ]
 
         else:
+
             def _get_install_commands(extra=None):
                 return [
-                    '$(PIP) install $(PIP_INSTALL_OPTIONS) -U "pip ~=10.0" wheel',
-                    '$(PIP) install $(PIP_INSTALL_OPTIONS) -U $(' + _get_reqs_inline_varname(extra=extra) + ') -r $(' + _get_reqs_file_varname(extra=extra) + ')',
+                    '$(PIP) install $(PIP_INSTALL_OPTIONS) -U "pip ~=18.0" wheel',
+                    '$(PIP) install $(PIP_INSTALL_OPTIONS) -U $(' + _get_reqs_inline_varname(extra=extra) + ') -r $(' +
+                    _get_reqs_file_varname(extra=extra) + ')',
                 ]
 
             def _get_install_deps(extra=None):
@@ -451,7 +458,7 @@ class PythonFeature(Feature):
         session = pip_command._build_session(pip_options)
         repository = PyPIRepository(pip_options, session)
 
-        for extra in itertools.chain((None,), python_config.get_extras()):
+        for extra in itertools.chain((None, ), python_config.get_extras()):
             requirements_file = 'requirements{}.txt'.format('-' + extra if extra else '')
 
             if python_config.override_requirements or not os.path.exists(requirements_file):
@@ -473,7 +480,7 @@ class PythonFeature(Feature):
                     '\n'.join(
                         (
                             '-e .{}'.format('[' + extra + ']' if extra else ''),
-                            *(('-r requirements.txt',) if extra else ()),
+                            *(('-r requirements.txt', ) if extra else ()),
                             *python_config.get_vendors(extra=extra),
                             *sorted(
                                 format_requirement(req) for req in resolver.resolve(max_rounds=10)

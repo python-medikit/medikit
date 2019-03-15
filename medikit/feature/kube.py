@@ -13,6 +13,7 @@ class KubeConfig(Feature.Config):
     def __init__(self):
         self._targets = dict()
         self._targets_patches = dict()
+        self._use_helm = False
 
     def add_target(self, name, variant=None, *, patch, patch_path=''):
         if not variant in self._targets:
@@ -32,6 +33,18 @@ class KubeConfig(Feature.Config):
         for target in self._targets[variant]:
             yield target, self._targets_patches[variant][target]
 
+    @property
+    def use_helm(self):
+        return self._use_helm
+
+    def enable_helm(self):
+        self._use_helm = True
+        return self
+
+    def disable_helm(self):
+        self._use_helm = False
+        return self
+
 
 class KubeFeature(Feature):
     Config = KubeConfig
@@ -46,6 +59,10 @@ class KubeFeature(Feature):
         event.makefile['KUBECTL_OPTIONS'] = ''
         event.makefile['KUBECONFIG'] = ''
         event.makefile['KUBE_NAMESPACE'] = 'default'
+
+        if kube_config.use_helm:
+            event.makefile['HELM'] = which('helm')
+            event.makefile['HELM_RELEASE'] = event.config.get_name()
 
         for variant in kube_config.get_variants():
             targets = list(kube_config.get_targets(variant=variant))
@@ -69,10 +86,7 @@ class KubeFeature(Feature):
                         )
                     )
 
-                    rollback_commands.append(
-                        '$(KUBECTL) rollout undo {target}'.format(target=target)
-                    )
-
+                    rollback_commands.append('$(KUBECTL) rollout undo {target}'.format(target=target))
 
                 event.makefile.add_target(
                     rollout_target,
@@ -87,4 +101,3 @@ class KubeFeature(Feature):
                     phony=True,
                     doc='Rollbacks last kubernetes patch operation.'
                 )
-

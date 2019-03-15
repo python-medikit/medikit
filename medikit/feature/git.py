@@ -34,9 +34,9 @@ class GitFeature(Feature):
 
         if not os.path.exists('.git'):
             self.dispatcher.info('git', 'Creating git repository...')
-            os.system('git init')
+            os.system('git init --quiet')
             os.system('git add Projectfile')
-            os.system('git commit -m "Project initialized using Medikit."')
+            os.system('git commit --quiet -m "Project initialized using Medikit."')
 
         def on_file_change(event):
             os.system('git add {}'.format(event.filename))

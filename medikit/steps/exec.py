@@ -70,7 +70,7 @@ class Commit(Step):
 
     def run(self, meta):
         branch = self.exec('git rev-parse --abbrev-ref HEAD')
-        version = self.exec('python setup.py --version')
+        version = self.config.get_version()
         assert version == meta['version']
         os.system('git commit -m ' + json.dumps(self.message.format(**meta)))
         if self.tag:

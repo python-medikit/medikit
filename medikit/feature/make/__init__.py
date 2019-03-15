@@ -58,13 +58,16 @@ class MakeFeature(Feature):
         if event.config['make'].include_medikit_targets:
             self.add_medikit_targets(event.config['make'])
 
+        if event.config['make'].includes:
+            self.add_includes(event.config['make'].includes)
+
         # Recipe courtesy of https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
         self.makefile.add_target(
             'help',
             r"""
             @echo "Available commands:"
             @echo
-            @grep -E '^[a-zA-Z_-]+:.*?##[\s]?.*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?##"}; {printf "    make \033[36m%-30s\033[0m %s\n", $$1, $$2}'
+            @grep -E '^[a-zA-Z_-]+:.*?##[\s]?.*$$' --no-filename $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?##"}; {printf "    make \033[36m%-30s\033[0m %s\n", $$1, $$2}'
             @echo
             """,
             phony=True,
@@ -89,7 +92,7 @@ class MakeFeature(Feature):
 
         self.makefile.add_target(
             'medikit',
-            '@$(PYTHON) -c {!r} || $(PYTHON) -m pip install -U "pip ~=10.0" "medikit>=$(MEDIKIT_VERSION)"'.format(
+            '@$(PYTHON) -c {!r} || $(PYTHON) -m pip install -U "pip ~=18.0" "medikit>=$(MEDIKIT_VERSION)"'.format(
                 '; '.join(source)
             ),
             phony=True,
@@ -113,3 +116,7 @@ class MakeFeature(Feature):
             phony=True,
             doc='''Update project artifacts using medikit, including requirements files.'''
         )
+
+    def add_includes(self, includes):
+        for include in includes:
+            self.makefile.header.append('include ' + include)

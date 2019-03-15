@@ -33,7 +33,7 @@ class YapfFeature(Feature):
                 '$(YAPF) $(YAPF_OPTIONS) .',
                 '$(YAPF) $(YAPF_OPTIONS) Projectfile',
             ])),
-            deps=('install-dev',),
+            deps=('install-dev', ),
             phony=True,
             doc='Reformats the whole python codebase using yapf.'
         )

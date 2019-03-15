@@ -23,6 +23,7 @@ class Makefile(object):
         self._target_order, self._target_values = deque(), {}
         self.hidden = set()
         self.phony = set()
+        self.header = []
 
     def __delitem__(self, key):
         self._env_order.remove(key)
@@ -50,7 +51,7 @@ class Makefile(object):
         content = [
             get_override_warning_banner(),
             '',
-        ]
+        ] + self.header + ['']
 
         if len(self):
             for k, v in self:
@@ -143,6 +144,15 @@ class Makefile(object):
             self._target_values[target][1],
             self._target_values[target][2],
         )
+        return self
+
+    def set_script(self, target, script):
+        self._target_values[target] = (
+            self._target_values[target][0],
+            script,
+            self._target_values[target][2],
+        )
+        return self
 
     def set_assignment_operator(self, key, value):
         assert value in ('?=', '=', '+=', ':=', '::=', '!='), 'Invalid operator'

@@ -27,7 +27,7 @@ The `django` handle is a :class:`DjangoConfig` instance, and can be used to cust
 
 This will add a few items to your Makefile, and ensure a minimalistic django project structure is available.
 
-By default, it will use Django ~=2.0,<2.1, but you can tune that:
+By default, it will use Django ~=2.0,<2.2, but you can tune that:
 
 .. code-block:: python
 

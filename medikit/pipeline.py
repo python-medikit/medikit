@@ -38,10 +38,11 @@ class ConfiguredPipeline:
     Used to actually load run and persist a configured pipeline.
     """
 
-    def __init__(self, name, pipeline):
+    def __init__(self, name, pipeline, config=None):
         self.name = name
         self.steps = pipeline.steps
         self.meta = {'created': str(datetime.datetime.now())}
+        self.config = config
 
     def init(self):
         for step in self.steps:
@@ -89,3 +90,4 @@ class ConfiguredPipeline:
             if get_identity(step) != identity:
                 raise IOError('Mismatch on step identity.')
             step.set_state(state)
+            step.config = self.config

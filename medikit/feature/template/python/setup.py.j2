@@ -44,7 +44,9 @@ setup(
     version = version,
     long_description = long_description,
     classifiers = classifiers,
-    packages = find_packages(exclude=['ez_setup', 'example', 'test']),
+    {% if not 'packages' in setup -%}
+        packages = find_packages(exclude=['ez_setup', 'example', 'test']),
+    {%- endif -%}
     include_package_data = True,
     {% if install_requires -%}
         install_requires = {{ install_requires | pprint }},{{ '\n    ' }}
