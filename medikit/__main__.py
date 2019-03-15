@@ -19,6 +19,7 @@ def main(args=None):
     mondrian.setup(excepthook=True)
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
+    logging.getLogger("pip._vendor.cachecontrol.controller").setLevel(logging.ERROR)
 
     cli = MedikitCommand()
 

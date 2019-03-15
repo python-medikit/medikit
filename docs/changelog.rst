@@ -1,6 +1,8 @@
 Changelog
 =========
 
+- :release:`0.7.1 <2019-03-15>`
+- :bug:`0` Remove deserialization warning (means nothing important).
 - :release:`0.7.0 <2019-03-15>`
 - :feature:`0` Git: now less verbose.
 - :feature:`0` Kubernetes: basic helm support.
