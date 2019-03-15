@@ -31,4 +31,3 @@ sphinx-sitemap==1.0.2
 sphinx==1.7.9
 sphinxcontrib-websupport==1.1.0
 urllib3==1.24.1
-yapf==0.26.0
