@@ -34,8 +34,8 @@ import os
 import tempfile
 from getpass import getuser
 
-from piptools._vendored.pip._vendor.distlib.util import parse_requirement
-from piptools._vendored.pip.req import parse_requirements
+from pip._vendor.distlib.util import parse_requirement
+from piptools._compat import parse_requirements
 from piptools.repositories import PyPIRepository
 from piptools.resolver import Resolver
 from piptools.scripts.compile import get_pip_command
@@ -44,6 +44,7 @@ from piptools.utils import format_requirement
 from medikit.events import subscribe
 from medikit.feature import ABSOLUTE_PRIORITY, Feature
 from medikit.feature.make import InstallScript, which
+from medikit.globals import PIP_VERSION
 from medikit.utils import get_override_warning_banner
 
 
@@ -297,7 +298,9 @@ class PythonFeature(Feature):
                 return [
                     "$(PIP) install $(PIP_INSTALL_OPTIONS) "
                     + _get_wheelhouse_options(extra=extra)
-                    + ' -U "pip ~=18.0" wheel',
+                    + ' -U "pip '
+                    + PIP_VERSION
+                    + '" wheel',
                     "$(PIP) install $(PIP_INSTALL_OPTIONS) "
                     + _get_wheelhouse_options(extra=extra)
                     + " -U $("
@@ -340,7 +343,7 @@ class PythonFeature(Feature):
 
             def _get_install_commands(extra=None):
                 return [
-                    '$(PIP) install $(PIP_INSTALL_OPTIONS) -U "pip ~=18.0" wheel',
+                    '$(PIP) install $(PIP_INSTALL_OPTIONS) -U "pip ' + PIP_VERSION + '" wheel',
                     "$(PIP) install $(PIP_INSTALL_OPTIONS) -U $("
                     + _get_reqs_inline_varname(extra=extra)
                     + ") -r $("

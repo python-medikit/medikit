@@ -10,6 +10,7 @@ from medikit.feature.make.config import MakeConfig
 from medikit.feature.make.events import MakefileEvent
 from medikit.feature.make.resources import MakefileTarget, Makefile, InstallScript, CleanScript
 from medikit.feature.make.utils import which
+from medikit.globals import PIP_VERSION
 from medikit.structs import Script
 
 __all__ = [
@@ -89,8 +90,8 @@ class MakeFeature(Feature):
 
         self.makefile.add_target(
             "medikit",
-            '@$(PYTHON) -c {!r} || $(PYTHON) -m pip install -U "pip ~=18.0" "medikit>=$(MEDIKIT_VERSION)"'.format(
-                "; ".join(source)
+            '@$(PYTHON) -c {!r} || $(PYTHON) -m pip install -U "pip {PIP_VERSION}" "medikit>=$(MEDIKIT_VERSION)"'.format(
+                "; ".join(source), PIP_VERSION=PIP_VERSION
             ),
             phony=True,
             hidden=True,
