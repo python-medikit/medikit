@@ -1,7 +1,8 @@
 from pip._vendor.distlib.util import parse_requirement
 
 from medikit.events import subscribe
-from . import Feature, SUPPORT_PRIORITY
+
+from . import SUPPORT_PRIORITY, Feature
 
 
 class SphinxConfig(Feature.Config):

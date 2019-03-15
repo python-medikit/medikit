@@ -1,5 +1,5 @@
 from medikit.feature.docker import DockerFeature
-from medikit.feature.make import MakefileEvent, Makefile
+from medikit.feature.make import Makefile, MakefileEvent
 from medikit.testing import FeatureTestCase
 
 PACKAGE_NAME = 'bar'

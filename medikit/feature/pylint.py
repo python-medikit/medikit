@@ -6,7 +6,7 @@ This feature may be outdated.
 """
 from medikit.events import subscribe
 
-from . import Feature, SUPPORT_PRIORITY
+from . import SUPPORT_PRIORITY, Feature
 
 
 class PylintFeature(Feature):

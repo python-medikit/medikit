@@ -1,4 +1,4 @@
-from medikit.commands import InitCommand, UpdateCommand, PipelineCommand
+from medikit.commands import InitCommand, PipelineCommand, UpdateCommand
 from medikit.commands.base import Command
 
 

@@ -3,8 +3,8 @@ from unittest import TestCase
 import pytest
 
 from medikit.events import ProjectEvent
-from medikit.feature.make import MakefileEvent, Makefile, MakeFeature
-from medikit.feature.python import PythonFeature, PythonConfig
+from medikit.feature.make import MakeFeature, Makefile, MakefileEvent
+from medikit.feature.python import PythonConfig, PythonFeature
 from medikit.testing import FeatureTestCase
 
 PACKAGE_NAME = 'foo.bar'

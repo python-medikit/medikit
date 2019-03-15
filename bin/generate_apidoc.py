@@ -1,7 +1,8 @@
 import os
 from textwrap import dedent
 
-from jinja2 import Template, Environment
+from jinja2 import Environment, Template
+
 from medikit.config.loader import load_feature_extensions
 from medikit.settings import DEFAULT_FEATURES
 

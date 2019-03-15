@@ -6,7 +6,8 @@ Adds the pytest testing framework to your project.
 import os
 
 from medikit.events import subscribe
-from . import Feature, SUPPORT_PRIORITY
+
+from . import SUPPORT_PRIORITY, Feature
 
 
 class PytestFeature(Feature):

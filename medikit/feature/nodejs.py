@@ -10,7 +10,7 @@ import os
 import runpy
 
 from medikit.events import subscribe
-from medikit.feature import Feature, LAST_PRIORITY
+from medikit.feature import LAST_PRIORITY, Feature
 from medikit.feature.make import which
 from medikit.steps.version import PythonVersion
 

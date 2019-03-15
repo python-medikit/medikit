@@ -42,8 +42,8 @@ from piptools.scripts.compile import get_pip_command
 from piptools.utils import format_requirement
 
 from medikit.events import subscribe
-from medikit.feature import Feature, ABSOLUTE_PRIORITY
-from medikit.feature.make import which, InstallScript
+from medikit.feature import ABSOLUTE_PRIORITY, Feature
+from medikit.feature.make import InstallScript, which
 from medikit.utils import get_override_warning_banner
 
 

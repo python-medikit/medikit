@@ -2,9 +2,10 @@
 # All changes will be overriden.
 # Edit Projectfile and run “make update” (or “medikit update”) to regenerate.
 
-from setuptools import setup, find_packages
 from codecs import open
 from os import path
+
+from setuptools import find_packages, setup
 
 here = path.abspath(path.dirname(__file__))
 

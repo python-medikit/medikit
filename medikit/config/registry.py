@@ -7,6 +7,7 @@ from contextlib import contextmanager
 from stevedore import ExtensionManager
 
 from medikit.pipeline import Pipeline
+from medikit.utils import run_command
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +67,7 @@ class ConfigurationRegistry():
     def get_version(self):
         if 'python' in self:
             try:
-                return self.exec('python setup.py --version')
+                return run_command('python setup.py --version')
             except RuntimeError:
                 pass  # ignore and fallback to alternative version getters
 

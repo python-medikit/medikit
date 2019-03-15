@@ -1,10 +1,9 @@
 import logging
 import textwrap
-
 from collections import OrderedDict
-from whistle import Event, EventDispatcher
 
 from mondrian import term
+from whistle import Event, EventDispatcher
 
 logger = logging.getLogger()
 

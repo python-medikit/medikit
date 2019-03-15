@@ -7,7 +7,8 @@ import os
 import random
 
 from medikit.events import subscribe
-from . import Feature, SUPPORT_PRIORITY
+
+from . import SUPPORT_PRIORITY, Feature
 
 random = random.SystemRandom()
 

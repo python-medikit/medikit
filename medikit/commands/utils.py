@@ -2,7 +2,7 @@ import os
 from collections import OrderedDict
 
 from medikit.config import read_configuration
-from medikit.settings import DEFAULT_FILES, DEFAULT_FEATURES
+from medikit.settings import DEFAULT_FEATURES, DEFAULT_FILES
 
 
 def _read_configuration(dispatcher, config_filename):

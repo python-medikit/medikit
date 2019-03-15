@@ -2,6 +2,8 @@ import shlex
 import subprocess
 from logging import getLogger
 
+from medikit.utils import run_command
+
 
 class Step:
     @property
@@ -43,10 +45,4 @@ class Step:
         pass
 
     def exec(self, command):
-        self.logger.info('Running command %s', command)
-        result = subprocess.run(shlex.split(command), stdout=subprocess.PIPE)
-        if result.returncode:
-            raise RuntimeError(
-                '"{command}" exited with status {returncode}.'.format(command=command, returncode=result.returncode)
-            )
-        return result.stdout.decode('utf-8').strip()
+        return run_command(command, logger=self.logger)

@@ -11,7 +11,7 @@ import os
 
 from medikit import settings
 from medikit.events import subscribe
-from medikit.feature import Feature, SUPPORT_PRIORITY, ABSOLUTE_PRIORITY
+from medikit.feature import ABSOLUTE_PRIORITY, SUPPORT_PRIORITY, Feature
 from medikit.structs import Script
 
 

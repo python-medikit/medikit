@@ -1,5 +1,5 @@
 from medikit.events import ProjectEvent
-from medikit.feature.make import MakefileEvent, Makefile
+from medikit.feature.make import Makefile, MakefileEvent
 from medikit.feature.pytest import PytestFeature
 from medikit.testing import FeatureTestCase
 

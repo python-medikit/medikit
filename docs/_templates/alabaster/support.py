@@ -1,8 +1,8 @@
 # flake8: noqa
 
 from pygments.style import Style
-from pygments.token import Keyword, Name, Comment, String, Error, \
-     Number, Operator, Generic, Whitespace, Punctuation, Other, Literal
+from pygments.token import (Comment, Error, Generic, Keyword, Literal, Name, Number, Operator, Other, Punctuation,
+                            String, Whitespace)
 
 
 # Originally based on FlaskyStyle which was based on 'tango'.

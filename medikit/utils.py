@@ -1,9 +1,14 @@
 import datetime
 import keyword
+import logging
+import shlex
+import subprocess
 import textwrap
 import tokenize
 
 import medikit
+
+logger = logging.getLogger(__name__)
 
 
 def is_identifier(ident):
@@ -68,3 +73,13 @@ def get_override_warning_banner(*, prefix='# ', above=None, bellow=None):
             )
         )
     )
+
+
+def run_command(command, *, logger=logger):
+    logger.info('Running command %s', command)
+    result = subprocess.run(shlex.split(command), stdout=subprocess.PIPE)
+    if result.returncode:
+        raise RuntimeError(
+            '"{command}" exited with status {returncode}.'.format(command=command, returncode=result.returncode)
+        )
+    return result.stdout.decode('utf-8').strip()
