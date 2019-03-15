@@ -6,6 +6,7 @@ Changelog
 - :feature:`0` Python: Upgraded to pip 19.x.
 - :feature:`0` Python: Upgraded to pip-tools 3.x.
 - :feature:`0` Yapf: Deprecated in favor of format that implements the same logic, but more.
+- :feature:`0` Add managed resource concept so some file types can be generated and overriden in a content-aware manner.
 - :release:`0.7.1 <2019-03-15>`
 - :bug:`0` Remove deserialization warning (means nothing important).
 - :release:`0.7.0 <2019-03-15>`

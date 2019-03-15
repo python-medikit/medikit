@@ -20,7 +20,7 @@ class FeatureTestCase(TestCase):
         return feature, dispatcher
 
     def create_config(self):
-        config = ConfigurationRegistry()
+        config = ConfigurationRegistry(self.create_dispatcher())
         if len(self.required_features):
             config.require(*self.required_features)
         return config
