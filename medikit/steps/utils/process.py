@@ -24,7 +24,7 @@ class Process(object):
     def run(self, events=None, ignore_signals=False):
         self._events = events
         self._child = self._child_ctor(self.cmd, env=self.env, cwd=self.cwd)
-        self._send_message({'pid': self._child.pid}, type='start')
+        self._send_message({"pid": self._child.pid}, type="start")
 
         # Don't pay attention to SIGINT/SIGTERM. The process itself is
         # considered unkillable, and will only exit when its child (the shell
@@ -33,33 +33,33 @@ class Process(object):
             signal.signal(signal.SIGINT, signal.SIG_IGN)
             signal.signal(signal.SIGTERM, signal.SIG_IGN)
 
-        for line in iter(self._child.stdout.readline, b''):
+        for line in iter(self._child.stdout.readline, b""):
             if not self.quiet:
                 self._send_message(line)
         self._child.stdout.close()
         self._child.wait()
 
-        self._send_message({'returncode': self._child.returncode}, type='stop')
+        self._send_message({"returncode": self._child.returncode}, type="stop")
 
-    def _send_message(self, data, type='line'):
+    def _send_message(self, data, type="line"):
         if self._events is not None:
             self._events.put(
                 Message(type=type, data=data, time=datetime.datetime.now(), name=self.name, colour=self.colour)
             )
 
 
-ON_WINDOWS = 'win32' in str(sys.platform).lower()
+ON_WINDOWS = "win32" in str(sys.platform).lower()
 
 
 class Popen(subprocess.Popen):
     def __init__(self, cmd, **kwargs):
-        start_new_session = kwargs.pop('start_new_session', True)
+        start_new_session = kwargs.pop("start_new_session", True)
         options = {
-            'stdout': subprocess.PIPE,
-            'stderr': subprocess.STDOUT,
-            'shell': True,
-            'bufsize': 1,
-            'close_fds': not ON_WINDOWS,
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.STDOUT,
+            "shell": True,
+            "bufsize": 1,
+            "close_fds": not ON_WINDOWS,
         }
         options.update(**kwargs)
 

@@ -16,10 +16,10 @@ class Step:
 
     @property
     def complete(self):
-        return self._state.get('complete', False)
+        return self._state.get("complete", False)
 
     def set_complete(self, value=True):
-        self._state['complete'] = bool(value)
+        self._state["complete"] = bool(value)
 
     def __init__(self):
         self._state = {}
@@ -27,7 +27,7 @@ class Step:
         self.config = None
 
     def __str__(self):
-        return '{}({})'.format(type(self).__name__, ', '.join(map(repr, self.__args__)))
+        return "{}({})".format(type(self).__name__, ", ".join(map(repr, self.__args__)))
 
     def get_state(self):
         return self._state

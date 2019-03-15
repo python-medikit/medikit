@@ -4,7 +4,7 @@ import stat
 
 from whistle import Event
 
-ENCODING = 'utf-8'
+ENCODING = "utf-8"
 
 
 class FileEvent(Event):
@@ -20,9 +20,9 @@ def File(dispatcher, name, *, executable=False, override=False):
     event = FileEvent(name, executable, override)
 
     if event.override or not os.path.exists(event.filename):
-        with open(event.filename, 'w+', encoding=ENCODING) as f:
+        with open(event.filename, "w+", encoding=ENCODING) as f:
             event.file = f
-            event = dispatcher.dispatch('medikit.on_file_opened', event)
+            event = dispatcher.dispatch("medikit.on_file_opened", event)
             yield f
             event.file = None
 
@@ -30,9 +30,9 @@ def File(dispatcher, name, *, executable=False, override=False):
             st = os.stat(event.filename)
             os.chmod(event.filename, st.st_mode | stat.S_IEXEC)
 
-        dispatcher.dispatch('medikit.on_file_closed', event)
+        dispatcher.dispatch("medikit.on_file_closed", event)
     else:
-        with open('/dev/null', 'w', encoding=ENCODING) as f:
+        with open("/dev/null", "w", encoding=ENCODING) as f:
             yield f
 
 
@@ -41,13 +41,13 @@ def NullFile(dispatcher, name, *, executable=False, override=False):
     event = FileEvent(name, executable, override)
 
     if event.override or not os.path.exists(event.filename):
-        with open('/dev/null', 'w', encoding=ENCODING) as f:
+        with open("/dev/null", "w", encoding=ENCODING) as f:
             event.file = f
-            event = dispatcher.dispatch('medikit.on_file_opened', event)
+            event = dispatcher.dispatch("medikit.on_file_opened", event)
             yield f
             event.file = None
 
-        dispatcher.dispatch('medikit.on_file_closed', event)
+        dispatcher.dispatch("medikit.on_file_closed", event)
     else:
-        with open('/dev/null', 'w', encoding=ENCODING) as f:
+        with open("/dev/null", "w", encoding=ENCODING) as f:
             yield f

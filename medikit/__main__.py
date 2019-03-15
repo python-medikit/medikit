@@ -27,24 +27,31 @@ def main(args=None):
         logger.setLevel(logging.DEBUG)
 
     options = vars(options)
-    command, handler = options.pop('command'), options.pop('_handler')
+    command, handler = options.pop("command"), options.pop("_handler")
 
-    config_filename = os.path.join(os.getcwd(), options.pop('target', '.'), options.pop('config'))
+    config_filename = os.path.join(os.getcwd(), options.pop("target", "."), options.pop("config"))
 
     version = medikit.__version__
     try:
-        if os.path.exists(os.path.join(os.path.dirname(os.path.dirname(medikit.__file__)), '.git')):
+        if os.path.exists(os.path.join(os.path.dirname(os.path.dirname(medikit.__file__)), ".git")):
             try:
-                version = check_output(['git', 'describe'], cwd=os.path.dirname(os.path.dirname(medikit.__file__)
-                                                                                )).decode('utf-8').strip() + ' (git)'
+                version = (
+                    check_output(["git", "describe"], cwd=os.path.dirname(os.path.dirname(medikit.__file__)))
+                    .decode("utf-8")
+                    .strip()
+                    + " (git)"
+                )
             except:
-                version = check_output(
-                    ['git', 'rev-parse', 'HEAD'], cwd=os.path.dirname(os.path.dirname(medikit.__file__))
-                ).decode('utf-8').strip()[0:7] + ' (git)'
+                version = (
+                    check_output(["git", "rev-parse", "HEAD"], cwd=os.path.dirname(os.path.dirname(medikit.__file__)))
+                    .decode("utf-8")
+                    .strip()[0:7]
+                    + " (git)"
+                )
     except:
-        warnings.warn('Git repository found, but could not find version number from the repository.')
+        warnings.warn("Git repository found, but could not find version number from the repository.")
 
-    print(mondrian.term.lightwhite_bg(mondrian.term.red('  ✚  Medikit v.' + version + '  ✚  ')))
+    print(mondrian.term.lightwhite_bg(mondrian.term.red("  ✚  Medikit v." + version + "  ✚  ")))
 
     if len(more_args):
         return handler(config_filename, more=more_args, **options)
@@ -52,5 +59,5 @@ def main(args=None):
         return handler(config_filename, **options)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

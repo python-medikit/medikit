@@ -12,7 +12,7 @@ from medikit.utils import run_command
 logger = logging.getLogger(__name__)
 
 
-class ConfigurationRegistry():
+class ConfigurationRegistry:
     def __init__(self):
         self._configs = {}
         self._features = {}
@@ -23,9 +23,9 @@ class ConfigurationRegistry():
             self._features[ext.name] = ext.plugin
 
         def on_load_feature_failure(mgr, entrypoint, err):
-            logger.exception('Exception caught while loading {}.'.format(entrypoint), err)
+            logger.exception("Exception caught while loading {}.".format(entrypoint), err)
 
-        mgr = ExtensionManager(namespace='medikit.feature', on_load_failure_callback=on_load_feature_failure)
+        mgr = ExtensionManager(namespace="medikit.feature", on_load_failure_callback=on_load_feature_failure)
         mgr.map(register_feature)
 
     def __getitem__(self, item):
@@ -46,34 +46,34 @@ class ConfigurationRegistry():
 
     @property
     def package_name(self):
-        if 'python' in self:
-            return self['python'].get('name')
+        if "python" in self:
+            return self["python"].get("name")
         else:
-            name = self.get_var('PACKAGE')
+            name = self.get_var("PACKAGE")
             if not name:
-                raise RuntimeError('You must define a package name, using either python.setup() or PACKAGE = ...')
+                raise RuntimeError("You must define a package name, using either python.setup() or PACKAGE = ...")
             return name
 
     def get_name(self):
         return self.package_name
 
     def get_version_file(self):
-        if 'python' in self:
-            return self['python'].version_file
-        elif self.get_var('VERSION_FILE'):
-            return self.get_var('VERSION_FILE')
-        return 'version.txt'
+        if "python" in self:
+            return self["python"].version_file
+        elif self.get_var("VERSION_FILE"):
+            return self.get_var("VERSION_FILE")
+        return "version.txt"
 
     def get_version(self):
-        if 'python' in self:
+        if "python" in self:
             try:
-                return run_command('python setup.py --version')
+                return run_command("python setup.py --version")
             except RuntimeError:
                 pass  # ignore and fallback to alternative version getters
 
         version_file = self.get_version_file()
-        if os.path.splitext(version_file)[1] == '.py':
-            return runpy.run_path(version_file).get('__version__')
+        if os.path.splitext(version_file)[1] == ".py":
+            return runpy.run_path(version_file).get("__version__")
         else:
             with open(version_file) as f:
                 return f.read().strip()
@@ -86,7 +86,7 @@ class ConfigurationRegistry():
             return self._require(args[0])
         elif len(args) > 1:
             return tuple(map(self._require, args))
-        raise ValueError('Empty.')
+        raise ValueError("Empty.")
 
     @contextmanager
     def pipeline(self, name):
@@ -100,7 +100,7 @@ class ConfigurationRegistry():
 
     def _require(self, name):
         if not name in self._features:
-            raise ValueError('Unknown feature {!r}.'.format(name))
+            raise ValueError("Unknown feature {!r}.".format(name))
 
         if name not in self._configs:
             self._configs[name] = self._features[name].Config()

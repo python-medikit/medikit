@@ -38,11 +38,11 @@ class Script(object):
         if not script:
             return []
         script = textwrap.dedent(str(script)).strip()
-        return script.split('\n')
+        return script.split("\n")
 
     def __iter__(self):
         for line in self.script:
             yield line
 
     def __str__(self):
-        return '\n'.join(self.__iter__())
+        return "\n".join(self.__iter__())

@@ -16,18 +16,21 @@ def deprecated_feature(deprecated_in, removed_in, feature, replacement):
     print(sys.warnoptions)
     if current_version < deprecated_in:
         warnings.warn(
-            'Using {} is pending deprecation starting at {} and will stop working at {}.\nPlease use {} instead.'.
-            format(feature, deprecated_in, removed_in, replacement), PendingDeprecationWarning
+            "Using {} is pending deprecation starting at {} and will stop working at {}.\nPlease use {} instead.".format(
+                feature, deprecated_in, removed_in, replacement
+            ),
+            PendingDeprecationWarning,
         )
         yield
     elif current_version < removed_in:
         warnings.warn(
-            'Using {} is deprecated since {} and will stop working at {}.\nPlease use {} instead.'.format(
+            "Using {} is deprecated since {} and will stop working at {}.\nPlease use {} instead.".format(
                 feature, deprecated_in, removed_in, replacement
-            ), DeprecationWarning
+            ),
+            DeprecationWarning,
         )
         yield
     else:
         raise RuntimeError(
-            'Using {} is not supported anymore since {}. Use {} instead.'.format(feature, removed_in, replacement)
+            "Using {} is not supported anymore since {}. Use {} instead.".format(feature, removed_in, replacement)
         )

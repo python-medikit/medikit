@@ -8,23 +8,17 @@ from medikit.commands.utils import _read_configuration
 from medikit.events import LoggingDispatcher
 from medikit.pipeline import ConfiguredPipeline, logger
 
-START = 'start'
-CONTINUE = 'continue'
-ABORT = 'abort'
-COMPLETE = 'complete'
+START = "start"
+CONTINUE = "continue"
+ABORT = "abort"
+COMPLETE = "complete"
 
 
 class PipelineCommand(Command):
     def add_arguments(self, parser):
-        parser.add_argument('pipeline', default=None, nargs='?')
-        parser.add_argument(
-            'action', choices=(
-                START,
-                CONTINUE,
-                ABORT,
-            ), nargs='?'
-        )
-        parser.add_argument('--force', '-f', action='store_true')
+        parser.add_argument("pipeline", default=None, nargs="?")
+        parser.add_argument("action", choices=(START, CONTINUE, ABORT), nargs="?")
+        parser.add_argument("--force", "-f", action="store_true")
 
     @classmethod
     def handle(cls, config_filename, *, pipeline, action, force=False, verbose=False):
@@ -33,21 +27,21 @@ class PipelineCommand(Command):
 
         if not pipeline:
             raise ValueError(
-                'You must choose a pipeline to run. Available choices: {}.'.format(
-                    ', '.join(sorted(config.pipelines.keys()))
+                "You must choose a pipeline to run. Available choices: {}.".format(
+                    ", ".join(sorted(config.pipelines.keys()))
                 )
             )
 
         if not pipeline in config.pipelines:
             raise ValueError(
-                'Undefined pipeline {!r}. Valid choices are: {}.'.format(
-                    pipeline, ', '.join(sorted(config.pipelines.keys()))
+                "Undefined pipeline {!r}. Valid choices are: {}.".format(
+                    pipeline, ", ".join(sorted(config.pipelines.keys()))
                 )
             )
 
         pipeline = ConfiguredPipeline(pipeline, config.pipelines[pipeline], config)
         path = os.path.dirname(config_filename)
-        pipeline_file = os.path.join(path, '.medikit/pipelines', pipeline.name + '.json')
+        pipeline_file = os.path.join(path, ".medikit/pipelines", pipeline.name + ".json")
         pipeline_dirname = os.path.dirname(pipeline_file)
         if not os.path.exists(pipeline_dirname):
             os.makedirs(pipeline_dirname)
@@ -57,7 +51,7 @@ class PipelineCommand(Command):
             )
 
         if not action:
-            raise RuntimeError('Choose a pipeline action: start, continue, abort.')
+            raise RuntimeError("Choose a pipeline action: start, continue, abort.")
 
         while action:
             if action == START:
@@ -68,14 +62,14 @@ class PipelineCommand(Command):
                 action = cls._handle_abort(pipeline, filename=pipeline_file)
             elif action == COMPLETE:
                 target = os.path.join(
-                    '.medikit/pipelines',
-                    pipeline.name + '.' + str(datetime.datetime.now()).replace(':', '.').replace(' ', '.') + '.json'
+                    ".medikit/pipelines",
+                    pipeline.name + "." + str(datetime.datetime.now()).replace(":", ".").replace(" ", ".") + ".json",
                 )
                 os.rename(pipeline_file, os.path.join(path, target))
-                logger.info('Pipeline complete. State saved as “{}”.'.format(target))
+                logger.info("Pipeline complete. State saved as “{}”.".format(target))
                 break
             else:
-                raise ValueError('Invalid action “{}”.'.format(action))
+                raise ValueError("Invalid action “{}”.".format(action))
             force = False
 
     @classmethod
@@ -83,8 +77,9 @@ class PipelineCommand(Command):
         if os.path.exists(filename):
             if not force:
                 raise FileExistsError(
-                    'Already started, use `medikit pipeline {name} start --force` to force a restart, or use `medikit pipeline {name} continue`.'
-                    .format(name=pipeline.name)
+                    "Already started, use `medikit pipeline {name} start --force` to force a restart, or use `medikit pipeline {name} continue`.".format(
+                        name=pipeline.name
+                    )
                 )
             os.unlink(filename)
 
@@ -92,7 +87,7 @@ class PipelineCommand(Command):
         pipeline.init()
 
         # Write the new, empty state file
-        with open(filename, 'w+') as f:
+        with open(filename, "w+") as f:
             f.write(pipeline.serialize())
 
         # "Continue", until step 1.
@@ -102,8 +97,9 @@ class PipelineCommand(Command):
     def _handle_continue(cls, pipeline, *, filename):
         if not os.path.exists(filename):
             raise FileNotFoundError(
-                'Pipeline “{}” not started, hence you cannot “continue” it. Are you looking for `medikit pipeline {name} start`?'
-                .format(name=pipeline.name)
+                "Pipeline “{}” not started, hence you cannot “continue” it. Are you looking for `medikit pipeline {name} start`?".format(
+                    name=pipeline.name
+                )
             )
 
         # XXX TODO add a lock file during the step and unlock at the end.
@@ -114,10 +110,10 @@ class PipelineCommand(Command):
             step = pipeline.next()
             name, current, size, descr = pipeline.name, pipeline.current, len(pipeline), str(step)
             logger.info(
-                term.black(' » ').join(
+                term.black(" » ").join(
                     (
-                        term.lightblue('{} ({}/{})'.format(name.upper(), current, size)),
-                        term.yellow('⇩ BEGIN'),
+                        term.lightblue("{} ({}/{})".format(name.upper(), current, size)),
+                        term.yellow("⇩ BEGIN"),
                         term.lightblack(descr),
                     )
                 )
@@ -125,26 +121,24 @@ class PipelineCommand(Command):
             step.run(pipeline.meta)
             if step.complete:
                 logger.info(
-                    term.black(' » ').
-                    join((
-                        term.lightblue('{} ({}/{})'.format(name.upper(), current, size)),
-                        term.green('SUCCESS'),
-                    )) + '\n'
+                    term.black(" » ").join(
+                        (term.lightblue("{} ({}/{})".format(name.upper(), current, size)), term.green("SUCCESS"))
+                    )
+                    + "\n"
                 )
             else:
                 logger.info(
-                    term.black(' » ').
-                    join((
-                        term.lightblue('{} ({}/{})'.format(name.upper(), current, size)),
-                        term.red('FAILED'),
-                    )) + '\n'
+                    term.black(" » ").join(
+                        (term.lightblue("{} ({}/{})".format(name.upper(), current, size)), term.red("FAILED"))
+                    )
+                    + "\n"
                 )
                 return
 
         except StopIteration:
             return COMPLETE
 
-        with open(filename, 'w+') as f:
+        with open(filename, "w+") as f:
             f.write(pipeline.serialize())
 
         return CONTINUE

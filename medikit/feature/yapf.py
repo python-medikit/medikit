@@ -16,35 +16,32 @@ from medikit.structs import Script
 
 
 class YapfFeature(Feature):
-    requires = {'python'}
+    requires = {"python"}
 
-    @subscribe('medikit.feature.python.on_generate')
+    @subscribe("medikit.feature.python.on_generate")
     def on_python_generate(self, event):
-        event.config['python'].add_requirements(dev=['yapf'])
+        event.config["python"].add_requirements(dev=["yapf"])
 
-    @subscribe('medikit.feature.make.on_generate', priority=SUPPORT_PRIORITY)
+    @subscribe("medikit.feature.make.on_generate", priority=SUPPORT_PRIORITY)
     def on_make_generate(self, event):
         makefile = event.makefile
-        makefile['YAPF'] = '$(PYTHON) -m yapf'
-        makefile['YAPF_OPTIONS'] = '-rip'
+        makefile["YAPF"] = "$(PYTHON) -m yapf"
+        makefile["YAPF_OPTIONS"] = "-rip"
         makefile.add_target(
-            'format',
-            Script('\n'.join([
-                '$(YAPF) $(YAPF_OPTIONS) .',
-                '$(YAPF) $(YAPF_OPTIONS) Projectfile',
-            ])),
-            deps=('install-dev', ),
+            "format",
+            Script("\n".join(["$(YAPF) $(YAPF_OPTIONS) .", "$(YAPF) $(YAPF_OPTIONS) Projectfile"])),
+            deps=("install-dev",),
             phony=True,
-            doc='Reformats the whole python codebase using yapf.'
+            doc="Reformats the whole python codebase using yapf.",
         )
 
-    @subscribe('medikit.on_start', priority=SUPPORT_PRIORITY)
+    @subscribe("medikit.on_start", priority=SUPPORT_PRIORITY)
     def on_start(self, event):
-        self.render_file('.style.yapf', 'yapf/style.yapf.j2')
+        self.render_file(".style.yapf", "yapf/style.yapf.j2")
 
-    @subscribe('medikit.on_start', priority=ABSOLUTE_PRIORITY - 1)
+    @subscribe("medikit.on_start", priority=ABSOLUTE_PRIORITY - 1)
     def on_before_start(self, event):
-        style_config = os.path.join(os.getcwd(), '.style.yapf')
+        style_config = os.path.join(os.getcwd(), ".style.yapf")
         if os.path.exists(style_config):
-            self.dispatcher.info('YAPF_STYLE_CONFIG = ' + style_config)
+            self.dispatcher.info("YAPF_STYLE_CONFIG = " + style_config)
             settings.YAPF_STYLE_CONFIG = style_config

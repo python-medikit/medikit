@@ -40,7 +40,7 @@ class Command:
         """
         The actual logic of the command. Subclasses must implement this method.
         """
-        raise NotImplementedError('Subclasses of {} must provide a handle() method'.format(Command.__name__))
+        raise NotImplementedError("Subclasses of {} must provide a handle() method".format(Command.__name__))
 
     @contextmanager
     def create_child(self, dest, *, required=False):

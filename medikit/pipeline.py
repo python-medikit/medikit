@@ -41,7 +41,7 @@ class ConfiguredPipeline:
     def __init__(self, name, pipeline, config=None):
         self.name = name
         self.steps = pipeline.steps
-        self.meta = {'created': str(datetime.datetime.now())}
+        self.meta = {"created": str(datetime.datetime.now())}
         self.config = config
 
     def init(self):
@@ -52,7 +52,7 @@ class ConfiguredPipeline:
         for step in self.steps:
             if not step.complete:
                 return step
-        raise StopIteration('No step left.')
+        raise StopIteration("No step left.")
 
     @property
     def current(self):
@@ -71,23 +71,20 @@ class ConfiguredPipeline:
     def serialize(self):
         return json.dumps(
             {
-                'meta': {
-                    **self.meta,
-                    'updated': str(datetime.datetime.now()),
-                },
-                'steps': [[get_identity(step), step.get_state()] for step in self.steps]
+                "meta": {**self.meta, "updated": str(datetime.datetime.now())},
+                "steps": [[get_identity(step), step.get_state()] for step in self.steps],
             },
-            indent=4
+            indent=4,
         )
 
     def unserialize(self, serialized):
         serialized = json.loads(serialized)
-        self.meta = serialized.get('meta', {})
-        steps = serialized.get('steps', [])
+        self.meta = serialized.get("meta", {})
+        steps = serialized.get("steps", [])
         if len(steps) != len(self.steps):
-            raise IOError('Invalid pipeline state storage.')
+            raise IOError("Invalid pipeline state storage.")
         for (identity, state), step in zip(steps, self.steps):
             if get_identity(step) != identity:
-                raise IOError('Mismatch on step identity.')
+                raise IOError("Mismatch on step identity.")
             step.set_state(state)
             step.config = self.config

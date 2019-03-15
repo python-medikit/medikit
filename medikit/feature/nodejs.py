@@ -20,13 +20,7 @@ class NodeJSConfig(Feature.Config):
 
     def __init__(self):
         self._setup = {}
-        self._dependencies = {
-            None: {},
-            'dev': {},
-            'peer': {},
-            'bundled': {},
-            'optional': {},
-        }
+        self._dependencies = {None: {}, "dev": {}, "peer": {}, "bundled": {}, "optional": {}}
         self.base_dir = None
 
     def setup(self, *, base_dir=None):
@@ -43,63 +37,58 @@ class NodeJSConfig(Feature.Config):
 
     def get_dependencies(self):
         return {
-            deptype + 'Dependencies' if deptype else 'dependencies': deps
-            for deptype, deps in self._dependencies.items() if len(deps)
+            deptype + "Dependencies" if deptype else "dependencies": deps
+            for deptype, deps in self._dependencies.items()
+            if len(deps)
         }
 
     def __add_dependencies(self, deps, deptype=None):
         if len(deps):
             if deptype not in self._dependencies:
-                raise KeyError('Invalid dependency type ' + deptype)
+                raise KeyError("Invalid dependency type " + deptype)
         self._dependencies[deptype].update(deps)
 
 
 class NodeJSFeature(Feature):
-    requires = {'python', 'make'}
+    requires = {"python", "make"}
 
     Config = NodeJSConfig
 
-    @subscribe('medikit.feature.make.on_generate')
+    @subscribe("medikit.feature.make.on_generate")
     def on_make_generate(self, event):
-        event.makefile['YARN'] = which('yarn')
-        event.makefile['NODE'] = which('node')
+        event.makefile["YARN"] = which("yarn")
+        event.makefile["NODE"] = which("node")
 
-        event.makefile.get_target('install').install += [
-            '$(YARN) install --production',
-        ]
+        event.makefile.get_target("install").install += ["$(YARN) install --production"]
 
-        event.makefile.get_target('install-dev').install += [
-            '$(YARN) install',
-        ]
+        event.makefile.get_target("install-dev").install += ["$(YARN) install"]
 
-    @subscribe('medikit.on_start')
+    @subscribe("medikit.on_start")
     def on_start(self, event):
-        name = event.config['python'].get('name')
+        name = event.config["python"].get("name")
 
         current_version = PythonVersion.coerce(
-            runpy.run_path(event.config['python'].version_file).get('__version__'), partial=True
+            runpy.run_path(event.config["python"].version_file).get("__version__"), partial=True
         )
         current_version.partial = False
 
         package = {
-            'name': name,
-            'version': str(current_version),
-            'description': event.config['python'].get('description'),
-            'author': event.config['python'].get('author'),
-            'license': event.config['python'].get('license'),
-            **event.config['nodejs'].get_dependencies()
+            "name": name,
+            "version": str(current_version),
+            "description": event.config["python"].get("description"),
+            "author": event.config["python"].get("author"),
+            "license": event.config["python"].get("license"),
+            **event.config["nodejs"].get_dependencies(),
         }
 
-        base_dir = event.config['nodejs'].base_dir or '.'
+        base_dir = event.config["nodejs"].base_dir or "."
 
         self.render_file_inline(
-            os.path.join(base_dir, 'package.json'),
-            json.dumps(package, sort_keys=True, indent=4),
-            override=True,
+            os.path.join(base_dir, "package.json"), json.dumps(package, sort_keys=True, indent=4), override=True
         )
 
-    @subscribe('medikit.on_end', priority=LAST_PRIORITY)
+    @subscribe("medikit.on_end", priority=LAST_PRIORITY)
     def on_end(self, event):
-        base_dir = event.config['nodejs'].base_dir or '.'
-        os.system('cd {base_dir}; yarn install'.format(base_dir=base_dir))
-        os.system('cd {base_dir}; git add yarn.lock'.format(base_dir=base_dir))
+        base_dir = event.config["nodejs"].base_dir or "."
+        os.system("cd {base_dir}; yarn install".format(base_dir=base_dir))
+        os.system("cd {base_dir}; git add yarn.lock".format(base_dir=base_dir))

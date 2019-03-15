@@ -11,7 +11,7 @@ from medikit.utils import format_file_content
 def read_configuration(dispatcher, filename, variables, features, files):
     config = ConfigurationRegistry()
     setup_default_pipelines(config)
-    default_context = {'listen': dispatcher.listen}
+    default_context = {"listen": dispatcher.listen}
 
     # monkey patch placeholders
     _listen, _pipeline, _require = medikit.listen, medikit.pipeline, medikit.require
@@ -30,9 +30,9 @@ def read_configuration(dispatcher, filename, variables, features, files):
         config.require(feature)
 
     # Deprecated: enabled and disabled features.
-    enable_features, disable_features = context.pop('enable_features', ()), context.pop('disable_features', ())
+    enable_features, disable_features = context.pop("enable_features", ()), context.pop("disable_features", ())
     if len(enable_features) or len(disable_features):
-        with deprecated_feature('0.5.0', '0.6.0', 'Using "enable_features" and "disable_features"', 'require()'):
+        with deprecated_feature("0.5.0", "0.6.0", 'Using "enable_features" and "disable_features"', "require()"):
             for feature in set(enable_features) - set(disable_features):
                 config.require(feature)
 

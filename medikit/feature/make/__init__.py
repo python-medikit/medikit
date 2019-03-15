@@ -13,14 +13,14 @@ from medikit.feature.make.utils import which
 from medikit.structs import Script
 
 __all__ = [
-    'CleanScript',
-    'InstallScript',
-    'MakeConfig',
-    'MakeFeature',
-    'Makefile',
-    'MakefileEvent',
-    'MakefileTarget',
-    'which',
+    "CleanScript",
+    "InstallScript",
+    "MakeConfig",
+    "MakeFeature",
+    "Makefile",
+    "MakefileEvent",
+    "MakefileTarget",
+    "which",
 ]
 
 
@@ -30,7 +30,7 @@ class MakeFeature(Feature):
     def configure(self):
         self.makefile = Makefile()
 
-    @subscribe('medikit.on_start', priority=HIGH_PRIORITY)
+    @subscribe("medikit.on_start", priority=HIGH_PRIORITY)
     def on_start(self, event):
         """
         :param ProjectEvent event:
@@ -39,31 +39,28 @@ class MakeFeature(Feature):
         for k in event.variables:
             self.makefile[k.upper()] = event.variables[k]
 
-        self.makefile.updateleft((
-            'QUICK',
-            '',
-        ), )
+        self.makefile.updateleft(("QUICK", ""))
 
         self.makefile.add_install_target()
 
-        for extra in event.config['make'].extras:
+        for extra in event.config["make"].extras:
             self.makefile.add_install_target(extra)
 
-        self.makefile.add_target('quick', Script('@printf ""'), phony=True, hidden=True)
+        self.makefile.add_target("quick", Script('@printf ""'), phony=True, hidden=True)
 
         self.dispatcher.dispatch(
             MakeConfig.on_generate, MakefileEvent(event.config.package_name, self.makefile, event.config)
         )
 
-        if event.config['make'].include_medikit_targets:
-            self.add_medikit_targets(event.config['make'])
+        if event.config["make"].include_medikit_targets:
+            self.add_medikit_targets(event.config["make"])
 
-        if event.config['make'].includes:
-            self.add_includes(event.config['make'].includes)
+        if event.config["make"].includes:
+            self.add_includes(event.config["make"].includes)
 
         # Recipe courtesy of https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
         self.makefile.add_target(
-            'help',
+            "help",
             r"""
             @echo "Available commands:"
             @echo
@@ -71,52 +68,52 @@ class MakeFeature(Feature):
             @echo
             """,
             phony=True,
-            doc='Shows available commands.'
+            doc="Shows available commands.",
         )
 
         # Actual rendering of the Makefile
-        self.render_file_inline('Makefile', self.makefile.__str__(), override=True)
+        self.render_file_inline("Makefile", self.makefile.__str__(), override=True)
 
     def add_medikit_targets(self, config):
-        if not 'PYTHON' in self.makefile:
-            self.makefile['PYTHON'] = which('python')
-        self.makefile['MEDIKIT'] = '$(PYTHON) -m medikit'
-        self.makefile['MEDIKIT_UPDATE_OPTIONS'] = ''
-        self.makefile['MEDIKIT_VERSION'] = medikit.__version__
+        if not "PYTHON" in self.makefile:
+            self.makefile["PYTHON"] = which("python")
+        self.makefile["MEDIKIT"] = "$(PYTHON) -m medikit"
+        self.makefile["MEDIKIT_UPDATE_OPTIONS"] = ""
+        self.makefile["MEDIKIT_VERSION"] = medikit.__version__
 
         source = [
-            'import medikit, pip, sys',
-            'from packaging.version import Version',
+            "import medikit, pip, sys",
+            "from packaging.version import Version",
             'sys.exit(0 if (Version(medikit.__version__) >= Version("$(MEDIKIT_VERSION)")) and (Version(pip.__version__) < Version("10")) else 1)',
         ]
 
         self.makefile.add_target(
-            'medikit',
+            "medikit",
             '@$(PYTHON) -c {!r} || $(PYTHON) -m pip install -U "pip ~=18.0" "medikit>=$(MEDIKIT_VERSION)"'.format(
-                '; '.join(source)
+                "; ".join(source)
             ),
             phony=True,
             hidden=True,
-            doc='Checks installed medikit version and updates it if it is outdated.'
+            doc="Checks installed medikit version and updates it if it is outdated.",
         )
 
         self.makefile.add_target(
-            'update',
-            '$(MEDIKIT) update $(MEDIKIT_UPDATE_OPTIONS)',
-            deps=('medikit', ),
+            "update",
+            "$(MEDIKIT) update $(MEDIKIT_UPDATE_OPTIONS)",
+            deps=("medikit",),
             phony=True,
-            doc='''Update project artifacts using medikit.'''
+            doc="""Update project artifacts using medikit.""",
         )
 
         # TODO this should adapt to langauges included, and be removed if no language
         # For example, requirements*.txt are specific to python, using classic setuptools.
         self.makefile.add_target(
-            'update-requirements',
+            "update-requirements",
             'MEDIKIT_UPDATE_OPTIONS="--override-requirements" $(MAKE) update',
             phony=True,
-            doc='''Update project artifacts using medikit, including requirements files.'''
+            doc="""Update project artifacts using medikit, including requirements files.""",
         )
 
     def add_includes(self, includes):
         for include in includes:
-            self.makefile.header.append('include ' + include)
+            self.makefile.header.append("include " + include)

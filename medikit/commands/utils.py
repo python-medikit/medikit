@@ -13,11 +13,11 @@ def _read_configuration(dispatcher, config_filename):
     :return tuple: (variables, features, files, config)
     """
     if not os.path.exists(config_filename):
-        raise IOError('Could not find project description file (looked in {})'.format(config_filename))
+        raise IOError("Could not find project description file (looked in {})".format(config_filename))
 
     variables = dict(PACKAGE=None)
 
-    files = {filename: '' for filename in DEFAULT_FILES}
+    files = {filename: "" for filename in DEFAULT_FILES}
     features = set(DEFAULT_FEATURES)
 
     return read_configuration(dispatcher, config_filename, variables, features, files)

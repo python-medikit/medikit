@@ -10,10 +10,10 @@ from medikit.feature import Feature
 from medikit.feature.make import which
 from medikit.structs import Script
 
-DEFAULT_NAME = '$(shell echo $(PACKAGE) | tr A-Z a-z)'
+DEFAULT_NAME = "$(shell echo $(PACKAGE) | tr A-Z a-z)"
 
-DOCKER = 'docker'
-ROCKER = 'rocker'
+DOCKER = "docker"
+ROCKER = "rocker"
 
 
 class DockerConfig(Feature.Config):
@@ -35,7 +35,7 @@ class DockerConfig(Feature.Config):
     @property
     def compose_file(self):
         if self._compose_file is None:
-            return 'docker-compose.yml'
+            return "docker-compose.yml"
         if self._compose_file is False:
             return None
         return self._compose_file
@@ -47,7 +47,7 @@ class DockerConfig(Feature.Config):
     @property
     def build_file(self):
         if self._build_file is None:
-            return self.builder.title() + 'file'
+            return self.builder.title() + "file"
         return self._build_file
 
     @build_file.setter
@@ -56,23 +56,23 @@ class DockerConfig(Feature.Config):
 
     def _get_default_variables(self):
         return dict(
-            DOCKER=which('docker'),
-            DOCKER_BUILD='$(DOCKER) image build',
-            DOCKER_BUILD_OPTIONS='--build-arg IMAGE=$(DOCKER_IMAGE) --build-arg TAG=$(DOCKER_TAG)',
-            DOCKER_PUSH='$(DOCKER) image push',
-            DOCKER_PUSH_OPTIONS='',
-            DOCKER_RUN='$(DOCKER) run',
-            DOCKER_RUN_COMMAND='',
-            DOCKER_RUN_NAME='$(PACKAGE)_run',
-            DOCKER_RUN_OPTIONS='',
-            DOCKER_RUN_PORTS='',
+            DOCKER=which("docker"),
+            DOCKER_BUILD="$(DOCKER) image build",
+            DOCKER_BUILD_OPTIONS="--build-arg IMAGE=$(DOCKER_IMAGE) --build-arg TAG=$(DOCKER_TAG)",
+            DOCKER_PUSH="$(DOCKER) image push",
+            DOCKER_PUSH_OPTIONS="",
+            DOCKER_RUN="$(DOCKER) run",
+            DOCKER_RUN_COMMAND="",
+            DOCKER_RUN_NAME="$(PACKAGE)_run",
+            DOCKER_RUN_OPTIONS="",
+            DOCKER_RUN_PORTS="",
         )
 
     def _get_default_image_variables(self):
         return dict(
-            DOCKER_BUILD_FILE='',  # will be set at runtime.
-            DOCKER_IMAGE='',  # will be set at runtime, see #71.
-            DOCKER_TAG='$(VERSION)',
+            DOCKER_BUILD_FILE="",  # will be set at runtime.
+            DOCKER_IMAGE="",  # will be set at runtime, see #71.
+            DOCKER_TAG="$(VERSION)",
         )
 
     def disable_builder(self):
@@ -83,27 +83,24 @@ class DockerConfig(Feature.Config):
     def use_default_builder(self):
         self.builder = DOCKER
 
-        self._variables = [
-            self._get_default_variables(),
-            self._get_default_image_variables(),
-        ]
+        self._variables = [self._get_default_variables(), self._get_default_image_variables()]
 
         self.scripts = Namespace(
             build=Script(
-                '$(DOCKER_BUILD) -f $(DOCKER_BUILD_FILE) $(DOCKER_BUILD_OPTIONS) -t $(DOCKER_IMAGE):$(DOCKER_TAG) .',
-                doc='Build a docker image.',
+                "$(DOCKER_BUILD) -f $(DOCKER_BUILD_FILE) $(DOCKER_BUILD_OPTIONS) -t $(DOCKER_IMAGE):$(DOCKER_TAG) .",
+                doc="Build a docker image.",
             ),
             push=Script(
-                '$(DOCKER_PUSH) $(DOCKER_PUSH_OPTIONS) $(DOCKER_IMAGE):$(DOCKER_TAG)',
-                doc='Push docker image to remote registry.',
+                "$(DOCKER_PUSH) $(DOCKER_PUSH_OPTIONS) $(DOCKER_IMAGE):$(DOCKER_TAG)",
+                doc="Push docker image to remote registry.",
             ),
             run=Script(
-                '$(DOCKER_RUN) $(DOCKER_RUN_OPTIONS) --interactive --tty --rm --name=$(DOCKER_RUN_NAME) $(DOCKER_RUN_PORTS) $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_RUN_COMMAND)',
-                doc='Run the default entry point in a container based on our docker image.',
+                "$(DOCKER_RUN) $(DOCKER_RUN_OPTIONS) --interactive --tty --rm --name=$(DOCKER_RUN_NAME) $(DOCKER_RUN_PORTS) $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_RUN_COMMAND)",
+                doc="Run the default entry point in a container based on our docker image.",
             ),
             shell=Script(
                 'DOCKER_RUN_COMMAND="/bin/bash" $(MAKE) docker-run',
-                doc='Run bash in a container based on our docker image.',
+                doc="Run bash in a container based on our docker image.",
             ),
         )
 
@@ -116,15 +113,14 @@ class DockerConfig(Feature.Config):
             self._get_default_variables(),
             self._get_default_image_variables(),
             dict(
-                ROCKER=which('rocker'),
-                ROCKER_BUILD='$(ROCKER) build',
-                ROCKER_BUILD_OPTIONS='',
-                ROCKER_BUILD_VARIABLES=
-                '--var DOCKER_IMAGE=$(DOCKER_IMAGE) --var DOCKER_TAG=$(DOCKER_TAG) --var PYTHON_REQUIREMENTS_FILE=requirements-prod.txt',
+                ROCKER=which("rocker"),
+                ROCKER_BUILD="$(ROCKER) build",
+                ROCKER_BUILD_OPTIONS="",
+                ROCKER_BUILD_VARIABLES="--var DOCKER_IMAGE=$(DOCKER_IMAGE) --var DOCKER_TAG=$(DOCKER_TAG) --var PYTHON_REQUIREMENTS_FILE=requirements-prod.txt",
             ),
         ]
 
-        self.scripts.build.set('$(ROCKER_BUILD) $(ROCKER_BUILD_OPTIONS) $(ROCKER_BUILD_VARIABLES) .')
+        self.scripts.build.set("$(ROCKER_BUILD) $(ROCKER_BUILD_OPTIONS) $(ROCKER_BUILD_VARIABLES) .")
         self.scripts.push.set('ROCKER_BUILD_OPTIONS="$(ROCKER_BUILD_OPTIONS) --push" $(MAKE) docker-build')
 
     @property
@@ -134,40 +130,36 @@ class DockerConfig(Feature.Config):
 
     @property
     def image(self):
-        return '/'.join(filter(None, (self._registry, self._user, self._name)))
+        return "/".join(filter(None, (self._registry, self._user, self._name)))
 
 
 class DockerFeature(Feature):
     Config = DockerConfig
 
-    @subscribe('medikit.feature.make.on_generate', priority=-1)
+    @subscribe("medikit.feature.make.on_generate", priority=-1)
     def on_make_generate(self, event):
-        docker_config = event.config['docker']
+        docker_config = event.config["docker"]
 
         for var, val in docker_config.variables:
             event.makefile[var] = val
 
         # Set DOCKER_IMAGE at runtime, see #71.
-        if ('DOCKER_BUILD_FILE' in event.makefile) and not event.makefile['DOCKER_BUILD_FILE']:
-            event.makefile['DOCKER_BUILD_FILE'] = docker_config.build_file
-        if ('DOCKER_IMAGE' in event.makefile) and not event.makefile['DOCKER_IMAGE']:
-            event.makefile['DOCKER_IMAGE'] = docker_config.image
+        if ("DOCKER_BUILD_FILE" in event.makefile) and not event.makefile["DOCKER_BUILD_FILE"]:
+            event.makefile["DOCKER_BUILD_FILE"] = docker_config.build_file
+        if ("DOCKER_IMAGE" in event.makefile) and not event.makefile["DOCKER_IMAGE"]:
+            event.makefile["DOCKER_IMAGE"] = docker_config.image
 
         # Targets
         for script_name, script_content in sorted(docker_config.scripts.__dict__.items()):
-            event.makefile.add_target(
-                'docker-' + script_name,
-                script_content,
-                phony=True,
-                doc=script_content.doc,
-            )
+            event.makefile.add_target("docker-" + script_name, script_content, phony=True, doc=script_content.doc)
 
-    @subscribe('medikit.on_end')
+    @subscribe("medikit.on_end")
     def on_end(self, event):
-        docker_config = event.config['docker']
+        docker_config = event.config["docker"]
 
         self.render_file_inline(
-            '.dockerignore', '''
+            ".dockerignore",
+            """
             **/__pycache__
             *.egg-info
             .cache
@@ -178,12 +170,14 @@ class DockerFeature(Feature):
             /Rockerfile
             node_modules
             static
-        ''', event.variables
+        """,
+            event.variables,
         )
 
         if docker_config.compose_file:
             self.render_file_inline(
-                docker_config.compose_file, '''
+                docker_config.compose_file,
+                """
                 version: '3'
 
                 volumes:
@@ -198,16 +192,20 @@ class DockerFeature(Feature):
                 #       - 5432:5432
                 #     volumes:
                 #       - postgres_data:/var/lib/postgresql/data
-            '''
+            """,
             )
 
         if docker_config.builder == DOCKER:
-            self.render_file_inline(docker_config.build_file, '''
+            self.render_file_inline(
+                docker_config.build_file,
+                """
                 FROM python:3
-            ''')
+            """,
+            )
         elif docker_config.builder == ROCKER:
             self.render_file_inline(
-                docker_config.build_file, '''
+                docker_config.build_file,
+                """
                 FROM python:3
                  
                 # Mount cache volume to keep cache persistent from one build to another
@@ -238,7 +236,7 @@ class DockerFeature(Feature):
                 CMD /env/bin/gunicorn config.wsgi --bind 0.0.0.0:8000 --workers 4
                 
                 PUSH {{ '{{ .DOCKER_IMAGE }}:{{ .DOCKER_TAG }}' }}
-            '''
+            """,
             )
         elif docker_config.builder is not None:
-            raise NotImplementedError('Unknown builder {}'.format(docker_config.builder))
+            raise NotImplementedError("Unknown builder {}".format(docker_config.builder))

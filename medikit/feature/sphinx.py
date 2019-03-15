@@ -33,30 +33,28 @@ class SphinxConfig(Feature.Config):
 class SphinxFeature(Feature):
     Config = SphinxConfig
 
-    @subscribe('medikit.feature.python.on_generate')
+    @subscribe("medikit.feature.python.on_generate")
     def on_python_generate(self, event):
-        event.config['python'].add_requirements(dev=[
-            'sphinx ~=1.7',
-        ])
+        event.config["python"].add_requirements(dev=["sphinx ~=1.7"])
 
-        theme = event.config['sphinx'].get_theme()
+        theme = event.config["sphinx"].get_theme()
         if theme:
-            event.config['python'].add_requirements(dev=[theme.requirement])
+            event.config["python"].add_requirements(dev=[theme.requirement])
 
-    @subscribe('medikit.feature.make.on_generate', priority=SUPPORT_PRIORITY)
+    @subscribe("medikit.feature.make.on_generate", priority=SUPPORT_PRIORITY)
     def on_make_generate(self, event):
         makefile = event.makefile
 
-        makefile['SPHINX_BUILD'] = '$(PYTHON_DIRNAME)/sphinx-build'
-        makefile['SPHINX_OPTIONS'] = ''
-        makefile['SPHINX_SOURCEDIR'] = 'docs'
-        makefile['SPHINX_BUILDDIR'] = '$(SPHINX_SOURCEDIR)/_build'
+        makefile["SPHINX_BUILD"] = "$(PYTHON_DIRNAME)/sphinx-build"
+        makefile["SPHINX_OPTIONS"] = ""
+        makefile["SPHINX_SOURCEDIR"] = "docs"
+        makefile["SPHINX_BUILDDIR"] = "$(SPHINX_SOURCEDIR)/_build"
 
         makefile.add_target(
-            '$(SPHINX_SOURCEDIR)',
-            '''
+            "$(SPHINX_SOURCEDIR)",
+            """
             $(SPHINX_BUILD) -b html -D latex_paper_size=a4 $(SPHINX_OPTIONS) $(SPHINX_SOURCEDIR) $(SPHINX_BUILDDIR)/html
-        ''',
-            deps=('install-dev', ),
-            phony=True
+        """,
+            deps=("install-dev",),
+            phony=True,
         )
