@@ -18,6 +18,7 @@ Changelog
 - :feature:`0` Python: Upgraded to pip version 18.
 - :feature:`0` Misc: Upgraded various python packages.
 - :feature:`0` Added changelog file.
+- :feature:`0` Switched internal formating to black / isort instead of yapf.
 - :bug:`0` Fixed make help that would break in case of included submakefiles.
 - :release:`0.6.3 <2018-05-30>`
 
