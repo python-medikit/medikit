@@ -113,23 +113,30 @@ class Feature(object):
 
 
 class ProjectInitializer(Feature):
-    def __init__(self, dispatcher, options):
+    def __init__(self, dispatcher, options, target=None):
         super().__init__(dispatcher)
         self.options = options
+        self.target = target
 
     def execute(self):
-        context = {}
+        context = {"name": ""}
 
         if self.options.get("name"):
             if not is_identifier(self.options["name"]):
-                raise RuntimeError("Invalid package name {!r}.".format(self.options["name"]))
+                raise RuntimeError(
+                    "Invalid package name {!r}. Please only use valid python identifiers.".format(self.options["name"])
+                )
             context["name"] = self.options["name"]
-            logging.info("name = %s", context["name"])
-        else:
+        elif self.target:
+            context["name"] = os.path.basename(self.target)
+
+        while not is_identifier(context["name"]):
             context["name"] = input("Name: ")
-            while not is_identifier(context["name"]):
-                logging.error("Invalid name. Please only use valid python identifiers.")
-                context["name"] = input("Name: ")
+            logging.error(
+                "Invalid package name {!r}. Please only use valid python identifiers.".format(context["name"])
+            )
+
+        logging.info("name = %s", context["name"])
 
         if self.options.get("description"):
             context["description"] = self.options["description"]

@@ -44,7 +44,7 @@ class InitCommand(Command):
         # - ...
         with _change_working_directory(config_dirname):
             dispatcher = LoggingDispatcher()
-            initializer = ProjectInitializer(dispatcher, options)
+            initializer = ProjectInitializer(dispatcher, options, target=config_dirname)
             initializer.execute()
             from medikit.commands import UpdateCommand
 
