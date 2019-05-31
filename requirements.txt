@@ -9,7 +9,7 @@ jinja2==2.10.1
 markupsafe==1.1.1
 mondrian==0.8.0
 packaging==19.0
-pbr==5.2.0
+pbr==5.2.1
 pip-tools==2.0.2
 pyparsing==2.4.0
 semantic-version==2.6.0
