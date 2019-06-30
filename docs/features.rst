@@ -42,6 +42,7 @@ Here is an example:
 
     features/django
     features/docker
+    features/format
     features/git
     features/kube
     features/make

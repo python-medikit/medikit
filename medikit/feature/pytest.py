@@ -13,9 +13,19 @@ from . import SUPPORT_PRIORITY, Feature
 
 class PytestConfig(Feature.Config):
     version = "~=4.6"
+    """
+    Pytest version to use in dev requirements. You can override this using `set_version(...)`.
+    """
+
     addons = {"coverage": "~=4.5", "pytest-cov": "~=2.7"}
+    """
+    Additionnal packages to use in dev requirements along with the main pytest packe. You can override this dictionnary.
+    """
 
     def set_version(self, version):
+        """
+        Overrides Pytest version requirement with your own.
+        """
         self.version = version
 
 

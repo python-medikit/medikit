@@ -18,7 +18,7 @@ To use the Pytest Feature, make sure your **Projectfile** contains the following
     
     pytest = require('pytest')
     
-The `pytest` handle is a :class:`Config` instance, and can be used to customize the feature.
+The `pytest` handle is a :class:`PytestConfig` instance, and can be used to customize the feature.
 
 
 
@@ -27,7 +27,12 @@ The `pytest` handle is a :class:`Config` instance, and can be used to customize 
 
 
 
+Configuration
+:::::::::::::
 
+.. autoclass:: PytestConfig
+    :members:
+    :undoc-members:
 
 Implementation
 ::::::::::::::

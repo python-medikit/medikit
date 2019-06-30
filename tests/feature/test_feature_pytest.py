@@ -55,4 +55,3 @@ class TestPytestFeature(FeatureTestCase):
             "pytest ~= 5.0",
             "pytest-cov ~= 2.7",
         ]
-

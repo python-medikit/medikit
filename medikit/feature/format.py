@@ -28,6 +28,16 @@ class FormatConfig(Feature.Config):
     _active_tools = set()
 
     def using(self, *tools):
+        """
+        Choose which tool to use when formatting the codebase.
+
+        Example::
+
+            require("format").using("yapf", "isort")
+
+        Note that the above is also the default, so using `require("format")` is enough to have the same effect.
+
+        """
         for tool in tools:
             if tool not in self.all_tools:
                 raise ValueError('Unknown formating tool "{}".'.format(tool))
