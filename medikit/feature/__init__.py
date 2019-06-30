@@ -4,14 +4,14 @@ from collections import OrderedDict
 from contextlib import ContextDecorator
 
 from jinja2 import Environment, PackageLoader, Template
+from mondrian import term
+from yapf import yapf_api
+
 from medikit import settings
 from medikit.events import attach_subscriptions
 from medikit.file import File
 from medikit.settings import DEFAULT_FEATURES
-from medikit.utils import is_identifier, format_file_content
-from yapf import yapf_api
-
-from mondrian import term
+from medikit.utils import format_file_content, is_identifier
 
 ABSOLUTE_PRIORITY = -100
 HIGH_PRIORITY = -80

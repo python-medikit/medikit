@@ -23,14 +23,19 @@ from medikit.structs import Script
 class FormatConfig(Feature.Config):
     python_tools = {"yapf", "black", "isort"}
     javascript_tools = {"prettier"}
+    default_tools = {"black", "isort"}
     all_tools = functools.reduce(set.union, [javascript_tools, python_tools], set())
-    active_tools = set()
+    _active_tools = set()
 
     def using(self, *tools):
         for tool in tools:
-            if not tool in self.all_tools:
+            if tool not in self.all_tools:
                 raise ValueError('Unknown formating tool "{}".'.format(tool))
-            self.active_tools.add(tool)
+            self._active_tools.add(tool)
+
+    @property
+    def active_tools(self):
+        return self._active_tools or self.default_tools
 
 
 class FormatFeature(Feature):

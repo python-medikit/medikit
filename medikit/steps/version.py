@@ -2,9 +2,9 @@ import os
 import runpy
 
 from git import Repo
+from git_semver import get_current_version
 from semantic_version import Version
 
-from git_semver import get_current_version
 from medikit.steps import Step
 
 

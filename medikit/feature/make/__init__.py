@@ -5,10 +5,10 @@ GNU Make support.
 
 import medikit
 from medikit.events import subscribe
-from medikit.feature import Feature, HIGH_PRIORITY
+from medikit.feature import HIGH_PRIORITY, Feature
 from medikit.feature.make.config import MakeConfig
 from medikit.feature.make.events import MakefileEvent
-from medikit.feature.make.resources import MakefileTarget, Makefile, InstallScript, CleanScript
+from medikit.feature.make.resources import CleanScript, InstallScript, Makefile, MakefileTarget
 from medikit.feature.make.utils import which
 from medikit.globals import PIP_VERSION
 from medikit.structs import Script

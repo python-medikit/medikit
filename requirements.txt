@@ -1,15 +1,15 @@
 -e .
 click==7.0
 colorama==0.3.9
-git-semver==0.2.3
+git-semver==0.2.4
 gitdb2==2.0.5
 gitpython==2.1.11
 jinja2==2.10.1
 markupsafe==1.1.1
 mondrian==0.8.0
 packaging==19.0
-pbr==5.2.1
-pip-tools==3.7.0
+pbr==5.3.1
+pip-tools==3.8.0
 pyparsing==2.4.0
 semantic-version==2.6.0
 six==1.12.0

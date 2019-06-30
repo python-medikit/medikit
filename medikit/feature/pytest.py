@@ -16,9 +16,12 @@ class PytestFeature(Feature):
 
     requires = {"python"}
 
+    version = "~=4.6"
+    addons = {"coverage": "~=4.5", "pytest-cov": "~=2.7"}
+
     @subscribe("medikit.feature.python.on_generate")
     def on_python_generate(self, event):
-        event.config["python"].add_requirements(dev=["coverage ~=4.4", "pytest ~=3.4", "pytest-cov ~=2.5"])
+        event.config["python"].add_requirements(dev=["pytest " + self.version, *map(" ".join, self.addons.items())])
 
     @subscribe("medikit.feature.make.on_generate", priority=SUPPORT_PRIORITY)
     def on_make_generate(self, event):

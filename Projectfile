@@ -41,7 +41,7 @@ python.setup(
     },
 )
 python.add_requirements(
-    "git-semver ~=0.2.3",
+    "git-semver ~=0.2.0",
     "jinja2 ~=2.9",
     "mondrian ~=0.7",
     "packaging ~=19.0",
