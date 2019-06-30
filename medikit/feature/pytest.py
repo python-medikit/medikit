@@ -11,17 +11,27 @@ from medikit.events import subscribe
 from . import SUPPORT_PRIORITY, Feature
 
 
-class PytestFeature(Feature):
-    # TODO: http://docs.pytest.org/en/latest/goodpractices.html#integrating-with-setuptools-python-setup-py-test-pytest-runner
-
-    requires = {"python"}
-
+class PytestConfig(Feature.Config):
     version = "~=4.6"
     addons = {"coverage": "~=4.5", "pytest-cov": "~=2.7"}
 
+    def set_version(self, version):
+        self.version = version
+
+
+class PytestFeature(Feature):
+    # TODO: http://docs.pytest.org/en/latest/goodpractices.html#integrating-with-setuptools-python-setup-py-test-pytest-runner
+
+    Config = PytestConfig
+
+    requires = {"python"}
+
     @subscribe("medikit.feature.python.on_generate")
     def on_python_generate(self, event):
-        event.config["python"].add_requirements(dev=["pytest " + self.version, *map(" ".join, self.addons.items())])
+        config = self.get_config(event)
+        python = self.get_config(event, "python")
+
+        python.add_requirements(dev=["pytest " + config.version, *map(" ".join, config.addons.items())])
 
     @subscribe("medikit.feature.make.on_generate", priority=SUPPORT_PRIORITY)
     def on_make_generate(self, event):

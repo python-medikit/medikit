@@ -68,7 +68,7 @@ setup(
         "dev": [
             "coverage ~= 4.5",
             "isort",
-            "pytest ~= 4.6",
+            "pytest ~= 5.0",
             "pytest-cov ~= 2.7",
             "releases >= 1.6, < 1.7",
             "sphinx ~= 1.7",

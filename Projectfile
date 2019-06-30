@@ -5,12 +5,16 @@ from medikit.feature.make.utils import which
 
 git = require("git")
 make = require("make")
-pytest = require("pytest")
 python = require("python")
 sphinx = require("sphinx")
 
+# tests
+with require("pytest") as pytest:
+    pytest.set_version("~=5.0")
+
 # code formater
-require("format").using("black", "isort")
+with require("format") as fmt:
+    fmt.using("black", "isort")
 
 python.setup(
     name="medikit",
