@@ -38,7 +38,6 @@ from pip._vendor.distlib.util import parse_requirement
 from piptools._compat import parse_requirements
 from piptools.repositories import PyPIRepository
 from piptools.resolver import Resolver
-from piptools.scripts.compile import get_pip_command
 from piptools.utils import format_requirement
 
 import medikit
@@ -443,10 +442,7 @@ class PythonFeature(Feature):
         python_config = event.config["python"]
 
         # Pip / PyPI
-        pip_command = get_pip_command()
-        pip_options, _ = pip_command.parse_args([])
-        session = pip_command._build_session(pip_options)
-        repository = PyPIRepository(pip_options, session)
+        repository = PyPIRepository([])
 
         for extra in itertools.chain((None,), python_config.get_extras()):
             requirements_file = "requirements{}.txt".format("-" + extra if extra else "")
@@ -460,7 +456,7 @@ class PythonFeature(Feature):
                 tmpfile.flush()
                 constraints = list(
                     parse_requirements(
-                        tmpfile.name, finder=repository.finder, session=repository.session, options=pip_options
+                        tmpfile.name, finder=repository.finder, session=repository.session, options=repository.options
                     )
                 )
                 resolver = Resolver(constraints, repository, prereleases=False, clear_caches=False, allow_unsafe=False)
