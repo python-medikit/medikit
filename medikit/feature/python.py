@@ -36,6 +36,8 @@ from getpass import getuser
 
 from pip._vendor.distlib.util import parse_requirement
 from piptools._compat import parse_requirements
+from piptools.cache import DependencyCache
+from piptools.locations import CACHE_DIR
 from piptools.repositories import PyPIRepository
 from piptools.resolver import Resolver
 from piptools.utils import format_requirement
@@ -442,7 +444,7 @@ class PythonFeature(Feature):
         python_config = event.config["python"]
 
         # Pip / PyPI
-        repository = PyPIRepository([])
+        repository = PyPIRepository([], cache_dir=CACHE_DIR)
 
         for extra in itertools.chain((None,), python_config.get_extras()):
             requirements_file = "requirements{}.txt".format("-" + extra if extra else "")
@@ -459,7 +461,14 @@ class PythonFeature(Feature):
                         tmpfile.name, finder=repository.finder, session=repository.session, options=repository.options
                     )
                 )
-                resolver = Resolver(constraints, repository, prereleases=False, clear_caches=False, allow_unsafe=False)
+                resolver = Resolver(
+                    constraints,
+                    repository,
+                    cache=DependencyCache(CACHE_DIR),
+                    prereleases=False,
+                    clear_caches=False,
+                    allow_unsafe=False,
+                )
 
                 self.render_file_inline(
                     requirements_file,
