@@ -1,10 +1,7 @@
 # medikit (see github.com/python-edgy/medikit)
 
 from medikit import listen, require
-from medikit.feature.make.utils import which
 
-make = require("make")
-python = require("python")
 sphinx = require("sphinx")
 
 # tests
@@ -16,79 +13,80 @@ with require("pytest") as pytest:
 with require("format") as fmt:
     fmt.using("black", "isort")
 
-python.setup(
-    name="medikit",
-    python_requires=">=3.5",
-    description="Opinionated python 3.5+ project management.",
-    license="Apache License, Version 2.0",
-    url="https://python-medikit.github.io/",
-    download_url="https://github.com/python-medikit/medikit/archive/{version}.tar.gz",
-    author="Romain Dorgueil",
-    author_email="romain@dorgueil.net",
-    entry_points={
-        "console_scripts": ["medikit=medikit.__main__:main"],
-        "medikit.feature": [
-            "django = medikit.feature.django:DjangoFeature",
-            "docker = medikit.feature.docker:DockerFeature",
-            "format = medikit.feature.format:FormatFeature",
-            "git = medikit.feature.git:GitFeature",
-            "kube = medikit.feature.kube:KubeFeature",
-            "make = medikit.feature.make:MakeFeature",
-            "nodejs = medikit.feature.nodejs:NodeJSFeature",
-            "pylint = medikit.feature.pylint:PylintFeature",
-            "pytest = medikit.feature.pytest:PytestFeature",
-            "python = medikit.feature.python:PythonFeature",
-            "sphinx = medikit.feature.sphinx:SphinxFeature",
-            "webpack = medikit.feature.webpack:WebpackFeature",
-            "yapf = medikit.feature.yapf:YapfFeature",
+with require("python") as python:
+    python.setup(
+        name="medikit",
+        python_requires=">=3.5",
+        description="Opinionated python 3.5+ project management.",
+        license="Apache License, Version 2.0",
+        url="https://python-medikit.github.io/",
+        download_url="https://github.com/python-medikit/medikit/archive/{version}.tar.gz",
+        author="Romain Dorgueil",
+        author_email="romain@dorgueil.net",
+        entry_points={
+            "console_scripts": ["medikit=medikit.__main__:main"],
+            "medikit.feature": [
+                "django = medikit.feature.django:DjangoFeature",
+                "docker = medikit.feature.docker:DockerFeature",
+                "format = medikit.feature.format:FormatFeature",
+                "git = medikit.feature.git:GitFeature",
+                "kube = medikit.feature.kube:KubeFeature",
+                "make = medikit.feature.make:MakeFeature",
+                "nodejs = medikit.feature.nodejs:NodeJSFeature",
+                "pylint = medikit.feature.pylint:PylintFeature",
+                "pytest = medikit.feature.pytest:PytestFeature",
+                "python = medikit.feature.python:PythonFeature",
+                "sphinx = medikit.feature.sphinx:SphinxFeature",
+                "webpack = medikit.feature.webpack:WebpackFeature",
+                "yapf = medikit.feature.yapf:YapfFeature",
+            ],
+        },
+    )
+    python.add_requirements(
+        "git-semver ~=0.3.2",
+        "jinja2 ~=2.10",
+        "mondrian ~=0.8",
+        "packaging ~=20.0",
+        "pip-tools ~=4.5.0",
+        "semantic_version <2.7",  # note: this version is required as it is the one used by releases
+        "stevedore ~=3.0",
+        "whistle ~=1.0",
+        "yapf ~=0.20",
+        dev=[
+            "sphinx-sitemap ~=1.0",
+            "releases >=1.6,<1.7",
+            "black ==20.8b1",
+            "pre-commit ~=2.9.0",
         ],
-    },
-)
-python.add_requirements(
-    "git-semver ~=0.3.2",
-    "jinja2 ~=2.10",
-    "mondrian ~=0.8",
-    "packaging ~=20.0",
-    "pip-tools ~=4.5.0",
-    "semantic_version <2.7",  # note: this version is required as it is the one used by releases
-    "stevedore ~=3.0",
-    "whistle ~=1.0",
-    "yapf ~=0.20",
-    dev=[
-        "sphinx-sitemap ~=1.0",
-        "releases >=1.6,<1.7",
-        "black ==20.8b1",
-        "pre-commit ~=2.9.0",
-    ],
-)
-
-
-# Sphinx
-@listen(make.on_generate)
-def on_make_generate_sphinx(event):
-    event.makefile["SPHINX_AUTOBUILD"] = "$(PYTHON_DIRNAME)/sphinx-autobuild"
-    event.makefile.add_target(
-        "watch-$(SPHINX_SOURCEDIR)",
-        """
-        $(SPHINX_AUTOBUILD) $(SPHINX_SOURCEDIR) $(shell mktemp -d)
-    """,
-        phony=True,
     )
 
 
-# Pipelines
-@listen(make.on_generate)
-def on_make_generate_pipelines(event):
-    makefile = event.makefile
+with require("make") as make:
+    # Sphinx
+    @listen(make.on_generate)
+    def on_make_generate_sphinx(event):
+        event.makefile["SPHINX_AUTOBUILD"] = "$(PYTHON_DIRNAME)/sphinx-autobuild"
+        event.makefile.add_target(
+            "watch-$(SPHINX_SOURCEDIR)",
+            """
+            $(SPHINX_AUTOBUILD) $(SPHINX_SOURCEDIR) $(shell mktemp -d)
+        """,
+            phony=True,
+        )
 
-    # Releases
-    event.makefile.add_target(
-        "release",
-        "$(MEDIKIT) pipeline release start",
-        deps=("medikit",),
-        phony=True,
-        doc='Runs the "release" pipeline.',
-    )
+    # Pipelines
+    @listen(make.on_generate)
+    def on_make_generate_pipelines(event):
+        makefile = event.makefile
+
+        # Releases
+        event.makefile.add_target(
+            "release",
+            "$(MEDIKIT) pipeline release start",
+            deps=("medikit",),
+            phony=True,
+            doc='Runs the "release" pipeline.',
+        )
 
 
 # vim: ft=python:
