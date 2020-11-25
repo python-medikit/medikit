@@ -9,6 +9,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def get_identity(step):
+    return str(step)
+
+
 class Pipeline:
     """
     Class to configure a pipeline.
@@ -18,8 +22,20 @@ class Pipeline:
     def __init__(self):
         self.steps = []
 
-    def add(self, step):
-        self.steps.append(step)
+    def add(self, step, *, before=None):
+        if before:
+            insert_at = None
+            for i, _step in enumerate(self.steps):
+                if before == get_identity(_step):
+                    insert_at = i
+                    break
+            if not insert_at:
+                raise ValueError(
+                    'Step with identity {!r} not found. Try "show" subcommand to list identities.'.format(before)
+                )
+            self.steps = self.steps[:insert_at] + [step] + self.steps[insert_at:]
+        else:
+            self.steps.append(step)
         return self
 
     def remove(self, identity):
@@ -28,9 +44,8 @@ class Pipeline:
                 del self.steps[i]
                 break
 
-
-def get_identity(step):
-    return str(step)
+    def __iter__(self):
+        yield from self.steps
 
 
 class ConfiguredPipeline:
@@ -43,6 +58,12 @@ class ConfiguredPipeline:
         self.steps = pipeline.steps
         self.meta = {"created": str(datetime.datetime.now())}
         self.config = config
+
+    def __iter__(self):
+        yield from self.steps
+
+    def __len__(self):
+        return len(self.steps)
 
     def init(self):
         for step in self.steps:
@@ -60,9 +81,6 @@ class ConfiguredPipeline:
             if not step.complete:
                 return i + 1
         return len(self)
-
-    def __len__(self):
-        return len(self.steps)
 
     def abort(self):
         for step in self.steps:

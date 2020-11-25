@@ -6,18 +6,20 @@ from mondrian import term
 from medikit.commands.base import Command
 from medikit.commands.utils import _read_configuration
 from medikit.events import LoggingDispatcher
-from medikit.pipeline import ConfiguredPipeline, logger
+from medikit.pipeline import ConfiguredPipeline, get_identity, logger
 
 START = "start"
 CONTINUE = "continue"
 ABORT = "abort"
+SHOW = "show"
 COMPLETE = "complete"
+QUIT = "quit"
 
 
 class PipelineCommand(Command):
     def add_arguments(self, parser):
         parser.add_argument("pipeline", default=None, nargs="?")
-        parser.add_argument("action", choices=(START, CONTINUE, ABORT), nargs="?")
+        parser.add_argument("action", choices=(START, CONTINUE, ABORT, SHOW), nargs="?")
         parser.add_argument("--force", "-f", action="store_true")
 
     @classmethod
@@ -54,7 +56,9 @@ class PipelineCommand(Command):
             raise RuntimeError("Choose a pipeline action: start, continue, abort.")
 
         while action:
-            if action == START:
+            if action == SHOW:
+                action = cls._handle_show(pipeline, filename=pipeline_file)
+            elif action == START:
                 action = cls._handle_start(pipeline, filename=pipeline_file, force=force)
             elif action == CONTINUE:
                 action = cls._handle_continue(pipeline, filename=pipeline_file)
@@ -68,9 +72,17 @@ class PipelineCommand(Command):
                 os.rename(pipeline_file, os.path.join(path, target))
                 logger.info("Pipeline complete. State saved as “{}”.".format(target))
                 break
+            elif action == QUIT:
+                break
             else:
                 raise ValueError("Invalid action “{}”.".format(action))
             force = False
+
+    @classmethod
+    def _handle_show(cls, pipeline, *, filename):
+        for step in pipeline:
+            print(get_identity(step))
+        return QUIT
 
     @classmethod
     def _handle_start(cls, pipeline, *, filename, force=False):

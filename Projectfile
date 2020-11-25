@@ -1,6 +1,7 @@
 # medikit (see github.com/python-edgy/medikit)
 
-from medikit import listen, require
+from medikit.steps.exec import System
+from medikit import listen, require, pipeline
 
 sphinx = require("sphinx")
 
@@ -88,5 +89,8 @@ with require("make") as make:
             doc='Runs the "release" pipeline.',
         )
 
+
+with pipeline("release") as release:
+    release.add(System('pre-commit run'), before="System('git add -p .', True)")
 
 # vim: ft=python:
