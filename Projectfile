@@ -91,6 +91,6 @@ with require("make") as make:
 
 
 with pipeline("release") as release:
-    release.add(System('pre-commit run'), before="System('git add -p .', True)")
+    release.add(System('pre-commit run || true'), before="System('git add -p .', True)")
 
 # vim: ft=python:
