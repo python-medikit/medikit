@@ -3,14 +3,14 @@
 from medikit import listen, require
 from medikit.feature.make.utils import which
 
-git = require("git")
 make = require("make")
 python = require("python")
 sphinx = require("sphinx")
 
 # tests
 with require("pytest") as pytest:
-    pytest.set_version("~=5.0")
+    pytest.set_version("~=6.0")
+    pytest.addons["coverage"] = "~=5.3"
 
 # code formater
 with require("format") as fmt:
@@ -51,10 +51,15 @@ python.add_requirements(
     "packaging ~=20.0",
     "pip-tools ~=4.5.0",
     "semantic_version <2.7",  # note: this version is required as it is the one used by releases
-    "stevedore ~=1.28",
+    "stevedore ~=3.0",
     "whistle ~=1.0",
     "yapf ~=0.20",
-    dev=["sphinx-sitemap ~=1.0", "releases >=1.6,<1.7"],
+    dev=[
+        "sphinx-sitemap ~=1.0",
+        "releases >=1.6,<1.7",
+        "black ==20.8b1",
+        "pre-commit ~=2.9.0",
+    ],
 )
 
 

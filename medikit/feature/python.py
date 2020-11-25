@@ -240,7 +240,7 @@ class PythonFeature(Feature):
         - ``PYTHON_DIR``
         - ``PYTHON_REQUIREMENTS_FILE``
         - ``PYTHON_REQUIREMENTS_DEV_FILE``
-        
+
         **Shortcuts**
         - ``PIP``
         - ``PIP_INSTALL_OPTIONS``
@@ -281,7 +281,7 @@ class PythonFeature(Feature):
             ("PYTHON_DIRNAME", "$(shell dirname $(PYTHON))"),
             (_get_reqs_file_varname(), "requirements.txt"),
             (_get_reqs_inline_varname(), " ".join(python_config.get_inline_requirements())),
-            *extra_variables
+            *extra_variables,
         )
 
         event.makefile["PIP"] = "$(PYTHON) -m pip"
