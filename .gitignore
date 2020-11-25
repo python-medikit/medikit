@@ -9,6 +9,7 @@
 /.medikit
 /.release
 /.virtualenv-python*
+/.vscode
 /build
 /dist
 /docs/_build
