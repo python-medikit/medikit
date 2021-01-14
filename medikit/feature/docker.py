@@ -58,7 +58,8 @@ class DockerConfig(Feature.Config):
     def _get_default_variables(self):
         return dict(
             DOCKER=which("docker"),
-            DOCKER_BUILD="$(DOCKER) image build",
+            USE_BUILDKIT="",
+            DOCKER_BUILD="$(if $(USE_BUILDKIT),$(DOCKER) buildx build,$(DOCKER) image build)",
             DOCKER_BUILD_OPTIONS="--build-arg IMAGE=$(DOCKER_IMAGE) --build-arg TAG=$(DOCKER_TAG)",
             DOCKER_PUSH="$(DOCKER) image push",
             DOCKER_PUSH_OPTIONS="",
@@ -127,7 +128,7 @@ class DockerConfig(Feature.Config):
     @property
     def variables(self):
         for variables in self._variables:
-            yield from sorted(variables.items())
+            yield from variables.items()
 
     @property
     def image(self):
@@ -182,11 +183,11 @@ class DockerFeature(Feature):
                 version: '3'
 
                 volumes:
-                
+
                 #   postgres_data: {}
 
                 services:
-                
+
                 #   postgres:
                 #     image: postgres:10
                 #     ports:
@@ -208,17 +209,17 @@ class DockerFeature(Feature):
                 docker_config.build_file,
                 """
                 FROM python:3
-                 
+
                 # Mount cache volume to keep cache persistent from one build to another
                 MOUNT /app/.cache
                 WORKDIR /app
-                
+
                 # Create application user
                 RUN useradd --home-dir /app --group www-data app \
                  && pip install -U pip wheel virtualenv \
                  && mkdir /env \
-                 && chown app:www-data -R /app /env 
-                 
+                 && chown app:www-data -R /app /env
+
                 # Add and install python requirements in a virtualenv
                 USER app
                 RUN virtualenv -p python3 /env/
@@ -235,7 +236,7 @@ class DockerFeature(Feature):
                 # Entrypoint
                 USER app
                 CMD /env/bin/gunicorn config.wsgi --bind 0.0.0.0:8000 --workers 4
-                
+
                 PUSH {{ '{{ .DOCKER_IMAGE }}:{{ .DOCKER_TAG }}' }}
             """,
             )
