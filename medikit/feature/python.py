@@ -276,7 +276,7 @@ class PythonFeature(Feature):
         # Python related environment
         event.makefile.updateleft(
             ("PACKAGE", event.config.package_name),
-            ("PYTHON", which("python")),
+            ("PYTHON", which("python3", "python")),
             ("PYTHON_BASENAME", "$(shell basename $(PYTHON))"),
             ("PYTHON_DIRNAME", "$(shell dirname $(PYTHON))"),
             (_get_reqs_file_varname(), "requirements.txt"),
