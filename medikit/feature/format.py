@@ -86,7 +86,7 @@ class FormatFeature(Feature):
 
         if "isort" in config.active_tools:
             makefile["ISORT"] = "$(PYTHON) -m isort"
-            makefile["ISORT_OPTIONS"] = "--recursive --apply"
+            makefile["ISORT_OPTIONS"] = ""
             format_script += ["$(ISORT) $(ISORT_OPTIONS) . Projectfile"]
 
         if "prettier" in config.active_tools:
