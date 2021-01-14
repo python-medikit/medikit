@@ -47,18 +47,18 @@ def pipeline(name):
     yield
 
 
-def joinwords(*args, prefix=None, separator=" ", **kwargs):
+def words(*args, prefix=None, separator=" ", **kwargs):
     """
     Join words together using a default space separator.
     """
     return separator.join("".join(filter(None, (prefix, arg))) for arg in args).format(**kwargs)
 
 
-def joinlines(*args, prefix=None, separator="\n", **kwargs):
+def lines(*args, prefix=None, separator="\n", **kwargs):
     """
     Join lines together using a default line feed separator.
     """
-    return joinwords(*args, prefix=prefix, separator=separator, **kwargs)
+    return words(*args, prefix=prefix, separator=separator, **kwargs)
 
 
 def which(cmd, *more_cmds):
