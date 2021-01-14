@@ -2,9 +2,11 @@
 
 from medikit import require
 
+NAME = '{{ name }}'
+
 with require('python') as python:
     python.setup(
-        name = '{{ name }}',
+        name = NAME,
         description = '{{ description }}',
         license = '{{ license }}',
         url = '{{ url }}',
