@@ -47,4 +47,18 @@ def pipeline(name):
     yield
 
 
+def joinwords(*args, prefix=None, separator=" ", **kwargs):
+    """
+    Join words together using a default space separator.
+    """
+    return separator.join("".join(filter(None, (prefix, arg))) for arg in args).format(**kwargs)
+
+
+def joinlines(*args, prefix=None, separator="\n", **kwargs):
+    """
+    Join lines together using a default line feed separator.
+    """
+    return joinwords(*args, prefix=prefix, separator=separator, **kwargs)
+
+
 __all__ = ["__version__"]
