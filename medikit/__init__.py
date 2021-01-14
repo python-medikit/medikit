@@ -61,4 +61,18 @@ def joinlines(*args, prefix=None, separator="\n", **kwargs):
     return joinwords(*args, prefix=prefix, separator=separator, **kwargs)
 
 
-__all__ = ["__version__"]
+def which(cmd, *more_cmds):
+    return (
+        "$(shell "
+        + " || ".join(
+            (
+                "which {cmd}".format(cmd=cmd),
+                *("which {cmd}".format(cmd=more_cmd) for more_cmd in more_cmds),
+                "echo {cmd}".format(cmd=cmd),
+            )
+        )
+        + ")"
+    )
+
+
+__all__ = [__version__]
