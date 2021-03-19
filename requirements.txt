@@ -5,7 +5,7 @@ git-semver==0.3.2
 gitdb==4.0.5
 gitpython==3.1.11
 importlib-metadata==3.1.0
-jinja2==2.11.2
+jinja2==2.11.3
 markupsafe==1.1.1
 mondrian==0.8.0
 packaging==20.4
