@@ -33,7 +33,7 @@ pyparsing==2.4.7
 pytest-cov==2.10.1
 pytest==6.1.2
 pytz==2020.4
-pyyaml==5.3.1
+pyyaml==5.4
 regex==2020.11.13
 releases==1.6.3
 requests==2.25.0
