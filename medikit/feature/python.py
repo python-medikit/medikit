@@ -55,7 +55,7 @@ from medikit.utils import get_override_warning_banner
 
 
 def _normalize_requirement(req):
-    """ Overrides the original method in Medikit, now it considers the special case of private repos """
+    """ Normalizes the requirement string. It considers the case of having or not an URL """
 
     if req.constraints and not req.url:
         bits = req.requirement.split()
@@ -505,7 +505,6 @@ class PythonFeature(Feature):
 
         # Pip / PyPI
         repository = PyPIRepository([], cache_dir=CACHE_DIR)
-        # repository = PyPIRepository([], cache_dir=tempfile.mkdtemp())
 
         # We just need to construct this structure if use_uniform_requirements == True
         requirements_by_name = {}
