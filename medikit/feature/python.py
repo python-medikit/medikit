@@ -57,7 +57,7 @@ from medikit.utils import get_override_warning_banner
 def _normalize_requirement(req):
     """ Normalizes the requirement string. It considers the case of having or not an URL """
 
-    if req.constraints and not req.url:
+    if not req.url:
         bits = req.requirement.split()
     else:
         bits = [req.requirement, '@', req.url]
