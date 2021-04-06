@@ -53,7 +53,6 @@ from medikit.globals import PIP_VERSION
 from medikit.resources.configparser import ConfigParserResource
 from medikit.utils import get_override_warning_banner
 
-from pprint import pprint
 
 def _normalize_requirement(req):
     """ Overrides the original method in Medikit, now it considers the special case of private repos """
