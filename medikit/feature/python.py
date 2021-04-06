@@ -53,6 +53,7 @@ from medikit.globals import PIP_VERSION
 from medikit.resources.configparser import ConfigParserResource
 from medikit.utils import get_override_warning_banner
 
+from pprint import pprint
 
 def _normalize_requirement(req):
     """ Overrides the original method in Medikit, now it considers the special case of private repos """
@@ -92,7 +93,9 @@ class PythonConfig(Feature.Config):
         self._create_packages = True
         self.override_requirements = False
         self.use_wheelhouse = False
+        # Use the same requirement versions among all the extras, when requirements coincide.
         self.use_uniform_requirements = False
+        # Print the information of the "parent" requirement in the requirements*.txt files.
         self.show_comes_from_info = False
 
     @property
@@ -494,33 +497,6 @@ class PythonFeature(Feature):
         except IOError:
             version = "0.0.0"
         self.render_file_inline(python_config.version_file, "__version__ = '{}'".format(version))
-
-        # setup = python_config.get_setup()
-        #
-        # context = {
-        #     "url": setup.pop("url", "http://example.com/"),
-        #     "download_url": setup.pop("download_url", "http://example.com/"),
-        # }
-        #
-        # for k, v in context.items():
-        #     context[k] = context[k].format(name=setup["name"], user=getuser(), version="{version}")
-        #
-        # context.update(
-        #     {
-        #         "entry_points": setup.pop("entry_points", {}),
-        #         "extras_require": python_config.get("extras_require"),
-        #         "install_requires": python_config.get("install_requires"),
-        #         "python": python_config,
-        #         "setup": setup,
-        #         "banner": get_override_warning_banner(),
-        #     }
-        # )
-        #
-        # from pprint import pprint
-        # pprint(context)
-        #
-        # # Render (with overwriting) the allmighty setup.py
-        # self.render_file("setup.py", "python/setup.py.j2", context, override=True)
 
     @subscribe(medikit.on_end, priority=ABSOLUTE_PRIORITY)
     def on_end(self, event):
