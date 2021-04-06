@@ -609,8 +609,5 @@ class PythonFeature(Feature):
             }
         )
 
-        from pprint import pprint
-        pprint(context)
-
         # Render (with overwriting) the allmighty setup.py
         self.render_file("setup.py", "python/setup.py.j2", context, override=True)
