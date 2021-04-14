@@ -72,3 +72,29 @@ class TestPythonFeature(FeatureTestCase):
 
         assert event.setup["name"] == PACKAGE_NAME
         assert event.setup["python_requires"] == ">=3.5"
+
+    def test_on_end(self):
+        config = self.create_config()
+
+        feature, dispatcher = self.create_feature()
+        event = ProjectEvent(config=config, setup={"name": PACKAGE_NAME, "python_requires": ">=3.5"})
+        feature.on_end(event)
+
+        assert event.setup["name"] == PACKAGE_NAME
+        assert event.setup["python_requires"] == ">=3.5"
+        assert not event.config["python"].use_uniform_requirements
+        assert not event.config["python"].show_comes_from_info
+
+    def test_on_end_uniform_requirements(self):
+        config = self.create_config()
+        config["python"].use_uniform_requirements = True
+        config["python"].show_comes_from_info = True
+
+        feature, dispatcher = self.create_feature()
+        event = ProjectEvent(config=config, setup={"name": PACKAGE_NAME, "python_requires": ">=3.5"})
+        feature.on_end(event)
+
+        assert event.setup["name"] == PACKAGE_NAME
+        assert event.setup["python_requires"] == ">=3.5"
+        assert event.config["python"].use_uniform_requirements
+        assert event.config["python"].show_comes_from_info
