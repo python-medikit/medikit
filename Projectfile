@@ -48,6 +48,7 @@ with require("python") as python:
         "jinja2 ~=2.10",
         "mondrian ~=0.8",
         "packaging ~=20.0",
+        "pip >=19,<20",
         "pip-tools ~=4.5.0",
         "semantic_version <2.7",  # note: this version is required as it is the one used by releases
         "stevedore ~=3.0",

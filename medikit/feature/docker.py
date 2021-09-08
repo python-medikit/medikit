@@ -58,9 +58,10 @@ class DockerConfig(Feature.Config):
     def _get_default_variables(self):
         return dict(
             DOCKER=which("docker"),
-            USE_BUILDKIT="",
-            DOCKER_BUILD="$(if $(USE_BUILDKIT),$(DOCKER) buildx build,$(DOCKER) image build)",
+            USE_BUILDX="",
+            DOCKER_BUILD="$(if $(USE_BUILDX),$(DOCKER) buildx build,$(DOCKER) image build)",
             DOCKER_BUILD_OPTIONS="--build-arg IMAGE=$(DOCKER_IMAGE) --build-arg TAG=$(DOCKER_TAG)",
+            DOCKER_BUILD_MORE_OPTIONS="",
             DOCKER_PUSH="$(DOCKER) image push",
             DOCKER_PUSH_OPTIONS="",
             DOCKER_RUN="$(DOCKER) run",
@@ -89,7 +90,7 @@ class DockerConfig(Feature.Config):
 
         self.scripts = Namespace(
             build=Script(
-                "$(DOCKER_BUILD) -f $(DOCKER_BUILD_FILE) $(DOCKER_BUILD_OPTIONS) -t $(DOCKER_IMAGE):$(DOCKER_TAG) .",
+                "$(DOCKER_BUILD) -f $(DOCKER_BUILD_FILE) $(DOCKER_BUILD_OPTIONS) $(DOCKER_BUILD_MORE_OPTIONS) -t $(DOCKER_IMAGE):$(DOCKER_TAG) .",
                 doc="Build a docker image.",
             ),
             push=Script(
@@ -97,7 +98,7 @@ class DockerConfig(Feature.Config):
                 doc="Push docker image to remote registry.",
             ),
             run=Script(
-                "$(DOCKER_RUN) $(DOCKER_RUN_OPTIONS) --interactive --tty --rm --name=$(DOCKER_RUN_NAME) $(DOCKER_RUN_PORTS) $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_RUN_COMMAND)",
+                "$(DOCKER_RUN) $(DOCKER_RUN_OPTIONS) --interactive $(shell test -t 0 && echo '--tty') --rm --name=$(DOCKER_RUN_NAME) $(DOCKER_RUN_PORTS) $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_RUN_COMMAND)",
                 doc="Run the default entry point in a container based on our docker image.",
             ),
             shell=Script(
